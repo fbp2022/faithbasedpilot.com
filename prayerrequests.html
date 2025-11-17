@@ -1,1 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Prayer Requests | Faith Based Pilot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark light" />
+  <style>
+    /* ========= BASE ========= */
+    :root {
+      --bg: #050713;
+      --bg-alt: #090d1f;
+      --card-bg: rgba(16, 20, 48, 0.85);
+      --accent: #4fd1c5;
+      --accent-soft: rgba(79, 209, 197, 0.25);
+      --accent-strong: rgba(79, 209, 197, 0.75);
+      --accent-2: #8b5cf6;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-subtle: rgba(148, 163, 184, 0.25);
+      --danger: #fb7185;
+      --radius-lg: 20px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 24px 80px rgba(15, 23, 42, 0.8);
+      --transition-fast: 0.18s ease-out;
+      --transition-med: 0.25s ease;
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at top left, rgba(79, 209, 197, 0.18), transparent 55%),
+        radial-gradient(circle at top right, rgba(139, 92, 246, 0.13), transparent 55%),
+        radial-gradient(circle at bottom, rgba(56, 189, 248, 0.12), transparent 55%),
+        linear-gradient(145deg, #020617, #020617 40%, #020617 70%, #020617);
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px 40px;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 960px;
+      border-radius: 32px;
+      padding: 24px 20px 28px;
+      background: radial-gradient(circle at top, rgba(79, 209, 197, 0.16), transparent 60%)
+        border-box;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle border / overlay */
+    .shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      backdrop-filter: blur(28px) saturate(130%);
+      -webkit-backdrop-filter: blur(28px) saturate(130%);
+      pointer-events: none;
+    }
+
+    .shell-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .brand-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .brand-tagline {
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-soft);
+    }
+
+    h1 {
+      font-size: clamp(1.7rem, 3vw, 2rem);
+      font-weight: 650;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    h1 span.logo-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 20% 0, rgba(79, 209, 197, 0.45), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    h1 span.logo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #a7f3d0, #22c55e);
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 440px;
+    }
+
+    .header-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: var(--radius-pill);
+      font-size: 0.75rem;
+      background: radial-gradient(circle at 0 0, rgba(34, 197, 94, 0.12), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: #bbf7d0;
+    }
+
+    .status-pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #bbf7d0, #22c55e);
+      box-shadow: 0 0 8px rgba(22, 163, 74, 0.9);
+    }
+
+    .count-pill {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+    }
+
+    /* ========= LAYOUT SECTIONS ========= */
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.25fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 800px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .header-meta {
+        align-items: flex-start;
+      }
+    }
+
+    /* ========= FORM CARD ========= */
+
+    .card-form {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(12, 10, 40, 0.98));
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      padding: 16px 16px 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-form::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      opacity: 0.18;
+      background:
+        radial-gradient(circle at 0 0, rgba(79, 209, 197, 0.6), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(139, 92, 246, 0.4), transparent 52%);
+      pointer-events: none;
+    }
+
+    .card-form-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-form-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .card-form-header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .card-form-header h2 span {
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent-soft);
+    }
+
+    .card-form-header .hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: right;
+      max-width: 200px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    input[type="text"],
+    textarea {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 8px 10px;
+      font-size: 0.86rem;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+        background var(--transition-fast), transform 0.08s ease-out;
+    }
+
+    input[type="text"]::placeholder,
+    textarea::placeholder {
+      color: rgba(148, 163, 184, 0.7);
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: var(--accent-strong);
+      box-shadow: 0 0 0 1px rgba(79, 209, 197, 0.4), 0 0 24px rgba(79, 209, 197, 0.25);
+      background: rgba(15, 23, 42, 0.98);
+      transform: translateY(-0.5px);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+      max-height: 220px;
+      line-height: 1.5;
+    }
+
+    .form-row-inline {
+      display: flex;
+      gap: 8px;
+    }
+
+    .form-row-inline .field-group {
+      flex: 1;
+    }
+
+    @media (max-width: 600px) {
+      .form-row-inline {
+        flex-direction: column;
+      }
+    }
+
+    .form-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .form-note {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .form-note strong {
+      color: var(--accent-soft);
+      font-weight: 500;
+    }
+
+    button[type="submit"] {
+      border: none;
+      cursor: pointer;
+      padding: 7px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 0.84rem;
+      font-weight: 550;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      background: radial-gradient(circle at 0 0, #22c55e, #0f766e);
+      color: #e5fdf5;
+      box-shadow:
+        0 0 0 1px rgba(22, 163, 74, 0.5),
+        0 14px 32px rgba(16, 185, 129, 0.45);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.12s ease-out, box-shadow 0.16s ease-out, filter 0.16s ease-out;
+      white-space: nowrap;
+    }
+
+    button[type="submit"]:hover {
+      transform: translateY(-1px);
+      filter: saturate(1.1);
+      box-shadow:
+        0 0 0 1px rgba(22, 163, 74, 0.6),
+        0 18px 40px rgba(16, 185, 129, 0.6);
+    }
+
+    button[type="submit"]:active {
+      transform: translateY(0.5px) scale(0.99);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.45);
+    }
+
+    .btn-icon-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #bbf7d0, #22c55e);
+      box-shadow: 0 0 10px rgba(22, 163, 74, 0.8);
+    }
+
+    /* ========= REQUESTS LIST CARD ========= */
+
+    .card-requests {
+      background: rgba(3, 7, 18, 0.95);
+      border-radius: var(--radius-lg);
+      padding: 14px 12px 10px;
+      border: 1px solid rgba(31, 41, 55, 0.85);
+      box-shadow: 0 26px 60px rgba(15, 23, 42, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: min(560px, 75vh);
+      overflow: hidden;
+    }
+
+    .card-requests-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding-inline: 2px;
+    }
+
+    .card-requests-header h2 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .card-requests-header h2 span {
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: rgba(148, 163, 184, 0.8);
+    }
+
+    .filter-pill {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .requests-scroll {
+      flex: 1;
+      margin-top: 4px;
+      padding: 4px;
+      border-radius: 16px;
+      background:
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.98)),
+        radial-gradient(circle at top, rgba(79, 209, 197, 0.16), transparent 60%);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.8) rgba(15, 23, 42, 0.8);
+    }
+
+    .requests-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .requests-scroll::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.9);
+    }
+    .requests-scroll::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(79, 209, 197, 0.8), rgba(59, 130, 246, 0.8));
+      border-radius: 999px;
+    }
+
+    .request-empty {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .request-card {
+      border-radius: 14px;
+      border: 1px solid rgba(55, 65, 81, 0.95);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(12, 10, 40, 0.98));
+      padding: 8px 10px;
+      margin-bottom: 7px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: border-color var(--transition-fast), transform 0.12s ease-out,
+        box-shadow var(--transition-fast), background var(--transition-fast);
+    }
+
+    .request-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      opacity: 0;
+      background: radial-gradient(circle at 0 0, rgba(79, 209, 197, 0.28), transparent 55%);
+      transition: opacity var(--transition-med);
+      pointer-events: none;
+    }
+
+    .request-card:hover {
+      transform: translateY(-1px);
+      border-color: rgba(79, 209, 197, 0.8);
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.9);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(12, 10, 40, 1));
+    }
+
+    .request-card:hover::before {
+      opacity: 1;
+    }
+
+    .request-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .request-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .request-title {
+      font-size: 0.9rem;
+      font-weight: 550;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .request-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .request-meta span.badge-name {
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      background: rgba(15, 23, 42, 0.92);
+      max-width: 160px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .request-meta span.badge-date {
+      opacity: 0.85;
+    }
+
+    .request-toggle-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      flex-shrink: 0;
+      color: rgba(226, 232, 240, 0.85);
+      background: radial-gradient(circle at 30% 0, rgba(79, 209, 197, 0.4), rgba(15, 23, 42, 0.95));
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9);
+      transition: transform 0.2s ease-out, border-color 0.16s ease-out, background 0.16s ease-out;
+    }
+
+    .request-card.open .request-toggle-icon {
+      transform: rotate(90deg);
+      border-color: rgba(79, 209, 197, 0.9);
+      background: radial-gradient(circle at 50% 0, rgba(79, 209, 197, 0.75), rgba(15, 23, 42, 0.98));
+    }
+
+    .request-body {
+      margin-top: 6px;
+      font-size: 0.82rem;
+      color: rgba(226, 232, 240, 0.9);
+      line-height: 1.5;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.22s ease-out, opacity 0.2s ease-out;
+    }
+
+    .request-card.open .request-body {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    .request-footer-note {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding: 0 4px 4px;
+      text-align: right;
+    }
+
+    .error-text {
+      font-size: 0.75rem;
+      color: var(--danger);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="shell-inner">
+      <header>
+        <div class="brand-block">
+          <div class="brand-tagline">Faith Based Pilot</div>
+          <h1>
+            <span class="logo-pill">
+              <span class="logo-dot"></span>
+              Prayer Channel
+            </span>
+            Prayer Requests
+          </h1>
+          <p class="subtitle">
+            Submit a request and it will appear in the shared list below. Newest requests rise to the
+            top. Only the title is shown at first &mdash; click to reveal the details and pray.
+          </p>
+        </div>
+        <div class="header-meta">
+          <div class="status-pill">
+            <span class="status-pill-dot"></span>
+            Live Requests Stream
+          </div>
+          <div id="count-pill" class="count-pill">
+            0 active requests
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <!-- PRAYER REQUEST FORM -->
+        <section class="card-form" aria-label="Submit prayer request">
+          <div class="card-form-inner">
+            <div class="card-form-header">
+              <h2>
+                Submit a Request
+                <span>Private details, public title</span>
+              </h2>
+              <p class="hint">
+                Only the <strong>title</strong> and an optional name are shown in the list.
+                The full request is revealed only when opened.
+              </p>
+            </div>
+
+            <form id="prayer-form" autocomplete="off">
+              <div class="field-group">
+                <label for="title">Title</label>
+                <input
+                  id="title"
+                  type="text"
+                  name="title"
+                  maxlength="120"
+                  placeholder="Example: Healing for my son's lungs"
+                  required
+                />
+              </div>
+
+              <div class="form-row-inline">
+                <div class="field-group">
+                  <label for="name">Name (optional)</label>
+                  <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    maxlength="60"
+                    placeholder="You can stay anonymous"
+                  />
+                </div>
+                <div class="field-group">
+                  <label for="tagline">Short tag (optional)</label>
+                  <input
+                    id="tagline"
+                    type="text"
+                    name="tagline"
+                    maxlength="60"
+                    placeholder="Family • Health • Provision"
+                  />
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="body">Prayer Request (seen when opened)</label>
+                <textarea
+                  id="body"
+                  name="body"
+                  maxlength="1200"
+                  placeholder="Share the details you’re comfortable with. This text appears only when someone opens your card."
+                  required
+                ></textarea>
+              </div>
+
+              <div id="error" class="error-text" style="display:none;"></div>
+
+              <div class="form-footer">
+                <p class="form-note">
+                  <strong>Note:</strong> Requests are stored securely in this browser only for now
+                  (no email or external database yet).
+                </p>
+                <button type="submit">
+                  <span class="btn-icon-dot"></span>
+                  Send Request
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- PRAYER REQUESTS LIST -->
+        <section class="card-requests" aria-label="Prayer request feed">
+          <div class="card-requests-header">
+            <h2>
+              Requests Feed
+              <span>Newest first</span>
+            </h2>
+            <div class="filter-pill">
+              Click a card to reveal full details.
+            </div>
+          </div>
+
+          <div id="requests-scroll" class="requests-scroll">
+            <div id="requests-list"></div>
+          </div>
+
+          <div class="request-footer-note">
+            For now, this feed is local to your device using encrypted browser storage. A shared,
+            cloud-based version can be added later.
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = "fbp_prayer_requests_v1";
+
+      /**
+       * Some starter test requests for first-time load.
+       * These are only used when localStorage has no data yet.
+       */
+      const seedRequests = [
+        {
+          id: "seed-1",
+          title: "Wisdom for a big decision at work",
+          name: "T.M.",
+          tagline: "Direction • Career",
+          body:
+            "Please pray that I would clearly hear the Lord’s leading about a possible job move. " +
+            "I want to provide well for my family but stay exactly where He wants me.",
+          createdAt: Date.now() - 1000 * 60 * 60 * 4 // 4 hours ago
+        },
+        {
+          id: "seed-2",
+          title: "Deepening hunger for God in our men’s group",
+          name: "Anonymous",
+          tagline: "Faith • Discipleship",
+          body:
+            "As we gather, pray that the Holy Spirit would stir a real hunger for Scripture and obedience. " +
+            "Not just good discussions, but real repentance, growth, and courage.",
+          createdAt: Date.now() - 1000 * 60 * 60 * 9 // 9 hours ago
+        },
+        {
+          id: "seed-3",
+          title: "Protection and peace over my son this week",
+          name: "Concerned father",
+          tagline: "Family • Protection",
+          body:
+            "I’m asking for prayer over my son’s health, sleep, and daily environment. " +
+            "Pray that the Lord would guard his body, mind, and spirit, and give me wisdom " +
+            "to advocate for him well.",
+          createdAt: Date.now() - 1000 * 60 * 60 * 24 // 24 hours ago
+        }
+      ];
+
+      /** Helpers **/
+      function loadRequests() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(seedRequests));
+            return [...seedRequests];
+          }
+          const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed)) return [...seedRequests];
+          return parsed
+            .filter((x) => x && x.title && x.body)
+            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        } catch (err) {
+          console.error("Error loading prayer requests", err);
+          return [...seedRequests];
+        }
+      }
+
+      function saveRequests(list) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        } catch (err) {
+          console.error("Error saving prayer requests", err);
+        }
+      }
+
+      function formatDate(ts) {
+        try {
+          const d = new Date(ts);
+          return d.toLocaleString(undefined, {
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+        } catch {
+          return "";
+        }
+      }
+
+      const form = document.getElementById("prayer-form");
+      const titleInput = document.getElementById("title");
+      const nameInput = document.getElementById("name");
+      const taglineInput = document.getElementById("tagline");
+      const bodyInput = document.getElementById("body");
+      const errorEl = document.getElementById("error");
+      const listEl = document.getElementById("requests-list");
+      const countPill = document.getElementById("count-pill");
+
+      let requests = loadRequests();
+
+      function updateCountPill() {
+        const count = requests.length;
+        if (!countPill) return;
+        if (count === 0) {
+          countPill.textContent = "No active requests yet";
+        } else if (count === 1) {
+          countPill.textContent = "1 active request";
+        } else {
+          countPill.textContent = count + " active requests";
+        }
+      }
+
+      function renderRequests() {
+        listEl.innerHTML = "";
+        if (!requests.length) {
+          const empty = document.createElement("div");
+          empty.className = "request-empty";
+          empty.textContent =
+            "No requests yet. Be the first to submit one using the form on the left.";
+          listEl.appendChild(empty);
+          updateCountPill();
+          return;
+        }
+
+        requests
+          .slice()
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+          .forEach((req) => {
+            const card = document.createElement("article");
+            card.className = "request-card";
+            card.setAttribute("tabindex", "0");
+
+            const header = document.createElement("div");
+            header.className = "request-card-header";
+
+            const titleBlock = document.createElement("div");
+            titleBlock.className = "request-title-block";
+
+            const title = document.createElement("div");
+            title.className = "request-title";
+            title.textContent = req.title || "(Untitled)";
+
+            const meta = document.createElement("div");
+            meta.className = "request-meta";
+
+            if (req.name) {
+              const nameBadge = document.createElement("span");
+              nameBadge.className = "badge-name";
+              nameBadge.textContent = req.name;
+              meta.appendChild(nameBadge);
+            }
+
+            if (req.tagline) {
+              const tagSpan = document.createElement("span");
+              tagSpan.style.opacity = "0.9";
+              tagSpan.textContent = req.tagline;
+              meta.appendChild(tagSpan);
+            }
+
+            const dateSpan = document.createElement("span");
+            dateSpan.className = "badge-date";
+            dateSpan.textContent = formatDate(req.createdAt || Date.now());
+            meta.appendChild(dateSpan);
+
+            titleBlock.appendChild(title);
+            titleBlock.appendChild(meta);
+
+            const toggleIcon = document.createElement("div");
+            toggleIcon.className = "request-toggle-icon";
+            toggleIcon.innerHTML = "&rsaquo;";
+
+            header.appendChild(titleBlock);
+            header.appendChild(toggleIcon);
+
+            const body = document.createElement("div");
+            body.className = "request-body";
+            body.textContent = req.body || "";
+
+            card.appendChild(header);
+            card.appendChild(body);
+
+            const toggleOpen = () => {
+              const isOpen = card.classList.contains("open");
+              const allCards = listEl.querySelectorAll(".request-card");
+              allCards.forEach((c) => {
+                if (c !== card) c.classList.remove("open");
+              });
+              if (!isOpen) {
+                card.classList.add("open");
+              } else {
+                card.classList.remove("open");
+              }
+            };
+
+            card.addEventListener("click", toggleOpen);
+            card.addEventListener("keydown", (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                toggleOpen();
+              }
+            });
+
+            listEl.appendChild(card);
+          });
+
+        updateCountPill();
+      }
+
+      renderRequests();
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        errorEl.style.display = "none";
+        errorEl.textContent = "";
+
+        const title = (titleInput.value || "").trim();
+        const name = (nameInput.value || "").trim();
+        const tagline = (taglineInput.value || "").trim();
+        const body = (bodyInput.value || "").trim();
+
+        if (!title || !body) {
+          errorEl.textContent = "Please provide both a title and the prayer details.";
+          errorEl.style.display = "block";
+          return;
+        }
+
+        const newReq = {
+          id: "local-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 7),
+          title,
+          name: name || "",
+          tagline: tagline || "",
+          body,
+          createdAt: Date.now()
+        };
+
+        // newest at the top
+        requests.unshift(newReq);
+        saveRequests(requests);
+        renderRequests();
+
+        form.reset();
+        titleInput.focus();
+      });
+    })();
+  </script>
+</body>
+</html>

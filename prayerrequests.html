@@ -1,957 +1,920 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <title>Prayer Requests | The Forge</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prayer Requests</title>
   <meta name="color-scheme" content="dark light" />
+
   <style>
-    /* ========= BASE ========= */
+    /* ===================== THEME VARIABLES ===================== */
     :root {
-      --bg: #050713;
-      --bg-alt: #090d1f;
-      --card-bg: rgba(16, 20, 48, 0.85);
-      --accent: #4fd1c5;
-      --accent-soft: rgba(79, 209, 197, 0.25);
-      --accent-strong: rgba(79, 209, 197, 0.75);
-      --accent-2: #8b5cf6;
-      --text-main: #f9fafb;
-      --text-muted: #9ca3af;
-      --border-subtle: rgba(148, 163, 184, 0.25);
-      --danger: #fb7185;
-      --radius-lg: 20px;
-      --radius-pill: 999px;
-      --shadow-soft: 0 24px 80px rgba(15, 23, 42, 0.8);
-      --transition-fast: 0.18s ease-out;
-      --transition-med: 0.25s ease;
+      --transition-fast: 0.2s ease-out;
+      --transition-med: 0.35s ease;
+      --radius-card: 18px;
+      --shadow-soft: 0 14px 35px rgba(0, 0, 0, 0.45);
+      --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
+    html, body {
       margin: 0;
       padding: 0;
+      height: 100%;
     }
 
     body {
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Segoe UI", sans-serif;
-      color: var(--text-main);
-      background:
-        radial-gradient(circle at top left, rgba(79, 209, 197, 0.18), transparent 55%),
-        radial-gradient(circle at top right, rgba(139, 92, 246, 0.13), transparent 55%),
-        radial-gradient(circle at bottom, rgba(56, 189, 248, 0.12), transparent 55%),
-        linear-gradient(145deg, #020617, #020617 40%, #020617 70%, #020617);
+      font-family: var(--font-body);
       display: flex;
-      justify-content: center;
-      padding: 32px 16px 40px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: background-color var(--transition-med),
+                  color var(--transition-med);
     }
 
-    .shell {
+    /* Dark + Light themes */
+    body[data-theme="dark"] {
+      background: radial-gradient(circle at 10% 0%, #060b14 0%, #020308 35%, #000000 100%);
+      color: #f4f7ff;
+    }
+
+    body[data-theme="light"] {
+      background: radial-gradient(circle at 10% 0%, #dce7ff 0%, #f6f9ff 40%, #ffffff 100%);
+      color: #111827;
+    }
+
+    /* Ambient hologram background animation */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -40%;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(0, 255, 255, 0.08), transparent 55%),
+        radial-gradient(circle at 80% 0%, rgba(80, 200, 255, 0.11), transparent 60%),
+        radial-gradient(circle at 50% 90%, rgba(0, 180, 255, 0.09), transparent 55%);
+      opacity: 0.9;
+      mix-blend-mode: screen;
+      animation: ambientDrift 22s infinite alternate ease-in-out;
+      z-index: -1;
+    }
+
+    @keyframes ambientDrift {
+      0% {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+      50% {
+        transform: translate3d(-3%, 2%, 0) scale(1.03);
+      }
+      100% {
+        transform: translate3d(4%, -3%, 0) scale(1.06);
+      }
+    }
+
+    /* ===================== LAYOUT ===================== */
+    .page-shell {
       width: 100%;
       max-width: 960px;
-      border-radius: 32px;
-      padding: 24px 20px 28px;
-      background: radial-gradient(circle at top, rgba(79, 209, 197, 0.16), transparent 60%)
-        border-box;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* subtle border / overlay */
-    .shell::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      backdrop-filter: blur(28px) saturate(130%);
-      -webkit-backdrop-filter: blur(28px) saturate(130%);
-      pointer-events: none;
-    }
-
-    .shell-inner {
-      position: relative;
-      z-index: 1;
+      padding: 24px 16px 48px;
+      box-sizing: border-box;
     }
 
     header {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: flex-start;
       gap: 16px;
       margin-bottom: 24px;
     }
 
-    .brand-block {
+    .title-block {
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
 
-    .brand-tagline {
-      font-size: 0.75rem;
-      letter-spacing: 0.18em;
+    .page-title {
+      font-size: clamp(1.6rem, 2.4vw, 2rem);
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--accent-soft);
-    }
-
-    h1 {
-      font-size: clamp(1.7rem, 3vw, 2rem);
-      font-weight: 650;
+      font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 0.55rem;
-    }
-
-    h1 span.logo-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 20% 0, rgba(79, 209, 197, 0.45), rgba(15, 23, 42, 0.9));
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      font-size: 0.8rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-    }
-
-    h1 span.logo-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: radial-gradient(circle, #a7f3d0, #22c55e);
-      box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
-    }
-
-    .subtitle {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      max-width: 440px;
-    }
-
-    .header-meta {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
       gap: 8px;
     }
 
-    .status-pill {
+    .page-title span.accent {
+      font-size: 0.65em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      border: 1px solid rgba(148, 163, 255, 0.5);
+      background: linear-gradient(120deg, rgba(37, 99, 235, 0.15), transparent);
+      backdrop-filter: blur(6px);
+    }
+
+    body[data-theme="light"] .page-title span.accent {
+      border-color: rgba(55, 65, 81, 0.3);
+      background: linear-gradient(120deg, rgba(191, 219, 254, 0.9), #ffffff);
+    }
+
+    .page-subtitle {
+      font-size: 0.9rem;
+      opacity: 0.85;
+      max-width: 540px;
+    }
+
+    /* Theme toggle button */
+    .theme-toggle {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 255, 0.45);
+      padding: 6px 14px;
+      font-size: 0.85rem;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 9px;
-      border-radius: var(--radius-pill);
-      font-size: 0.75rem;
-      background: radial-gradient(circle at 0 0, rgba(34, 197, 94, 0.12), rgba(15, 23, 42, 0.9));
-      border: 1px solid rgba(34, 197, 94, 0.4);
-      color: #bbf7d0;
+      gap: 8px;
+      background: radial-gradient(circle at 0% 0%, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+      color: #e5edff;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.5);
+      transition: background-color var(--transition-fast),
+                  border-color var(--transition-fast),
+                  transform var(--transition-fast),
+                  box-shadow var(--transition-fast);
     }
 
-    .status-pill-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: radial-gradient(circle, #bbf7d0, #22c55e);
-      box-shadow: 0 0 8px rgba(22, 163, 74, 0.9);
+    body[data-theme="light"] .theme-toggle {
+      background: linear-gradient(135deg, #ffffff, #e5edff);
+      color: #111827;
+      border-color: rgba(148, 163, 184, 0.7);
+      box-shadow: 0 10px 25px rgba(148, 163, 184, 0.35);
     }
 
-    .count-pill {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      padding: 3px 10px;
-      border-radius: var(--radius-pill);
-      background: rgba(15, 23, 42, 0.7);
-      border: 1px dashed rgba(148, 163, 184, 0.5);
+    .theme-toggle:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.6);
     }
 
-    /* ========= LAYOUT SECTIONS ========= */
-
-    main {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.25fr);
-      gap: 18px;
+    .theme-toggle-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(191, 219, 254, 0.6);
+      position: relative;
+      box-shadow: inset 0 0 12px rgba(56, 189, 248, 0.5);
     }
 
-    @media (max-width: 800px) {
-      main {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .header-meta {
-        align-items: flex-start;
-      }
+    .theme-toggle-icon::before {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: inherit;
+      background: radial-gradient(circle at 30% 20%, #ffffff, #38bdf8 65%, transparent 70%);
+      opacity: 0.85;
     }
 
-    /* ========= FORM CARD ========= */
+    body[data-theme="light"] .theme-toggle-icon {
+      box-shadow: inset 0 0 7px rgba(30, 64, 175, 0.25);
+    }
 
-    .card-form {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(12, 10, 40, 0.98));
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-soft);
-      padding: 16px 16px 14px;
+    body[data-theme="light"] .theme-toggle-icon::before {
+      background: radial-gradient(circle at 20% 30%, #fbbf24, #f97316 60%, transparent 72%);
+    }
+
+    /* ===================== FORM ===================== */
+    .panel {
+      margin-bottom: 24px;
+      border-radius: 22px;
+      padding: 18px 18px 20px;
       position: relative;
       overflow: hidden;
+      box-shadow: var(--shadow-soft);
+      background: radial-gradient(circle at 0% 0%, rgba(15, 23, 42, 0.9), rgba(3, 7, 18, 0.96));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      backdrop-filter: blur(14px);
     }
 
-    .card-form::before {
+    body[data-theme="light"] .panel {
+      background: radial-gradient(circle at 0% 0%, #ffffff, #e5edff);
+      border-color: rgba(148, 163, 184, 0.7);
+      box-shadow: 0 16px 40px rgba(148, 163, 184, 0.35);
+    }
+
+    .panel::before {
       content: "";
       position: absolute;
       inset: -40%;
-      opacity: 0.18;
       background:
-        radial-gradient(circle at 0 0, rgba(79, 209, 197, 0.6), transparent 55%),
-        radial-gradient(circle at 100% 0, rgba(139, 92, 246, 0.4), transparent 52%);
+        radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.2), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.18), transparent 60%);
+      opacity: 0.6;
+      mix-blend-mode: screen;
       pointer-events: none;
     }
 
-    .card-form-inner {
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
       position: relative;
       z-index: 1;
     }
 
-    .card-form-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .card-form-header h2 {
-      font-size: 1rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .card-form-header h2 span {
-      font-size: 0.75rem;
-      font-weight: 500;
+    .panel-title {
+      font-size: 0.95rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--accent-soft);
+      opacity: 0.9;
     }
 
-    .card-form-header .hint {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-align: right;
-      max-width: 200px;
+    .panel-title span {
+      font-weight: 600;
     }
 
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .tiny-caption {
+      font-size: 0.8rem;
+      opacity: 0.75;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 14px;
+      margin-top: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-grid-full {
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 640px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     label {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-muted);
+      display: block;
+      font-size: 0.82rem;
+      margin-bottom: 4px;
+      opacity: 0.9;
     }
 
-    .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    .optional {
+      font-size: 0.75rem;
+      opacity: 0.65;
     }
 
     input[type="text"],
     textarea {
-      background: rgba(15, 23, 42, 0.95);
-      border-radius: 10px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      padding: 8px 10px;
-      font-size: 0.86rem;
-      color: var(--text-main);
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 255, 0.4);
+      padding: 8px 11px;
+      font-size: 0.9rem;
+      background: rgba(15, 23, 42, 0.85);
+      color: inherit;
       outline: none;
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
-        background var(--transition-fast), transform 0.08s ease-out;
-    }
-
-    input[type="text"]::placeholder,
-    textarea::placeholder {
-      color: rgba(148, 163, 184, 0.7);
-    }
-
-    input[type="text"]:focus,
-    textarea:focus {
-      border-color: var(--accent-strong);
-      box-shadow: 0 0 0 1px rgba(79, 209, 197, 0.4), 0 0 24px rgba(79, 209, 197, 0.25);
-      background: rgba(15, 23, 42, 0.98);
-      transform: translateY(-0.5px);
+      transition: border-color var(--transition-fast),
+                  box-shadow var(--transition-fast),
+                  background-color var(--transition-fast),
+                  transform var(--transition-fast);
     }
 
     textarea {
+      border-radius: 18px;
+      min-height: 96px;
       resize: vertical;
-      min-height: 90px;
-      max-height: 220px;
       line-height: 1.5;
     }
 
-    .form-row-inline {
+    body[data-theme="light"] input[type="text"],
+    body[data-theme="light"] textarea {
+      background: rgba(255, 255, 255, 0.94);
+      border-color: rgba(148, 163, 184, 0.8);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      opacity: 0.6;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: rgba(56, 189, 248, 0.8);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.8),
+                  0 0 24px rgba(59, 130, 246, 0.45);
+      transform: translateY(-1px);
+    }
+
+    body[data-theme="light"] input:focus,
+    body[data-theme="light"] textarea:focus {
+      border-color: rgba(37, 99, 235, 0.9);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.9),
+                  0 0 18px rgba(59, 130, 246, 0.4);
+    }
+
+    .actions-row {
       display: flex;
-      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 10px;
+      position: relative;
+      z-index: 1;
     }
 
-    .form-row-inline .field-group {
-      flex: 1;
-    }
-
-    @media (max-width: 600px) {
-      .form-row-inline {
-        flex-direction: column;
-      }
-    }
-
-    .form-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-top: 4px;
-    }
-
-    .form-note {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-    }
-
-    .form-note strong {
-      color: var(--accent-soft);
-      font-weight: 500;
-    }
-
-    button[type="submit"] {
+    .btn-primary {
+      border-radius: 999px;
       border: none;
-      cursor: pointer;
-      padding: 7px 16px;
-      border-radius: var(--radius-pill);
-      font-size: 0.84rem;
-      font-weight: 550;
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      letter-spacing: 0.14em;
-      background: radial-gradient(circle at 0 0, #22c55e, #0f766e);
-      color: #e5fdf5;
-      box-shadow:
-        0 0 0 1px rgba(22, 163, 74, 0.5),
-        0 14px 32px rgba(16, 185, 129, 0.45);
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      transition: transform 0.12s ease-out, box-shadow 0.16s ease-out, filter 0.16s ease-out;
-      white-space: nowrap;
+      cursor: pointer;
+      background: linear-gradient(135deg, #0ea5e9, #2563eb);
+      color: #e5f2ff;
+      box-shadow: 0 15px 35px rgba(37, 99, 235, 0.7);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.18s ease-out, box-shadow 0.18s ease-out;
     }
 
-    button[type="submit"]:hover {
-      transform: translateY(-1px);
-      filter: saturate(1.1);
-      box-shadow:
-        0 0 0 1px rgba(22, 163, 74, 0.6),
-        0 18px 40px rgba(16, 185, 129, 0.6);
+    .btn-primary::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(255, 255, 255, 0.2), transparent 40%, rgba(96, 165, 250, 0.35));
+      mix-blend-mode: screen;
+      opacity: 0;
+      transition: opacity 0.25s ease-out;
     }
 
-    button[type="submit"]:active {
-      transform: translateY(0.5px) scale(0.99);
-      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.45);
+    .btn-primary:hover {
+      transform: translateY(-1.5px);
+      box-shadow: 0 22px 45px rgba(37, 99, 235, 0.8);
     }
 
-    .btn-icon-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: radial-gradient(circle, #bbf7d0, #22c55e);
-      box-shadow: 0 0 10px rgba(22, 163, 74, 0.8);
+    .btn-primary:hover::before {
+      opacity: 1;
     }
 
-    /* ========= REQUESTS LIST CARD ========= */
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.9);
+    }
 
-    .card-requests {
-      background: rgba(3, 7, 18, 0.95);
-      border-radius: var(--radius-lg);
-      padding: 14px 12px 10px;
-      border: 1px solid rgba(31, 41, 55, 0.85);
-      box-shadow: 0 26px 60px rgba(15, 23, 42, 0.95);
+    .btn-primary-icon {
+      font-size: 1.1rem;
+    }
+
+    /* ===================== PRAYER LIST ===================== */
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      margin-top: 6px;
+    }
+
+    .section-heading h2 {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin: 0;
+      opacity: 0.8;
+    }
+
+    .section-heading span {
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    .prayer-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      max-height: min(560px, 75vh);
-      overflow: hidden;
     }
 
-    .card-requests-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      padding-inline: 2px;
-    }
-
-    .card-requests-header h2 {
-      font-size: 0.92rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    .card-requests-header h2 span {
-      font-size: 0.75rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: rgba(148, 163, 184, 0.8);
-    }
-
-    .filter-pill {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      padding: 3px 9px;
-      border-radius: var(--radius-pill);
-      border: 1px dashed rgba(148, 163, 184, 0.6);
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    .requests-scroll {
-      flex: 1;
-      margin-top: 4px;
-      padding: 4px;
-      border-radius: 16px;
-      background:
-        linear-gradient(to bottom, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.98)),
-        radial-gradient(circle at top, rgba(79, 209, 197, 0.16), transparent 60%);
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(148, 163, 184, 0.8) rgba(15, 23, 42, 0.8);
-    }
-
-    .requests-scroll::-webkit-scrollbar {
-      width: 6px;
-    }
-    .requests-scroll::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.9);
-    }
-    .requests-scroll::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, rgba(79, 209, 197, 0.8), rgba(59, 130, 246, 0.8));
-      border-radius: 999px;
-    }
-
-    .request-empty {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      padding: 8px 10px;
-      text-align: center;
-    }
-
-    .request-card {
-      border-radius: 14px;
-      border: 1px solid rgba(55, 65, 81, 0.95);
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(12, 10, 40, 0.98));
-      padding: 8px 10px;
-      margin-bottom: 7px;
-      cursor: pointer;
+    /* Hologram card frame */
+    .prayer-card {
       position: relative;
+      border-radius: var(--radius-card);
+      padding: 11px 13px 11px;
+      cursor: pointer;
       overflow: hidden;
-      transition: border-color var(--transition-fast), transform 0.12s ease-out,
-        box-shadow var(--transition-fast), background var(--transition-fast);
+      transform: translateY(0) translateZ(0);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+                  border-color var(--transition-fast), background-color var(--transition-fast);
+      background: radial-gradient(circle at 0% 0%, rgba(15, 23, 42, 0.9), rgba(3, 7, 18, 0.96));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(16px);
     }
 
-    .request-card::before {
+    .prayer-card::before {
       content: "";
       position: absolute;
-      inset: -40%;
+      inset: -120%;
+      background:
+        conic-gradient(from 0deg, rgba(56, 189, 248, 0.2), rgba(129, 140, 248, 0.35), rgba(56, 189, 248, 0.2));
       opacity: 0;
-      background: radial-gradient(circle at 0 0, rgba(79, 209, 197, 0.28), transparent 55%);
       transition: opacity var(--transition-med);
+      mix-blend-mode: screen;
       pointer-events: none;
     }
 
-    .request-card:hover {
-      transform: translateY(-1px);
-      border-color: rgba(79, 209, 197, 0.8);
-      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.9);
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(12, 10, 40, 1));
+    .prayer-card::after {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: calc(var(--radius-card) - 1px);
+      border: 1px solid rgba(15, 23, 42, 0.75);
+      opacity: 0.8;
+      pointer-events: none;
     }
 
-    .request-card:hover::before {
-      opacity: 1;
+    body[data-theme="light"] .prayer-card {
+      background: linear-gradient(145deg, #ffffff, #e5edff);
+      border-color: rgba(148, 163, 184, 0.8);
+      box-shadow: 0 16px 40px rgba(148, 163, 184, 0.45);
     }
 
-    .request-card-header {
+    body[data-theme="light"] .prayer-card::after {
+      border-color: rgba(148, 163, 184, 0.55);
+    }
+
+    .prayer-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 22px 55px rgba(15, 23, 42, 0.95);
+      border-color: rgba(56, 189, 248, 0.7);
+    }
+
+    body[data-theme="light"] .prayer-card:hover {
+      box-shadow: 0 24px 60px rgba(148, 163, 184, 0.65);
+      border-color: rgba(37, 99, 235, 0.9);
+    }
+
+    .prayer-card:hover::before {
+      opacity: 0.5;
+    }
+
+    /* Open state glow pulse */
+    .prayer-card.open {
+      animation: glowPulse 1.6s infinite alternate ease-in-out;
+    }
+
+    @keyframes glowPulse {
+      from {
+        box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.5),
+                    0 0 25px rgba(56, 189, 248, 0.7),
+                    0 18px 45px rgba(15, 23, 42, 0.95);
+      }
+      to {
+        box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.65),
+                    0 0 40px rgba(129, 140, 248, 0.85),
+                    0 24px 65px rgba(15, 23, 42, 1);
+      }
+    }
+
+    body[data-theme="light"] .prayer-card.open {
+      animation: glowPulseLight 1.7s infinite alternate ease-in-out;
+    }
+
+    @keyframes glowPulseLight {
+      from {
+        box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.6),
+                    0 0 22px rgba(59, 130, 246, 0.7),
+                    0 18px 42px rgba(148, 163, 184, 0.7);
+      }
+      to {
+        box-shadow: 0 0 0 1px rgba(30, 64, 175, 0.9),
+                    0 0 34px rgba(30, 64, 175, 0.95),
+                    0 28px 70px rgba(148, 163, 184, 0.85);
+      }
+    }
+
+    /* Card content layout */
+    .prayer-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 8px;
+      gap: 10px;
     }
 
-    .request-title-block {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-    }
-
-    .request-title {
-      font-size: 0.9rem;
-      font-weight: 550;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .request-meta {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .request-meta span.badge-name {
-      padding: 2px 8px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(148, 163, 184, 0.65);
-      background: rgba(15, 23, 42, 0.92);
-      max-width: 160px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .request-meta span.badge-date {
-      opacity: 0.85;
-    }
-
-    .request-toggle-icon {
+    .chevron {
       width: 18px;
       height: 18px;
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.8);
-      display: inline-flex;
+      border: 1px solid rgba(56, 189, 248, 0.75);
+      display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.78rem;
       flex-shrink: 0;
-      color: rgba(226, 232, 240, 0.85);
-      background: radial-gradient(circle at 30% 0, rgba(79, 209, 197, 0.4), rgba(15, 23, 42, 0.95));
-      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9);
-      transition: transform 0.2s ease-out, border-color 0.16s ease-out, background 0.16s ease-out;
+      font-size: 0.65rem;
+      color: rgba(191, 219, 254, 0.9);
+      transition: transform var(--transition-med), background-color var(--transition-med),
+                  border-color var(--transition-med), color var(--transition-med);
+      background: radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.75), rgba(15, 23, 42, 0.9));
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.9);
     }
 
-    .request-card.open .request-toggle-icon {
+    body[data-theme="light"] .chevron {
+      border-color: rgba(37, 99, 235, 0.9);
+      background: radial-gradient(circle at 30% 20%, #eff6ff, #2563eb);
+      color: #0f172a;
+      box-shadow: 0 0 10px rgba(129, 140, 248, 0.85);
+    }
+
+    .prayer-card.open .chevron {
       transform: rotate(90deg);
-      border-color: rgba(79, 209, 197, 0.9);
-      background: radial-gradient(circle at 50% 0, rgba(79, 209, 197, 0.75), rgba(15, 23, 42, 0.98));
+      background: radial-gradient(circle at 30% 20%, rgba(56, 189, 248, 0.95), rgba(8, 47, 73, 0.95));
+      border-color: rgba(125, 211, 252, 1);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 1);
+      color: #ecfeff;
     }
 
-    .request-body {
-      margin-top: 6px;
-      font-size: 0.82rem;
-      color: rgba(226, 232, 240, 0.9);
+    .chevron-icon {
+      display: inline-block;
+      transform: translateX(1px);
+    }
+
+    .prayer-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .prayer-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .prayer-meta {
+      font-size: 0.8rem;
+      opacity: 0.75;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .meta-pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 255, 0.5);
+      background: radial-gradient(circle at 0% 0%, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+    }
+
+    body[data-theme="light"] .meta-pill {
+      border-color: rgba(148, 163, 184, 0.9);
+      background: radial-gradient(circle at 0% 0%, #ffffff, #e5edff);
+    }
+
+    .prayer-body {
+      margin-top: 8px;
+      font-size: 0.86rem;
       line-height: 1.5;
+      opacity: 0.9;
       max-height: 0;
       overflow: hidden;
-      opacity: 0;
-      transition: max-height 0.22s ease-out, opacity 0.2s ease-out;
+      transition: max-height 0.35s ease;
     }
 
-    .request-card.open .request-body {
-      max-height: 400px;
-      opacity: 1;
+    .prayer-body-inner {
+      padding-top: 6px;
+      border-top: 1px dashed rgba(148, 163, 255, 0.4);
     }
 
-    .request-footer-note {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      padding: 0 4px 4px;
-      text-align: right;
+    body[data-theme="light"] .prayer-body-inner {
+      border-top-color: rgba(148, 163, 184, 0.7);
     }
 
-    .error-text {
+    .prayer-body p {
+      margin: 0;
+      white-space: pre-wrap;
+    }
+
+    .hint-line {
       font-size: 0.75rem;
-      color: var(--danger);
+      opacity: 0.7;
       margin-top: 4px;
     }
+
   </style>
 </head>
-<body>
-  <div class="shell">
-    <div class="shell-inner">
-      <header>
-        <div class="brand-block">
-          <div class="brand-tagline">The Forge</div>
-          <h1>
-            <span class="logo-pill">
-              <span class="logo-dot"></span>
-              Prayer Channel
-            </span>
-            Prayer Requests
-          </h1>
-          <p class="subtitle">
-            Submit a request and it will appear in the shared list below. Newest requests rise to the
-            top. Only the title is shown at first &mdash; click to reveal the details and pray.
-          </p>
+<body data-theme="dark">
+  <div class="page-shell">
+    <header>
+      <div class="title-block">
+        <div class="page-title">
+          Prayer Requests
+          <span class="accent">Live Feed</span>
         </div>
-        <div class="header-meta">
-          <div class="status-pill">
-            <span class="status-pill-dot"></span>
-            Live Requests Stream
+        <div class="page-subtitle">
+          Submit a request and it will appear at the top of the list. Tap a card to reveal the full prayer.
+        </div>
+      </div>
+
+      <button class="theme-toggle" type="button" id="themeToggle">
+        <div class="theme-toggle-icon" aria-hidden="true"></div>
+        <span class="theme-toggle-label">Dark Mode</span>
+      </button>
+    </header>
+
+    <!-- Submit Form -->
+    <section class="panel" aria-labelledby="submitHeading">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title" id="submitHeading">
+            <span>New Request</span> &nbsp;&nbsp;CHANNEL 01
           </div>
-          <div id="count-pill" class="count-pill">
-            0 active requests
+          <div class="tiny-caption">
+            All prayer requests show the title, posted time, and your name if you choose to share it.
           </div>
         </div>
-      </header>
+      </div>
 
-      <main>
-        <!-- PRAYER REQUEST FORM -->
-        <section class="card-form" aria-label="Submit prayer request">
-          <div class="card-form-inner">
-            <div class="card-form-header">
-              <h2>
-                Submit a Request
-                <span>Private details, public title</span>
-              </h2>
-              <p class="hint">
-                Only the <strong>title</strong> and an optional name are shown in the list.
-                The full request is revealed only when opened.
-              </p>
-            </div>
-
-            <form id="prayer-form" autocomplete="off">
-              <div class="field-group">
-                <label for="title">Title</label>
-                <input
-                  id="title"
-                  type="text"
-                  name="title"
-                  maxlength="120"
-                  placeholder="Example: Healing for my son's lungs"
-                  required
-                />
-              </div>
-
-              <div class="form-row-inline">
-                <div class="field-group">
-                  <label for="name">Name (optional)</label>
-                  <input
-                    id="name"
-                    type="text"
-                    name="name"
-                    maxlength="60"
-                    placeholder="You can stay anonymous"
-                  />
-                </div>
-                <div class="field-group">
-                  <label for="tagline">Short tag (optional)</label>
-                  <input
-                    id="tagline"
-                    type="text"
-                    name="tagline"
-                    maxlength="60"
-                    placeholder="Family • Health • Provision"
-                  />
-                </div>
-              </div>
-
-              <div class="field-group">
-                <label for="body">Prayer Request (seen when opened)</label>
-                <textarea
-                  id="body"
-                  name="body"
-                  maxlength="1200"
-                  placeholder="Share the details you’re comfortable with. This text appears only when someone opens your card."
-                  required
-                ></textarea>
-              </div>
-
-              <div id="error" class="error-text" style="display:none;"></div>
-
-              <div class="form-footer">
-                <p class="form-note">
-                  <strong>Note:</strong> Requests are stored securely in this browser only for now
-                  (no email or external database yet).
-                </p>
-                <button type="submit">
-                  <span class="btn-icon-dot"></span>
-                  Send Request
-                </button>
-              </div>
-            </form>
-          </div>
-        </section>
-
-        <!-- PRAYER REQUESTS LIST -->
-        <section class="card-requests" aria-label="Prayer request feed">
-          <div class="card-requests-header">
-            <h2>
-              Requests Feed
-              <span>Newest first</span>
-            </h2>
-            <div class="filter-pill">
-              Click a card to reveal full details.
-            </div>
+      <form id="prayerForm" autocomplete="off" novalidate>
+        <div class="form-grid">
+          <div>
+            <label for="name">
+              Name <span class="optional">(optional)</span>
+            </label>
+            <input type="text" id="name" name="name" maxlength="80" placeholder="Leave blank to post as Anonymous" />
           </div>
 
-          <div id="requests-scroll" class="requests-scroll">
-            <div id="requests-list"></div>
+          <div>
+            <label for="title">
+              Request Title <span class="optional">(required)</span>
+            </label>
+            <input type="text" id="title" name="title" maxlength="120" placeholder="Short summary of your prayer request" required />
           </div>
 
-          <div class="request-footer-note">
-            For now, this feed is local to your device using encrypted browser storage. A shared,
-            cloud-based version can be added later.
+          <div class="form-grid-full">
+            <label for="message">
+              Prayer Request Details <span class="optional">(required)</span>
+            </label>
+            <textarea id="message" name="message" maxlength="3000" placeholder="Share as much detail as you are comfortable with."></textarea>
           </div>
-        </section>
-      </main>
-    </div>
+        </div>
+
+        <div class="actions-row">
+          <button type="submit" class="btn-primary">
+            <span class="btn-primary-icon">✈️</span>
+            <span>Submit Request</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- List -->
+    <section aria-labelledby="listHeading">
+      <div class="section-heading">
+        <h2 id="listHeading">Prayer Feed</h2>
+        <span id="requestCountLabel">3 active requests</span>
+      </div>
+
+      <div class="prayer-list" id="prayerList">
+        <!-- Cards injected via JS -->
+      </div>
+    </section>
   </div>
 
   <script>
+    // ===================== THEME TOGGLE =====================
     (function () {
-      const STORAGE_KEY = "fbp_prayer_requests_v1";
+      const body = document.body;
+      const toggleBtn = document.getElementById("themeToggle");
+      const label = toggleBtn.querySelector(".theme-toggle-label");
 
-      /**
-       * Some starter test requests for first-time load.
-       * These are only used when localStorage has no data yet.
-       */
-      const seedRequests = [
-        {
-          id: "seed-1",
-          title: "Wisdom for a big decision at work",
-          name: "T.M.",
-          tagline: "Direction • Career",
-          body:
-            "Please pray that I would clearly hear the Lord’s leading about a possible job move. " +
-            "I want to provide well for my family but stay exactly where He wants me.",
-          createdAt: Date.now() - 1000 * 60 * 60 * 4 // 4 hours ago
-        },
-        {
-          id: "seed-2",
-          title: "Deepening hunger for God in our men’s group",
-          name: "Anonymous",
-          tagline: "Faith • Discipleship",
-          body:
-            "As we gather, pray that the Holy Spirit would stir a real hunger for Scripture and obedience. " +
-            "Not just good discussions, but real repentance, growth, and courage.",
-          createdAt: Date.now() - 1000 * 60 * 60 * 9 // 9 hours ago
-        },
-        {
-          id: "seed-3",
-          title: "Protection and peace over my son this week",
-          name: "Concerned father",
-          tagline: "Family • Protection",
-          body:
-            "I’m asking for prayer over my son’s health, sleep, and daily environment. " +
-            "Pray that the Lord would guard his body, mind, and spirit, and give me wisdom " +
-            "to advocate for him well.",
-          createdAt: Date.now() - 1000 * 60 * 60 * 24 // 24 hours ago
-        }
-      ];
-
-      /** Helpers **/
-      function loadRequests() {
+      function setTheme(theme) {
+        body.setAttribute("data-theme", theme);
+        document.documentElement.setAttribute("data-theme", theme);
+        label.textContent = theme === "dark" ? "Dark Mode" : "Light Mode";
         try {
-          const raw = localStorage.getItem(STORAGE_KEY);
-          if (!raw) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(seedRequests));
-            return [...seedRequests];
-          }
-          const parsed = JSON.parse(raw);
-          if (!Array.isArray(parsed)) return [...seedRequests];
-          return parsed
-            .filter((x) => x && x.title && x.body)
-            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-        } catch (err) {
-          console.error("Error loading prayer requests", err);
-          return [...seedRequests];
-        }
+          localStorage.setItem("prayerTheme", theme);
+        } catch (e) {}
       }
 
-      function saveRequests(list) {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-        } catch (err) {
-          console.error("Error saving prayer requests", err);
-        }
+      // Load saved theme
+      let savedTheme;
+      try {
+        savedTheme = localStorage.getItem("prayerTheme");
+      } catch (e) {
+        savedTheme = null;
+      }
+      if (savedTheme === "light" || savedTheme === "dark") {
+        setTheme(savedTheme);
+      } else {
+        setTheme("dark");
       }
 
-      function formatDate(ts) {
-        try {
-          const d = new Date(ts);
-          return d.toLocaleString(undefined, {
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-          });
-        } catch {
-          return "";
-        }
-      }
-
-      const form = document.getElementById("prayer-form");
-      const titleInput = document.getElementById("title");
-      const nameInput = document.getElementById("name");
-      const taglineInput = document.getElementById("tagline");
-      const bodyInput = document.getElementById("body");
-      const errorEl = document.getElementById("error");
-      const listEl = document.getElementById("requests-list");
-      const countPill = document.getElementById("count-pill");
-
-      let requests = loadRequests();
-
-      function updateCountPill() {
-        const count = requests.length;
-        if (!countPill) return;
-        if (count === 0) {
-          countPill.textContent = "No active requests yet";
-        } else if (count === 1) {
-          countPill.textContent = "1 active request";
-        } else {
-          countPill.textContent = count + " active requests";
-        }
-      }
-
-      function renderRequests() {
-        listEl.innerHTML = "";
-        if (!requests.length) {
-          const empty = document.createElement("div");
-          empty.className = "request-empty";
-          empty.textContent =
-            "No requests yet. Be the first to submit one using the form on the left.";
-          listEl.appendChild(empty);
-          updateCountPill();
-          return;
-        }
-
-        requests
-          .slice()
-          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
-          .forEach((req) => {
-            const card = document.createElement("article");
-            card.className = "request-card";
-            card.setAttribute("tabindex", "0");
-
-            const header = document.createElement("div");
-            header.className = "request-card-header";
-
-            const titleBlock = document.createElement("div");
-            titleBlock.className = "request-title-block";
-
-            const title = document.createElement("div");
-            title.className = "request-title";
-            title.textContent = req.title || "(Untitled)";
-
-            const meta = document.createElement("div");
-            meta.className = "request-meta";
-
-            if (req.name) {
-              const nameBadge = document.createElement("span");
-              nameBadge.className = "badge-name";
-              nameBadge.textContent = req.name;
-              meta.appendChild(nameBadge);
-            }
-
-            if (req.tagline) {
-              const tagSpan = document.createElement("span");
-              tagSpan.style.opacity = "0.9";
-              tagSpan.textContent = req.tagline;
-              meta.appendChild(tagSpan);
-            }
-
-            const dateSpan = document.createElement("span");
-            dateSpan.className = "badge-date";
-            dateSpan.textContent = formatDate(req.createdAt || Date.now());
-            meta.appendChild(dateSpan);
-
-            titleBlock.appendChild(title);
-            titleBlock.appendChild(meta);
-
-            const toggleIcon = document.createElement("div");
-            toggleIcon.className = "request-toggle-icon";
-            toggleIcon.innerHTML = "&rsaquo;";
-
-            header.appendChild(titleBlock);
-            header.appendChild(toggleIcon);
-
-            const body = document.createElement("div");
-            body.className = "request-body";
-            body.textContent = req.body || "";
-
-            card.appendChild(header);
-            card.appendChild(body);
-
-            const toggleOpen = () => {
-              const isOpen = card.classList.contains("open");
-              const allCards = listEl.querySelectorAll(".request-card");
-              allCards.forEach((c) => {
-                if (c !== card) c.classList.remove("open");
-              });
-              if (!isOpen) {
-                card.classList.add("open");
-              } else {
-                card.classList.remove("open");
-              }
-            };
-
-            card.addEventListener("click", toggleOpen);
-            card.addEventListener("keydown", (e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                toggleOpen();
-              }
-            });
-
-            listEl.appendChild(card);
-          });
-
-        updateCountPill();
-      }
-
-      renderRequests();
-
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        errorEl.style.display = "none";
-        errorEl.textContent = "";
-
-        const title = (titleInput.value || "").trim();
-        const name = (nameInput.value || "").trim();
-        const tagline = (taglineInput.value || "").trim();
-        const body = (bodyInput.value || "").trim();
-
-        if (!title || !body) {
-          errorEl.textContent = "Please provide both a title and the prayer details.";
-          errorEl.style.display = "block";
-          return;
-        }
-
-        const newReq = {
-          id: "local-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 7),
-          title,
-          name: name || "",
-          tagline: tagline || "",
-          body,
-          createdAt: Date.now()
-        };
-
-        // newest at the top
-        requests.unshift(newReq);
-        saveRequests(requests);
-        renderRequests();
-
-        form.reset();
-        titleInput.focus();
+      toggleBtn.addEventListener("click", () => {
+        const current = body.getAttribute("data-theme") || "dark";
+        const next = current === "dark" ? "light" : "dark";
+        setTheme(next);
       });
     })();
+
+    // ===================== PRAYER FEED LOGIC =====================
+    const prayerListEl = document.getElementById("prayerList");
+    const countLabelEl = document.getElementById("requestCountLabel");
+    const formEl = document.getElementById("prayerForm");
+
+    // Test/sample data
+    const prayers = [
+      {
+        id: "p3",
+        title: "Wisdom in a big decision",
+        name: "David",
+        message:
+          "Please pray that I would have clarity and peace about a major decision I need to make regarding career and family.\n\nI want to follow the Lord’s leading and not just what seems comfortable.",
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 6)
+      },
+      {
+        id: "p2",
+        title: "Health & healing",
+        name: "",
+        message:
+          "Asking prayer for a close family member who is going through ongoing health issues.\n\nDoctors are still trying to find answers. Please pray for healing, wisdom, and strength for our family.",
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 18)
+      },
+      {
+        id: "p1",
+        title: "Protection while traveling",
+        name: "Anonymous",
+        message:
+          "I have several long drives coming up over the next few weeks.\n\nPlease pray for protection, alertness on the road, and opportunities to encourage anyone I meet along the way.",
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 32)
+      }
+    ];
+
+    function formatDateTime(date) {
+      const options = {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "numeric",
+        minute: "2-digit"
+      };
+      return date.toLocaleString(undefined, options);
+    }
+
+    function sanitizeName(name) {
+      const trimmed = (name || "").trim();
+      if (!trimmed) return "Anonymous";
+      return trimmed;
+    }
+
+    function updateCountLabel() {
+      const count = prayers.length;
+      if (count === 0) {
+        countLabelEl.textContent = "No active requests yet";
+      } else if (count === 1) {
+        countLabelEl.textContent = "1 active request";
+      } else {
+        countLabelEl.textContent = count + " active requests";
+      }
+    }
+
+    function createPrayerCard(prayer) {
+      const card = document.createElement("article");
+      card.className = "prayer-card";
+      card.setAttribute("tabindex", "0");
+      card.dataset.id = prayer.id;
+
+      const safeName = sanitizeName(prayer.name);
+      const dateText = formatDateTime(prayer.createdAt);
+
+      card.innerHTML = `
+        <div class="prayer-header">
+          <div class="chevron" aria-hidden="true">
+            <span class="chevron-icon">▶</span>
+          </div>
+          <div class="prayer-main">
+            <div class="prayer-title">${prayer.title || "Untitled request"}</div>
+            <div class="prayer-meta">
+              <span class="meta-pill">${dateText}</span>
+              <span class="meta-pill">Requested by: ${safeName}</span>
+            </div>
+          </div>
+        </div>
+        <div class="prayer-body">
+          <div class="prayer-body-inner">
+            <p>${(prayer.message || "").replace(/\n/g, "<br>")}</p>
+            <div class="hint-line">Tap card again to collapse</div>
+          </div>
+        </div>
+      `;
+
+      const bodyEl = card.querySelector(".prayer-body");
+
+      function toggleOpen() {
+        const isOpen = card.classList.contains("open");
+        if (isOpen) {
+          const currentHeight = bodyEl.scrollHeight;
+          bodyEl.style.maxHeight = currentHeight + "px";
+          requestAnimationFrame(() => {
+            bodyEl.style.maxHeight = "0px";
+          });
+          card.classList.remove("open");
+        } else {
+          // Close any other open cards
+          document.querySelectorAll(".prayer-card.open").forEach(openCard => {
+            if (openCard !== card) {
+              const openBody = openCard.querySelector(".prayer-body");
+              const h = openBody.scrollHeight;
+              openBody.style.maxHeight = h + "px";
+              requestAnimationFrame(() => {
+                openBody.style.maxHeight = "0px";
+              });
+              openCard.classList.remove("open");
+            }
+          });
+
+          const fullHeight = bodyEl.scrollHeight;
+          bodyEl.style.maxHeight = fullHeight + "px";
+          card.classList.add("open");
+        }
+      }
+
+      card.addEventListener("click", toggleOpen);
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggleOpen();
+        }
+      });
+
+      // Start collapsed
+      bodyEl.style.maxHeight = "0px";
+
+      return card;
+    }
+
+    function renderAllPrayers() {
+      // Latest on top
+      prayers.sort((a, b) => b.createdAt - a.createdAt);
+      prayerListEl.innerHTML = "";
+      prayers.forEach(prayer => {
+        const card = createPrayerCard(prayer);
+        prayerListEl.appendChild(card);
+      });
+      updateCountLabel();
+    }
+
+    // Initial render
+    renderAllPrayers();
+
+    // ===================== FORM HANDLING =====================
+    formEl.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const nameInput = formEl.querySelector("#name");
+      const titleInput = formEl.querySelector("#title");
+      const messageInput = formEl.querySelector("#message");
+
+      const title = titleInput.value.trim();
+      const message = messageInput.value.trim();
+      const name = nameInput.value;
+
+      if (!title || !message) {
+        // You can swap this for a nicer inline error if you want later
+        alert("Please fill in both the title and the details of your prayer request.");
+        return;
+      }
+
+      const newPrayer = {
+        id: "p_" + Date.now(),
+        title,
+        name,
+        message,
+        createdAt: new Date()
+      };
+
+      // Add to start of array
+      prayers.unshift(newPrayer);
+
+      // Re-render (keeps newest at top)
+      renderAllPrayers();
+
+      // Reset form (keep name if you want; current clears everything)
+      nameInput.value = "";
+      titleInput.value = "";
+      messageInput.value = "";
+    });
   </script>
 </body>
 </html>

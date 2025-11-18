@@ -286,6 +286,15 @@
       font-size: 0.95rem;
     }
 
+    /* Desktop vs mobile helpers */
+    .desktop-only {
+      display: inline-flex;
+    }
+
+    .mobile-only {
+      display: none;
+    }
+
     /* Hamburger (mobile) */
     .hamburger {
       display: none;
@@ -396,6 +405,14 @@
 
       .hamburger {
         display: flex;
+      }
+
+      .desktop-only {
+        display: none;
+      }
+
+      .mobile-only {
+        display: block;
       }
     }
 
@@ -896,7 +913,7 @@
       color: var(--text-soft);
     }
 
-    /* ================== AUTH MODAL (UI ONLY, NO FIREBASE) ================== */
+    /* ================== AUTH MODAL ================== */
 
     .auth-overlay {
       position: fixed;
@@ -1074,6 +1091,27 @@
       color: var(--text-soft);
     }
 
+    .forgot-password-row {
+      margin-top: 0.15rem;
+      text-align: right;
+    }
+
+    .linkish-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      cursor: pointer;
+      text-decoration: underline;
+      color: var(--text-soft);
+      opacity: 0.9;
+    }
+
+    .linkish-btn:hover {
+      opacity: 1;
+      color: var(--accent);
+    }
+
     /* ================== RESPONSIVE ================== */
 
     @media (max-width: 880px) {
@@ -1140,10 +1178,15 @@
           <span class="icon">🌙</span>
           <span>Theme</span>
         </button>
-        <button class="account-btn" id="accountButton" type="button">
-          <span class="icon">👤</span>
-          <span>Account</span>
-        </button>
+
+        <!-- Desktop-only account button -->
+        <div class="desktop-only">
+          <button class="account-btn" id="accountButton" type="button">
+            <span class="icon">👤</span>
+            <span>Account</span>
+          </button>
+        </div>
+
         <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
@@ -1162,6 +1205,8 @@
         <a href="#join">Join</a>
         <a href="#contact">Contact</a>
         <a href="prayerrequests.html">Prayer Requests</a>
+
+        <!-- Mobile-only account access lives in the hamburger -->
         <button type="button" class="mobile-account-btn" id="mobileAccountButton">
           Account / Sign In
         </button>
@@ -1720,12 +1765,12 @@
     <footer>
       <div>© <span id="year"></span> The Forge · ESTD 2025</div>
       <div class="auth-status-text" id="authStatus">
-        Account system not connected yet. You’ll sign in here once Firebase is wired up.
+        Signed out. Use the Account button to sign in when your profile is created.
       </div>
     </footer>
   </main>
 
-  <!-- AUTH MODAL (UI ONLY) -->
+  <!-- AUTH MODAL (wired by auth.js) -->
   <div class="auth-overlay" id="authOverlay" aria-modal="true" role="dialog" aria-hidden="true">
     <div class="auth-card">
       <button type="button" class="auth-close-btn" id="authCloseBtn" aria-label="Close account window">✕</button>
@@ -1742,7 +1787,7 @@
           <button type="button" class="auth-toggle-btn" data-mode="signup">Create Account</button>
         </div>
 
-        <!-- Sign In form (no Firebase wiring yet) -->
+        <!-- Sign In form -->
         <form id="authSignInForm" class="auth-form">
           <div class="auth-field">
             <label class="auth-label" for="signinEmail">Email</label>
@@ -1752,6 +1797,14 @@
             <label class="auth-label" for="signinPassword">Password</label>
             <input id="signinPassword" type="password" class="auth-input" autocomplete="current-password" required />
           </div>
+
+          <!-- Forgot password -->
+          <div class="forgot-password-row">
+            <button type="button" class="linkish-btn" id="forgotPasswordButton">
+              Forgot password?
+            </button>
+          </div>
+
           <button type="submit" class="auth-btn">Sign In</button>
           <div class="auth-error" id="authError"></div>
           <div class="auth-footnote">
@@ -1759,7 +1812,7 @@
           </div>
         </form>
 
-        <!-- Sign Up form (no Firebase wiring yet) -->
+        <!-- Sign Up form -->
         <form id="authSignUpForm" class="auth-form" style="display:none;">
           <div class="auth-field">
             <label class="auth-label" for="signupDisplayName">Display Name (optional)</label>
@@ -1791,6 +1844,7 @@
     </div>
   </div>
 
+  <!-- LOCAL UI SCRIPTS (theme, mobile nav, footer year) -->
   <script>
     // THEME TOGGLE
     (function () {
@@ -1852,8 +1906,8 @@
         }
       });
 
-      mobileNav.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', () => {
+      mobileNav.querySelectorAll('a, button').forEach((el) => {
+        el.addEventListener('click', () => {
           closeNav();
         });
       });
@@ -1861,107 +1915,9 @@
 
     // YEAR IN FOOTER
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    // AUTH MODAL UI (no Firebase wiring yet)
-    (function () {
-      const overlay = document.getElementById('authOverlay');
-      const openBtn = document.getElementById('accountButton');
-      const mobileOpenBtn = document.getElementById('mobileAccountButton');
-      const closeBtn = document.getElementById('authCloseBtn');
-      const toggleButtons = overlay.querySelectorAll('.auth-toggle-btn');
-      const signInForm = document.getElementById('authSignInForm');
-      const signUpForm = document.getElementById('authSignUpForm');
-      const errorSignIn = document.getElementById('authError');
-      const errorSignUp = document.getElementById('authErrorSignup');
-
-      function openOverlay() {
-        overlay.classList.add('open');
-        overlay.setAttribute('aria-hidden', 'false');
-      }
-
-      function closeOverlay() {
-        overlay.classList.remove('open');
-        overlay.setAttribute('aria-hidden', 'true');
-      }
-
-      if (openBtn) openBtn.addEventListener('click', openOverlay);
-      if (mobileOpenBtn) mobileOpenBtn.addEventListener('click', () => {
-        closeNavIfOpen();
-        openOverlay();
-      });
-      if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
-
-      overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) closeOverlay();
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && overlay.classList.contains('open')) {
-          closeOverlay();
-        }
-      });
-
-      function setMode(mode) {
-        toggleButtons.forEach((btn) => {
-          btn.classList.toggle('active', btn.dataset.mode === mode);
-        });
-        if (mode === 'signin') {
-          signInForm.style.display = 'grid';
-          signUpForm.style.display = 'none';
-          errorSignIn.textContent = '';
-          errorSignUp.textContent = '';
-        } else {
-          signInForm.style.display = 'grid';
-          signInForm.style.display = 'none';
-        }
-      }
-
-      function setModeCorrect(mode) {
-        toggleButtons.forEach((btn) => {
-          btn.classList.toggle('active', btn.dataset.mode === mode);
-        });
-        if (mode === 'signin') {
-          signInForm.style.display = 'grid';
-          signUpForm.style.display = 'none';
-        } else {
-          signInForm.style.display = 'none';
-          signUpForm.style.display = 'grid';
-        }
-        errorSignIn.textContent = '';
-        errorSignUp.textContent = '';
-      }
-
-      // fix typo from helper
-      setModeCorrect('signin');
-
-      toggleButtons.forEach((btn) => {
-        btn.addEventListener('click', () => setModeCorrect(btn.dataset.mode));
-      });
-
-      // For now, prevent submit and just show a message so we don't pretend it's wired up
-      signInForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        errorSignIn.textContent = "Firebase sign-in isn't connected yet. This is just the UI.";
-      });
-
-      signUpForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        errorSignUp.textContent = "Firebase account creation isn't connected yet. This is just the UI.";
-      });
-
-      // Helper for closing mobile nav before opening account modal
-      function closeNavIfOpen() {
-        const mobileNav = document.getElementById('mobileNav');
-        const hamburger = document.getElementById('hamburger');
-        if (mobileNav && mobileNav.classList.contains('open')) {
-          mobileNav.classList.remove('open');
-        }
-        if (hamburger && hamburger.classList.contains('is-open')) {
-          hamburger.classList.remove('is-open');
-          hamburger.setAttribute('aria-expanded', 'false');
-        }
-      }
-    })();
   </script>
+
+  <!-- FIREBASE AUTH / PROFILE / PRAYER LOGIC -->
+  <script type="module" src="auth.js"></script>
 </body>
 </html>

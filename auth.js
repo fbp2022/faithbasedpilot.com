@@ -1,385 +1,528 @@
 // auth.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+// Handles Firebase auth, invite-code gated signup, profiles, and prayer requests.
+// Include this in your HTML files with:
+//   <script type="module" src="auth.js"></script>
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getAuth,
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut
-} from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+  signOut,
+  updateProfile,
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  addDoc,
+  collection,
+  serverTimestamp,
+  onSnapshot,
+  orderBy,
+  deleteDoc,
+  updateDoc,
+  increment,
+  Timestamp,
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/**
- * IMPORTANT:
- * 1) Use the SAME config as your "theforge" Firebase project.
- * 2) This app + auth are shared by prayerrequests.html (and later theforge.html).
- */
+/* ==============================
+   1. FIREBASE INIT
+   ============================== */
+
+// TODO: Replace with your actual config from Firebase console
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",
+  apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
   projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  // storageBucket, messagingSenderId, appId are optional for this page
 };
 
-// 🔑 Universal invite code (change to whatever you want)
-const INVITE_CODE = "FORGE2025";
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+// global-ish state
+let currentUser = null;
+let cachedInviteCode = null;
 
-// Small helper object exposed globally + as module export
-const forgeAuth = {
-  auth,
-  currentUser: null,
-  listeners: [],
-  onAuthChange(callback) {
-    if (typeof callback === "function") {
-      this.listeners.push(callback);
-      // Fire immediately if we already have a user
-      if (this.currentUser !== undefined) {
-        callback(this.currentUser);
-      }
+/* ==============================
+   2. INVITE CODE HELPER
+   ============================== */
+
+async function fetchInviteCode() {
+  if (cachedInviteCode !== null) return cachedInviteCode;
+
+  try {
+    const ref = doc(db, "config", "auth");
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      cachedInviteCode = String(snap.data().invitecode || "").trim();
+      return cachedInviteCode;
+    } else {
+      console.error("config/auth document does not exist – invite code missing");
+      return null;
     }
-  },
-  async signOut() {
-    await signOut(auth);
+  } catch (err) {
+    console.error("Error fetching invite code:", err);
+    return null;
   }
-};
-
-export { forgeAuth };
-window.forgeAuth = forgeAuth;
-
-// ============ BASIC AUTH UI (Overlay + Forms) ============
-
-function injectAuthStyles() {
-  const style = document.createElement("style");
-  style.textContent = `
-    #authOverlay {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at 0 0, rgba(0,0,0,0.65), rgba(0,0,0,0.92));
-      backdrop-filter: blur(18px);
-      z-index: 999;
-    }
-
-    #authOverlay.hidden {
-      display: none;
-    }
-
-    .auth-card {
-      width: 100%;
-      max-width: 420px;
-      border-radius: 18px;
-      background: var(--bg-card, #020617);
-      border: 1px solid var(--border-subtle, rgba(0,255,200,0.3));
-      box-shadow: 0 0 30px rgba(0,0,0,0.9);
-      padding: 1.4rem 1.4rem 1.2rem;
-      color: var(--text-main, #e5f2ff);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    .auth-card-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .auth-card-title {
-      font-size: 1rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }
-
-    .auth-card-sub {
-      font-size: 0.78rem;
-      color: var(--text-soft, #7a8799);
-      max-width: 220px;
-      text-align: right;
-    }
-
-    .auth-toggle-row {
-      display: flex;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle, rgba(0,255,200,0.3));
-      overflow: hidden;
-      margin-bottom: 0.8rem;
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-    }
-
-    .auth-toggle-btn {
-      flex: 1;
-      padding: 0.45rem 0.3rem;
-      text-align: center;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      color: var(--text-soft, #7a8799);
-    }
-
-    .auth-toggle-btn.active {
-      background: radial-gradient(circle at 0 0, var(--accent, #00ffd0), var(--accent-alt, #00aaff));
-      color: #020409;
-      font-weight: 600;
-    }
-
-    .auth-form {
-      display: grid;
-      gap: 0.55rem;
-      margin-bottom: 0.6rem;
-    }
-
-    .auth-field {
-      display: grid;
-      gap: 0.25rem;
-    }
-
-    .auth-label {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-      color: var(--text-soft, #7a8799);
-    }
-
-    .auth-input {
-      border-radius: 10px;
-      border: 1px solid var(--border-subtle, rgba(0,255,200,0.3));
-      background: var(--bg-elevated, #020617);
-      padding: 0.5rem 0.7rem;
-      font-size: 0.9rem;
-      color: var(--text-main, #e5f2ff);
-      outline: none;
-    }
-
-    :root[data-theme="light"] .auth-input {
-      background: #ffffff;
-      color: var(--text-main, #071420);
-    }
-
-    .auth-input:focus {
-      border-color: var(--accent-soft, rgba(0,255,200,0.6));
-      box-shadow: 0 0 12px rgba(0,255,200,0.45);
-    }
-
-    .auth-btn {
-      margin-top: 0.5rem;
-      width: 100%;
-      border-radius: 999px;
-      border: none;
-      padding: 0.55rem;
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      background: radial-gradient(circle at 0 0, var(--accent, #00ffd0), var(--accent-alt, #00aaff));
-      color: #020409;
-      cursor: pointer;
-      box-shadow: 0 0 18px rgba(0,255,200,0.5);
-    }
-
-    .auth-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 0 24px rgba(0,255,200,0.7);
-    }
-
-    .auth-error {
-      font-size: 0.78rem;
-      color: var(--danger, #ff4b4b);
-      min-height: 1em;
-      margin-top: 0.2rem;
-    }
-
-    .auth-footnote {
-      margin-top: 0.4rem;
-      font-size: 0.74rem;
-      color: var(--text-soft, #7a8799);
-    }
-
-    .auth-footnote span.code {
-      font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      padding: 0.1rem 0.4rem;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle, rgba(0,255,200,0.3));
-      background: rgba(0,0,0,0.25);
-    }
-  `;
-  document.head.appendChild(style);
 }
 
-function buildAuthOverlay() {
-  injectAuthStyles();
+/* ==============================
+   3. AUTH UI HELPERS
+   ============================== */
 
-  const overlay = document.createElement("div");
-  overlay.id = "authOverlay";
-  overlay.innerHTML = `
-    <div class="auth-card">
-      <div class="auth-card-header">
-        <div>
-          <div class="auth-card-title">Access The Forge</div>
-        </div>
-        <div class="auth-card-sub">
-          Invite-only access with a shared, non-expiring code.
+function $(id) {
+  return document.getElementById(id);
+}
+
+function showEl(el) {
+  if (!el) return;
+  el.classList.add("is-open");
+  el.removeAttribute("hidden");
+}
+
+function hideEl(el) {
+  if (!el) return;
+  el.classList.remove("is-open");
+  el.setAttribute("hidden", "true");
+}
+
+// Small helper to show text status (like “Signed in as X”)
+function updateAuthStatusUI() {
+  const statusEl = $("authStatus");
+  const logoutBtn = $("logoutBtn");
+
+  if (!statusEl && !logoutBtn) return; // page might not have them
+
+  if (currentUser) {
+    if (statusEl) {
+      const name = currentUser.displayName || currentUser.email || "Signed in";
+      statusEl.textContent = `Signed in as ${name}`;
+    }
+    if (logoutBtn) logoutBtn.style.display = "inline-flex";
+  } else {
+    if (statusEl) statusEl.textContent = "Not signed in";
+    if (logoutBtn) logoutBtn.style.display = "none";
+  }
+}
+
+/* ==============================
+   4. SIGNUP + LOGIN HANDLERS
+   ============================== */
+
+async function handleSignupSubmit(event) {
+  event.preventDefault();
+  const nameInput = $("signupName");
+  const emailInput = $("signupEmail");
+  const passInput = $("signupPassword");
+  const pass2Input = $("signupPassword2");
+  const inviteInput = $("signupInvite");
+
+  if (!nameInput || !emailInput || !passInput || !pass2Input || !inviteInput) return;
+
+  const displayName = nameInput.value.trim();
+  const email = emailInput.value.trim();
+  const password = passInput.value;
+  const password2 = pass2Input.value;
+  const invite = inviteInput.value.trim();
+
+  if (!displayName || !email || !password || !password2 || !invite) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  if (password !== password2) {
+    alert("Passwords do not match.");
+    return;
+  }
+
+  if (password.length < 8) {
+    alert("Password must be at least 8 characters.");
+    return;
+  }
+
+  const storedInvite = await fetchInviteCode();
+  if (!storedInvite) {
+    alert("Invite code configuration is missing. Contact the site owner.");
+    return;
+  }
+
+  if (invite !== storedInvite) {
+    alert("Invalid invite code.");
+    return;
+  }
+
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    const user = cred.user;
+
+    // Update displayName in Auth profile
+    await updateProfile(user, { displayName });
+
+    // Create profile document (or update if exists)
+    const profRef = doc(db, "profiles", user.uid);
+    await setDoc(
+      profRef,
+      {
+        displayName,
+        email,
+        role: "member",
+        createdAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+
+    hideEl($("signupModal"));
+    alert("Account created. You are now signed in.");
+  } catch (err) {
+    console.error("Signup error:", err);
+    alert(err.message || "Could not create account.");
+  }
+}
+
+async function handleLoginSubmit(event) {
+  event.preventDefault();
+  const emailInput = $("loginEmail");
+  const passInput = $("loginPassword");
+  if (!emailInput || !passInput) return;
+
+  const email = emailInput.value.trim();
+  const password = passInput.value;
+
+  if (!email || !password) {
+    alert("Please enter email and password.");
+    return;
+  }
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    hideEl($("loginModal"));
+  } catch (err) {
+    console.error("Login error:", err);
+    alert(err.message || "Could not sign in.");
+  }
+}
+
+async function handleLogoutClick() {
+  try {
+    await signOut(auth);
+  } catch (err) {
+    console.error("Logout error:", err);
+  }
+}
+
+/* ==============================
+   5. PRAYER REQUESTS (FIRESTORE)
+   ============================== */
+
+function setupPrayerPage() {
+  const formEl = $("prayerForm");
+  const listEl = $("prayerList");
+  const countLabelEl = $("requestCountLabel");
+
+  if (!formEl || !listEl) {
+    // Not on prayerrequests.html
+    return;
+  }
+
+  // --- Submit new prayer ---
+  formEl.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!currentUser) {
+      alert("You must be signed in to submit a prayer request.");
+      return;
+    }
+
+    const nameInput = formEl.querySelector("#name");
+    const titleInput = formEl.querySelector("#title");
+    const messageInput = formEl.querySelector("#message");
+
+    const rawName = nameInput ? nameInput.value : "";
+    const title = titleInput ? titleInput.value.trim() : "";
+    const message = messageInput ? messageInput.value.trim() : "";
+
+    if (!title || !message) {
+      alert("Please fill in both the title and the details of your prayer request.");
+      return;
+    }
+
+    const storedName = (rawName || "").trim(); // may be blank (Anonymous)
+    try {
+      await addDoc(collection(db, "prayers"), {
+        title,
+        message,
+        name: storedName,                // can be empty string
+        ownerUid: currentUser.uid,       // still track owner for deletion
+        ownerDisplayName: currentUser.displayName || null,
+        createdAt: serverTimestamp(),
+        prayerCount: 0,
+      });
+
+      // Clear fields; we keep name so they don't have to retype it
+      titleInput.value = "";
+      messageInput.value = "";
+    } catch (err) {
+      console.error("Error adding prayer:", err);
+      alert("Could not submit prayer request. Try again.");
+    }
+  });
+
+  // --- Live listener for prayers ---
+  const prayersRef = collection(db, "prayers");
+  const q = orderBy("createdAt", "desc");
+
+  onSnapshot(
+    collection(db, "prayers"),
+    (snapshot) => {
+      const now = new Date();
+      const cutoff = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000); // 60 days
+
+      const prayers = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const createdAt = data.createdAt instanceof Timestamp ? data.createdAt.toDate() : null;
+
+        // Hide prayers older than 60 days in the UI
+        if (createdAt && createdAt < cutoff) {
+          return;
+        }
+
+        prayers.push({
+          id: docSnap.id,
+          ...data,
+          createdAt,
+        });
+      });
+
+      // sort newest at top
+      prayers.sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+      renderPrayerList(prayers, listEl, countLabelEl);
+    },
+    (err) => {
+      console.error("Error listening to prayers:", err);
+    }
+  );
+}
+
+function renderPrayerList(prayers, listEl, countLabelEl) {
+  listEl.innerHTML = "";
+
+  if (Array.isArray(prayers)) {
+    prayers.forEach((p) => {
+      const card = createPrayerCard(p);
+      listEl.appendChild(card);
+    });
+  }
+
+  const count = prayers.length;
+  if (countLabelEl) {
+    if (count === 0) {
+      countLabelEl.textContent = "No active requests yet";
+    } else if (count === 1) {
+      countLabelEl.textContent = "1 active request";
+    } else {
+      countLabelEl.textContent = `${count} active requests`;
+    }
+  }
+}
+
+function formatDateTime(date) {
+  if (!(date instanceof Date)) return "";
+  return date.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function sanitizeName(name) {
+  const trimmed = (name || "").trim();
+  if (!trimmed) return "Anonymous";
+  return trimmed;
+}
+
+function createPrayerCard(prayer) {
+  const card = document.createElement("article");
+  card.className = "prayer-card";
+  card.setAttribute("tabindex", "0");
+  card.dataset.id = prayer.id;
+
+  const safeName = sanitizeName(prayer.name);
+  const dateText = prayer.createdAt ? formatDateTime(prayer.createdAt) : "";
+  const count = prayer.prayerCount || 0;
+  const youOwnIt = currentUser && prayer.ownerUid === currentUser.uid;
+
+  card.innerHTML = `
+    <div class="prayer-header">
+      <div class="chevron" aria-hidden="true">
+        <span class="chevron-icon">▶</span>
+      </div>
+      <div class="prayer-main">
+        <div class="prayer-title">${prayer.title || "Untitled request"}</div>
+        <div class="prayer-meta">
+          <span class="meta-pill">${dateText}</span>
+          <span class="meta-pill">Requested by: ${safeName}</span>
         </div>
       </div>
-
-      <div class="auth-toggle-row">
-        <button type="button" class="auth-toggle-btn active" data-mode="signin">Sign In</button>
-        <button type="button" class="auth-toggle-btn" data-mode="signup">Create Account</button>
+    </div>
+    <div class="prayer-body">
+      <div class="prayer-body-inner">
+        <p>${(prayer.message || "").replace(/\n/g, "<br>")}</p>
+        <div class="prayer-footer" style="margin-top:8px; font-size:0.8rem; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <span class="prayer-count">${count === 1 ? "1 person praying" : count + " people praying"}</span>
+          <button type="button" class="pray-button" style="padding:3px 10px; border-radius:999px; border:1px solid rgba(148,163,255,0.6); background:transparent; cursor:pointer;">
+            I'm praying
+          </button>
+          ${
+            youOwnIt
+              ? `<button type="button" class="delete-button" style="padding:3px 10px; border-radius:999px; border:1px solid rgba(239,68,68,0.8); background:transparent; color:#fecaca; cursor:pointer;">
+                   Delete
+                 </button>`
+              : ""
+          }
+        </div>
+        <div class="hint-line">Tap card again to collapse</div>
       </div>
-
-      <form id="authSignInForm" class="auth-form">
-        <div class="auth-field">
-          <label class="auth-label" for="signinEmail">Email</label>
-          <input id="signinEmail" type="email" class="auth-input" autocomplete="email" required />
-        </div>
-        <div class="auth-field">
-          <label class="auth-label" for="signinPassword">Password</label>
-          <input id="signinPassword" type="password" class="auth-input" autocomplete="current-password" required />
-        </div>
-        <button type="submit" class="auth-btn">Sign In</button>
-        <div class="auth-error" id="authError"></div>
-        <div class="auth-footnote">
-          Already invited? Use the email and password you created when you first joined.
-        </div>
-      </form>
-
-      <form id="authSignUpForm" class="auth-form" style="display:none;">
-        <div class="auth-field">
-          <label class="auth-label" for="signupEmail">Email</label>
-          <input id="signupEmail" type="email" class="auth-input" autocomplete="email" required />
-        </div>
-        <div class="auth-field">
-          <label class="auth-label" for="signupPassword">Password</label>
-          <input id="signupPassword" type="password" class="auth-input" autocomplete="new-password" required />
-        </div>
-        <div class="auth-field">
-          <label class="auth-label" for="signupPassword2">Confirm Password</label>
-          <input id="signupPassword2" type="password" class="auth-input" autocomplete="new-password" required />
-        </div>
-        <div class="auth-field">
-          <label class="auth-label" for="signupInvite">Invite Code</label>
-          <input id="signupInvite" type="text" class="auth-input" placeholder="Enter the shared Forge invite code" required />
-        </div>
-        <button type="submit" class="auth-btn">Create Account</button>
-        <div class="auth-error" id="authErrorSignup"></div>
-        <div class="auth-footnote">
-          Use the shared code: <span class="code">${INVITE_CODE}</span><br/>
-          This code can be rotated later if needed.
-        </div>
-      </form>
     </div>
   `;
 
-  document.body.appendChild(overlay);
+  const bodyEl = card.querySelector(".prayer-body");
+  bodyEl.style.maxHeight = "0px";
 
-  const toggleButtons = overlay.querySelectorAll(".auth-toggle-btn");
-  const signInForm = overlay.querySelector("#authSignInForm");
-  const signUpForm = overlay.querySelector("#authSignUpForm");
-  const errorSignIn = overlay.querySelector("#authError");
-  const errorSignUp = overlay.querySelector("#authErrorSignup");
-
-  function setMode(mode) {
-    toggleButtons.forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.mode === mode);
-    });
-    if (mode === "signin") {
-      signInForm.style.display = "grid";
-      signUpForm.style.display = "none";
-      errorSignIn.textContent = "";
-      errorSignUp.textContent = "";
+  function toggleOpen() {
+    const isOpen = card.classList.contains("open");
+    if (isOpen) {
+      const currentHeight = bodyEl.scrollHeight;
+      bodyEl.style.maxHeight = currentHeight + "px";
+      requestAnimationFrame(() => {
+        bodyEl.style.maxHeight = "0px";
+      });
+      card.classList.remove("open");
     } else {
-      signInForm.style.display = "none";
-      signUpForm.style.display = "grid";
-      errorSignIn.textContent = "";
-      errorSignUp.textContent = "";
+      document.querySelectorAll(".prayer-card.open").forEach((openCard) => {
+        if (openCard === card) return;
+        const openBody = openCard.querySelector(".prayer-body");
+        const h = openBody.scrollHeight;
+        openBody.style.maxHeight = h + "px";
+        requestAnimationFrame(() => {
+          openBody.style.maxHeight = "0px";
+        });
+        openCard.classList.remove("open");
+      });
+
+      const fullHeight = bodyEl.scrollHeight;
+      bodyEl.style.maxHeight = fullHeight + "px";
+      card.classList.add("open");
     }
   }
 
-  toggleButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      setMode(btn.dataset.mode);
+  card.addEventListener("click", (e) => {
+    // avoid toggling if clicking buttons
+    const target = e.target;
+    if (target.closest(".pray-button") || target.closest(".delete-button")) {
+      return;
+    }
+    toggleOpen();
+  });
+
+  card.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggleOpen();
+    }
+  });
+
+  // “I’m praying” button
+  const prayBtn = card.querySelector(".pray-button");
+  const countEl = card.querySelector(".prayer-count");
+  if (prayBtn && countEl) {
+    prayBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      if (!currentUser) {
+        alert("You must be signed in to mark that you are praying.");
+        return;
+      }
+      try {
+        const ref = doc(db, "prayers", prayer.id);
+        await updateDoc(ref, { prayerCount: increment(1) });
+        const newCount = (prayer.prayerCount || 0) + 1;
+        prayer.prayerCount = newCount;
+        countEl.textContent =
+          newCount === 1 ? "1 person praying" : newCount + " people praying";
+      } catch (err) {
+        console.error("Error incrementing prayer count:", err);
+      }
     });
-  });
+  }
 
-  signInForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    errorSignIn.textContent = "";
+  // Delete button (only rendered if youOwnIt === true)
+  const delBtn = card.querySelector(".delete-button");
+  if (delBtn) {
+    delBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      if (!currentUser || currentUser.uid !== prayer.ownerUid) {
+        alert("You can only delete prayer requests you created.");
+        return;
+      }
+      if (!confirm("Delete this prayer request?")) return;
+      try {
+        await deleteDoc(doc(db, "prayers", prayer.id));
+      } catch (err) {
+        console.error("Error deleting prayer:", err);
+        alert("Could not delete prayer request.");
+      }
+    });
+  }
 
-    const email = document.getElementById("signinEmail").value.trim();
-    const password = document.getElementById("signinPassword").value;
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // onAuthStateChanged will hide overlay
-    } catch (err) {
-      console.error(err);
-      errorSignIn.textContent = "Unable to sign in. Check your credentials and try again.";
-    }
-  });
-
-  signUpForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    errorSignUp.textContent = "";
-
-    const email = document.getElementById("signupEmail").value.trim();
-    const password = document.getElementById("signupPassword").value;
-    const password2 = document.getElementById("signupPassword2").value;
-    const invite = document.getElementById("signupInvite").value.trim();
-
-    if (password !== password2) {
-      errorSignUp.textContent = "Passwords do not match.";
-      return;
-    }
-
-    if (invite !== INVITE_CODE) {
-      errorSignUp.textContent = "Invalid invite code.";
-      return;
-    }
-
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      // onAuthStateChanged will hide overlay
-    } catch (err) {
-      console.error(err);
-      errorSignUp.textContent = "Unable to create account. Try a different email or try again later.";
-    }
-  });
-
-  return overlay;
+  return card;
 }
 
-const overlayEl = buildAuthOverlay();
+/* ==============================
+   6. SETUP LISTENERS ON LOAD
+   ============================== */
 
-// Keep overlay in sync with auth state
+function setupAuthUI() {
+  const signupForm = $("signupForm");
+  const loginForm = $("loginForm");
+  const openSignup = $("openSignup");
+  const openLogin = $("openLogin");
+  const closeSignup = $("closeSignup");
+  const closeLogin = $("closeLogin");
+  const logoutBtn = $("logoutBtn");
+
+  if (signupForm) signupForm.addEventListener("submit", handleSignupSubmit);
+  if (loginForm) loginForm.addEventListener("submit", handleLoginSubmit);
+  if (logoutBtn) logoutBtn.addEventListener("click", handleLogoutClick);
+
+  if (openSignup && $("signupModal")) {
+    openSignup.addEventListener("click", () => showEl($("signupModal")));
+  }
+  if (openLogin && $("loginModal")) {
+    openLogin.addEventListener("click", () => showEl($("loginModal")));
+  }
+  if (closeSignup) {
+    closeSignup.addEventListener("click", () => hideEl($("signupModal")));
+  }
+  if (closeLogin) {
+    closeLogin.addEventListener("click", () => hideEl($("loginModal")));
+  }
+}
+
+// Auth state
 onAuthStateChanged(auth, (user) => {
-  forgeAuth.currentUser = user;
-  forgeAuth.listeners.forEach((cb) => {
-    try {
-      cb(user);
-    } catch (e) {
-      console.error("forgeAuth listener error:", e);
-    }
-  });
+  currentUser = user || null;
+  updateAuthStatusUI();
+});
 
-  if (user) {
-    overlayEl.classList.add("hidden");
-  } else {
-    overlayEl.classList.remove("hidden");
-  }
-
-  // Optional: update a nav/account status element if one exists
-  const authStatus = document.getElementById("authStatus");
-  if (authStatus) {
-    if (user) {
-      authStatus.textContent = `Signed in as ${user.email || user.uid}`;
-    } else {
-      authStatus.textContent = "Sign in with the invite-only Forge account to submit and manage requests.";
-    }
-  }
+// Initialize when DOM is ready
+document.addEventListener("DOMContentLoaded", () => {
+  setupAuthUI();
+  setupPrayerPage();
 });

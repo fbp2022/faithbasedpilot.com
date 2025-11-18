@@ -1,3 +1,7 @@
+prayerrequests.html code from GitHub lost css:
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -386,6 +390,11 @@
         display: none;
       }
 
+      /* HIDE inline account button on mobile – account lives in hamburger menu only */
+      .account-btn {
+        display: none;
+      }
+
       .hamburger {
         display: flex;
       }
@@ -682,6 +691,16 @@
 
     .btn span.icon {
       font-size: 1rem;
+    }
+
+    /* disabled state used after "I'm praying" is counted */
+    .btn-disabled,
+    .btn-disabled:hover,
+    .btn-disabled:active {
+      opacity: 0.6;
+      cursor: default;
+      transform: none;
+      box-shadow: none;
     }
 
     .status-text {
@@ -993,6 +1012,22 @@
       color: var(--text-soft);
     }
 
+    .auth-forgot-link {
+      margin-top: 0.15rem;
+      border: none;
+      padding: 0;
+      background: transparent;
+      color: var(--accent);
+      font-size: 0.75rem;
+      text-align: right;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .auth-forgot-link:hover {
+      color: var(--text-main);
+    }
+
     /* ================== RESPONSIVE ================== */
 
     @media (max-width: 880px) {
@@ -1093,18 +1128,18 @@
         <div class="hero-panel-glow"></div>
         <div class="hero-panel-content">
           <div class="hero-panel-heading">How this works</div>
-          <div class="hero-panel-title">Requests · Prayers · 60 Days</div>
+          <div class="hero-panel-title">Requests · Prayers · Stewardship</div>
           <p class="hero-panel-text">
             Each request shows only the title until it is opened. Inside, men can read the details and tap
             <strong>“I’m praying”</strong> to add to the count.
           </p>
           <p class="hero-panel-text">
-            Requests are designed to be temporary: after about <strong>60 days</strong>, they will expire and be removed
-            so the wall stays current. Long-term situations can always be re-posted with fresh updates.
+            Requests remain on the wall until the situation is updated or the request owner (or a group admin)
+            removes or archives it. Brothers are encouraged to share follow-ups so we can see how God is moving.
           </p>
           <p class="hero-panel-meta">
-            Note: In the final build, the 60-day removal will be handled by a Firestore TTL rule based on a
-            <code>createdAt</code> timestamp, not by this page.
+            Note: In the live build, prayer requests will be stewarded manually by the prayer wall admin, not by any
+            automatic 60-day timer.
           </p>
         </div>
       </aside>
@@ -1154,16 +1189,16 @@
               <span>Submit Request</span>
             </button>
             <span class="badge-ttl">
-              <span class="icon">⏳</span>
-              <span>Expires after ~60 days</span>
+              <span class="icon">📌</span>
+              <span>Tracked over time · no auto-expiry</span>
             </span>
           </div>
 
           <div class="error-text" id="newPrayerError"></div>
           <p class="status-text">
-            In the final version, this form will require you to be signed in.
-            Your request will be stored in Firebase with a <strong>createdAt</strong> timestamp and a
-            <strong>prayerCount</strong> of 0.
+            For now, this form adds requests locally in your browser so you can see how the wall will behave.
+            In the live version, this will write to Firebase with a <strong>createdAt</strong> timestamp and
+            a <strong>prayerCount</strong> of 0.
           </p>
         </form>
       </article>
@@ -1185,13 +1220,12 @@
         <h3 class="card-title">Prayer Wall</h3>
         <div id="prayerList" class="prayer-list">
           <!-- Populated by JS with sample data for now.
-               Later, auth.js will read from Firestore (collection: prayers),
-               filter out anything older than ~60 days, and render them here. -->
+               Later, auth + Firebase will load real documents from the "prayers" collection. -->
         </div>
 
         <p class="status-text" style="margin-top: 0.9rem;">
-          This list is using <strong>sample data</strong> for now. Once Firebase is wired up, it will load live requests
-          from the <code>prayers</code> collection and show real prayer counts.
+          This list is using <strong>sample data</strong> for now. Once Firebase is wired in here, it will load
+          live requests from the <code>prayers</code> collection and show real prayer counts.
         </p>
       </article>
     </section>
@@ -1199,12 +1233,13 @@
     <footer>
       <div>© <span id="year"></span> The Forge · Prayer Requests</div>
       <div class="auth-status-text" id="authStatus">
-        Account + Firebase integration not connected yet. You’ll sign in here and see live counts once auth.js is in place.
+        Account + Firebase are connected on the main Forge page; this wall is currently running in demo mode
+        so you can finalize layout and behavior.
       </div>
     </footer>
   </main>
 
-  <!-- AUTH MODAL (UI ONLY) -->
+  <!-- AUTH MODAL -->
   <div class="auth-overlay" id="authOverlay" aria-modal="true" role="dialog" aria-hidden="true">
     <div class="auth-card">
       <button type="button" class="auth-close-btn" id="authCloseBtn" aria-label="Close account window">✕</button>
@@ -1221,7 +1256,7 @@
           <button type="button" class="auth-toggle-btn" data-mode="signup">Create Account</button>
         </div>
 
-        <!-- Sign In form (no Firebase wiring yet) -->
+        <!-- Sign In form -->
         <form id="authSignInForm" class="auth-form">
           <div class="auth-field">
             <label class="auth-label" for="signinEmail">Email</label>
@@ -1231,6 +1266,9 @@
             <label class="auth-label" for="signinPassword">Password</label>
             <input id="signinPassword" type="password" class="auth-input" autocomplete="current-password" required />
           </div>
+          <button type="button" class="auth-forgot-link" id="forgotPasswordBtn">
+            Forgot password?
+          </button>
           <button type="submit" class="auth-btn">Sign In</button>
           <div class="auth-error" id="authError"></div>
           <div class="auth-footnote">
@@ -1238,7 +1276,7 @@
           </div>
         </form>
 
-        <!-- Sign Up form (no Firebase wiring yet) -->
+        <!-- Sign Up form -->
         <form id="authSignUpForm" class="auth-form" style="display:none;">
           <div class="auth-field">
             <label class="auth-label" for="signupDisplayName">Display Name (optional)</label>
@@ -1336,12 +1374,15 @@
           closeNav();
         });
       });
+
+      // expose so auth modal can close nav when opened from mobile
+      window.__forgeCloseMobileNav = closeNav;
     })();
 
     // YEAR IN FOOTER
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // AUTH MODAL UI (no Firebase yet)
+    // AUTH MODAL UI (still UI-only here; actual Firebase logic lives in auth.js on the main page)
     (function () {
       const overlay = document.getElementById('authOverlay');
       const openBtn = document.getElementById('accountButton');
@@ -1352,6 +1393,7 @@
       const signUpForm = document.getElementById('authSignUpForm');
       const errorSignIn = document.getElementById('authError');
       const errorSignUp = document.getElementById('authErrorSignup');
+      const forgotBtn = document.getElementById('forgotPasswordBtn');
 
       function openOverlay() {
         overlay.classList.add('open');
@@ -1365,7 +1407,9 @@
 
       if (openBtn) openBtn.addEventListener('click', openOverlay);
       if (mobileOpenBtn) mobileOpenBtn.addEventListener('click', () => {
-        closeNavIfOpen();
+        if (typeof window.__forgeCloseMobileNav === 'function') {
+          window.__forgeCloseMobileNav();
+        }
         openOverlay();
       });
       if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
@@ -1401,39 +1445,39 @@
         btn.addEventListener('click', () => setMode(btn.dataset.mode));
       });
 
-      // Temp behavior: show message instead of calling Firebase
+      // TEMP behavior: show message instead of calling Firebase
       signInForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        errorSignIn.textContent = "Firebase sign-in isn't connected yet. This is just the UI.";
+        errorSignIn.textContent =
+          "Firebase sign-in for this page will be wired through auth.js. For now this is just the UI.";
       });
 
       signUpForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        errorSignUp.textContent = "Firebase account creation isn't connected yet. This is just the UI.";
+        errorSignUp.textContent =
+          "Firebase account creation for this page will be wired through auth.js. For now this is just the UI.";
       });
 
-      function closeNavIfOpen() {
-        const mobileNav = document.getElementById('mobileNav');
-        const hamburger = document.getElementById('hamburger');
-        if (mobileNav && mobileNav.classList.contains('open')) {
-          mobileNav.classList.remove('open');
-        }
-        if (hamburger && hamburger.classList.contains('is-open')) {
-          hamburger.classList.remove('is-open');
-          hamburger.setAttribute('aria-expanded', 'false');
-        }
+      if (forgotBtn) {
+        forgotBtn.addEventListener('click', () => {
+          const email = document.getElementById('signinEmail').value.trim();
+          if (!email) {
+            errorSignIn.textContent = 'Enter your email in the field above, then tap "Forgot password?" again.';
+            return;
+          }
+          errorSignIn.textContent =
+            'Password reset will be handled by Firebase in auth.js on the main build. This is a placeholder message.';
+        });
       }
     })();
 
-    // PRAYER LIST DEMO (local only, no Firebase)
+    // PRAYER LIST DEMO (local only, no Firebase yet)
     (function () {
       const prayerListEl = document.getElementById('prayerList');
       const newPrayerForm = document.getElementById('newPrayerForm');
       const errorEl = document.getElementById('newPrayerError');
+      const STORAGE_PREFIX = 'forge-prayer-clicked-';
 
-      // This sample data mimics what Firestore docs will look like later.
-      // Each item would be a document in "prayers" with fields:
-      // title, body, name (optional), createdAt (timestamp), ownerUid, prayerCount, prayedBy...
       const samplePrayers = [
         {
           id: 'p3',
@@ -1461,6 +1505,26 @@
         }
       ];
 
+      function formatDate(date) {
+        try {
+          return date.toLocaleDateString();
+        } catch (_) {
+          return '';
+        }
+      }
+
+      function applyPrayedState(card, prayerId, countEl, button) {
+        const key = STORAGE_PREFIX + prayerId;
+        const already = localStorage.getItem(key) === '1';
+        if (already) {
+          button.classList.add('btn-disabled');
+          button.disabled = true;
+          button.innerHTML = '<span class="icon">✅</span><span>Counted</span>';
+          const count = Number(countEl.dataset.count || '0');
+          countEl.textContent = `${count} men have prayed`;
+        }
+      }
+
       function renderPrayer(prayer) {
         const card = document.createElement('article');
         card.className = 'prayer-card';
@@ -1471,7 +1535,7 @@
             <div class="prayer-title">${prayer.title}</div>
             <div class="prayer-meta">
               <div>${prayer.name || 'Anonymous brother'}</div>
-              <div>${prayer.createdAt.toLocaleDateString()}</div>
+              <div>${formatDate(prayer.createdAt)}</div>
             </div>
           </div>
           <div class="prayer-body">
@@ -1488,26 +1552,42 @@
           </div>
         `;
 
-        // Toggle open/closed when clicking the card (but not when clicking the button)
+        // Accordion behavior: open one, close others
         card.addEventListener('click', (e) => {
           if (e.target.closest('.btn-pray')) return;
+          const currentlyOpen = document.querySelectorAll('.prayer-card.open');
+          currentlyOpen.forEach((c) => {
+            if (c !== card) c.classList.remove('open');
+          });
           card.classList.toggle('open');
         });
 
-        // Local-only "I’m praying" button behavior
         const prayBtn = card.querySelector('.btn-pray');
         const countEl = card.querySelector('.prayer-count');
+        const prayerId = prayer.id;
+
+        applyPrayedState(card, prayerId, countEl, prayBtn);
 
         prayBtn.addEventListener('click', (e) => {
           e.stopPropagation();
+          const key = STORAGE_PREFIX + prayerId;
+          if (localStorage.getItem(key) === '1') {
+            return;
+          }
           let count = Number(countEl.dataset.count || '0');
           count += 1;
           countEl.dataset.count = String(count);
           countEl.textContent = `${count} men have prayed`;
-          // In the real version, auth.js will:
-          // - Check the signed-in user (uid)
-          // - Ensure each uid can only pray once per request
-          // - Use a Firestore transaction to increment prayerCount
+
+          localStorage.setItem(key, '1');
+          prayBtn.classList.add('btn-disabled');
+          prayBtn.disabled = true;
+          prayBtn.innerHTML = '<span class="icon">✅</span><span>Counted</span>';
+
+          // In the live version, auth.js + Firestore will:
+          // - Require a signed-in user (uid)
+          // - Check a per-prayer, per-user record
+          // - Only increment prayerCount the first time that uid clicks.
         });
 
         return card;
@@ -1551,11 +1631,11 @@
 
         newPrayerForm.reset();
 
-        // In the real version, auth.js will:
+        // In the live version, this submit will:
         // - Require a signed-in user
         // - Write a new document in "prayers" with fields:
-        //   title, body, name (optional), ownerUid, createdAt: serverTimestamp(), prayerCount: 0
-        // - Firestore TTL will later auto-delete docs ~60 days after createdAt.
+        //   title, body, name (optional), ownerUid, createdAt, prayerCount: 0
+        // - Only you (Tristan) will be allowed to delete requests.
       });
     })();
   </script>

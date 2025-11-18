@@ -1,3 +1,7 @@
+theforge.html
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -286,15 +290,6 @@
       font-size: 0.95rem;
     }
 
-    /* Desktop vs mobile helpers */
-    .desktop-only {
-      display: inline-flex;
-    }
-
-    .mobile-only {
-      display: none;
-    }
-
     /* Hamburger (mobile) */
     .hamburger {
       display: none;
@@ -406,17 +401,720 @@
       .hamburger {
         display: flex;
       }
+    }
 
-      .desktop-only {
-        display: none;
+    /* ================== HERO ================== */
+
+    main {
+      padding-top: 1.5rem;
+    }
+
+    .hero {
+      margin: 1.5rem 0 2.5rem;
+      display: grid;
+      grid-template-columns: minmax(0, 3.2fr) minmax(0, 2.8fr);
+      gap: 2.25rem;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.2rem 0.75rem 0.2rem 0.25rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 0 0, rgba(0, 255, 200, 0.3), transparent 70%);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 0 18px rgba(0, 255, 200, 0.25);
+      margin-bottom: 1.1rem;
+    }
+
+    .hero-badge-label {
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+      color: #020409;
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .hero-badge-text {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-soft);
+    }
+
+    .hero-title {
+      font-size: clamp(2.3rem, 4vw, 3rem);
+      line-height: 1.1;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+      text-shadow: 0 0 18px rgba(0, 255, 200, 0.4);
+    }
+
+    .hero-subtitle {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--text-soft);
+      margin-bottom: 1.4rem;
+    }
+
+    .hero-text {
+      font-size: 0.98rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero-scripture {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      border-left: 2px solid var(--accent-soft);
+      padding-left: 0.75rem;
+      margin-bottom: 1.7rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.7rem 1.6rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      text-decoration: none;
+      transition:
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast);
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+      color: #020409;
+      box-shadow: var(--shadow-accent);
+      border-color: transparent;
+    }
+
+    .btn-outline {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 22px rgba(0, 255, 200, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
+    }
+
+    .btn span.icon {
+      font-size: 1rem;
+    }
+
+    /* Right hero card (hologram panel) */
+
+    .hero-panel {
+      position: relative;
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 1.5rem 1.3rem;
+      box-shadow: var(--shadow-strong);
+      overflow: hidden;
+    }
+
+    .hero-panel-glow {
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(0, 255, 200, 0.2), transparent 60%),
+        radial-gradient(circle at 90% 100%, rgba(0, 140, 255, 0.18), transparent 65%);
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0.75;
+    }
+
+    .hero-panel-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-panel-heading {
+      font-size: 0.85rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-panel-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-main);
+      margin-bottom: 0.9rem;
+    }
+
+    .hero-panel-text {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .hero-panel-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    .hero-panel-meta-item {
+      padding: 0.5rem 0.65rem;
+      border-radius: 12px;
+      background: var(--bg-card-soft);
+      border: 1px solid rgba(0, 255, 200, 0.18);
+    }
+
+    .meta-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-soft);
+      margin-bottom: 0.15rem;
+    }
+
+    .meta-value {
+      font-size: 0.85rem;
+      color: var(--text-main);
+    }
+
+    /* ================== GENERIC SECTIONS ================== */
+
+    .section {
+      margin-bottom: 2.75rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-kicker {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--text-soft);
+      margin-bottom: 0.25rem;
+    }
+
+    .section-title {
+      font-size: 1.35rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+
+    .section-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      max-width: 360px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.5fr);
+      gap: 1.75rem;
+    }
+
+    .card {
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 1.5rem 1.35rem;
+      box-shadow: var(--shadow-strong);
+      transition:
+        transform var(--transition-med),
+        box-shadow var(--transition-med),
+        border-color var(--transition-med),
+        background var(--transition-med);
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 26px rgba(0, 255, 200, 0.35);
+      border-color: var(--accent-soft);
+    }
+
+    .card-title {
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.65rem;
+      color: var(--text-main);
+    }
+
+    .card-text {
+      font-size: 0.96rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 0.6rem;
+    }
+
+    .card-list {
+      list-style: none;
+      margin-top: 0.4rem;
+    }
+
+    .card-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.93rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .card-list-bullet {
+      width: 5px;
+      height: 5px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      margin-top: 0.45rem;
+      flex-shrink: 0;
+    }
+
+    .scripture-ref {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      margin-top: 0.5rem;
+    }
+
+    /* ================== BELIEFS SECTION ================== */
+
+    .belief-intro {
+      font-size: 0.96rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 1.1rem;
+    }
+
+    .beliefs-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.8fr);
+      gap: 1.75rem;
+    }
+
+    .beliefs-list {
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 1.4rem 1.35rem;
+      box-shadow: var(--shadow-strong);
+    }
+
+    .belief-item {
+      margin-bottom: 0.9rem;
+      padding-bottom: 0.7rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .belief-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .belief-item h3 {
+      font-size: 0.95rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+      color: var(--text-main);
+    }
+
+    .belief-item p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ================== RULES ================== */
+
+    .rules-list {
+      counter-reset: rule;
+      list-style: none;
+    }
+
+    .rules-list li {
+      counter-increment: rule;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: flex-start;
+      gap: 0.65rem;
+      font-size: 0.93rem;
+      color: var(--text-muted);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .rules-list li:last-child {
+      border-bottom: none;
+    }
+
+    .rule-number {
+      width: 1.8rem;
+      height: 1.8rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: var(--text-soft);
+    }
+
+    .rule-content strong {
+      color: var(--text-main);
+    }
+
+    .notice {
+      margin-top: 0.9rem;
+      font-size: 0.85rem;
+      color: var(--danger);
+    }
+
+    /* ================== JOIN / CONTACT ================== */
+
+    .join-note {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 0.6rem;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr);
+      gap: 1.75rem;
+    }
+
+    .contact-form {
+      display: grid;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    .field {
+      display: grid;
+      gap: 0.3rem;
+    }
+
+    .field label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-soft);
+    }
+
+    .field input,
+    .field textarea {
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      padding: 0.55rem 0.75rem;
+      font-size: 0.9rem;
+      outline: none;
+      resize: vertical;
+      min-height: 2.4rem;
+    }
+
+    :root[data-theme="light"] .field input,
+    :root[data-theme="light"] .field textarea {
+      background: #ffffff;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: var(--accent-soft);
+      box-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
+    }
+
+    .contact-meta {
+      font-size: 0.93rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .contact-meta p + p {
+      margin-top: 0.7rem;
+    }
+
+    .contact-meta strong {
+      color: var(--text-main);
+    }
+
+    footer {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .auth-status-text {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+    }
+
+    /* ================== AUTH MODAL (UI ONLY, NO FIREBASE) ================== */
+
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 0 0, rgba(0,0,0,0.65), rgba(0,0,0,0.92));
+      backdrop-filter: blur(18px);
+      z-index: 999;
+    }
+
+    .auth-overlay.open {
+      display: flex;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 0 30px rgba(0,0,0,0.9);
+      padding: 1.4rem 1.4rem 1.2rem;
+      color: var(--text-main);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 10% 0, rgba(0,255,200,0.2), transparent 65%),
+        radial-gradient(circle at 100% 100%, rgba(0,140,255,0.25), transparent 70%);
+      mix-blend-mode: screen;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .auth-card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-card-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .auth-card-title {
+      font-size: 1rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .auth-card-sub {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      max-width: 230px;
+      text-align: right;
+    }
+
+    .auth-close-btn {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.7rem;
+      border: none;
+      background: transparent;
+      color: var(--text-soft);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.2rem;
+    }
+
+    .auth-toggle-row {
+      display: flex;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      margin-bottom: 0.8rem;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .auth-toggle-btn {
+      flex: 1;
+      padding: 0.45rem 0.3rem;
+      text-align: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--text-soft);
+    }
+
+    .auth-toggle-btn.active {
+      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+      color: #020409;
+      font-weight: 600;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 0.55rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .auth-field {
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .auth-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--text-soft);
+    }
+
+    .auth-input {
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      padding: 0.5rem 0.7rem;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    :root[data-theme="light"] .auth-input {
+      background: #ffffff;
+      color: var(--text-main);
+    }
+
+    .auth-input:focus {
+      border-color: var(--accent-soft);
+      box-shadow: 0 0 12px rgba(0,255,200,0.45);
+    }
+
+    .auth-btn {
+      margin-top: 0.5rem;
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      padding: 0.55rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+      color: #020409;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(0,255,200,0.5);
+    }
+
+    .auth-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 24px rgba(0,255,200,0.7);
+    }
+
+    .auth-error {
+      font-size: 0.78rem;
+      color: var(--danger);
+      min-height: 1em;
+      margin-top: 0.2rem;
+    }
+
+    .auth-footnote {
+      margin-top: 0.4rem;
+      font-size: 0.74rem;
+      color: var(--text-soft);
+    }
+
+    /* ================== RESPONSIVE ================== */
+
+    @media (max-width: 880px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
       }
 
-      .mobile-only {
-        display: block;
+      .hero-panel {
+        order: -1;
+      }
+
+      .card-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .beliefs-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .contact-grid {
+        grid-template-columns: minmax(0, 1fr);
       }
     }
 
-    /* (More styles come later in the file for hero, sections, auth modal, etc.) */
+    @media (max-width: 600px) {
+      .shell {
+        padding: 0 1.1rem 3rem;
+      }
+
+      .nav {
+        padding: 0 1.1rem;
+      }
+
+      footer {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
@@ -446,15 +1144,10 @@
           <span class="icon">🌙</span>
           <span>Theme</span>
         </button>
-
-        <!-- Desktop-only account button -->
-        <div class="desktop-only">
-          <button class="account-btn" id="accountButton" type="button">
-            <span class="icon">👤</span>
-            <span>Account</span>
-          </button>
-        </div>
-
+        <button class="account-btn" id="accountButton" type="button">
+          <span class="icon">👤</span>
+          <span>Account</span>
+        </button>
         <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
@@ -473,8 +1166,6 @@
         <a href="#join">Join</a>
         <a href="#contact">Contact</a>
         <a href="prayerrequests.html">Prayer Requests</a>
-
-        <!-- Mobile-only account access lives in the hamburger -->
         <button type="button" class="mobile-account-btn" id="mobileAccountButton">
           Account / Sign In
         </button>
@@ -482,7 +1173,7 @@
     </div>
   </header>
 
-    <main class="shell">
+  <main class="shell">
     <!-- HERO / LANDING -->
     <section class="hero" id="top">
       <div>
@@ -558,55 +1249,57 @@
       </div>
 
       <div class="card-grid">
-        <div class="card">
-          <h3 class="card-title">Brotherhood with Purpose</h3>
+        <article class="card">
+          <h3 class="card-title">Mission Statement</h3>
           <p class="card-text">
-            Men today are isolated. Weak. Spiritually dull. Society attacks masculinity while failing to offer anything
-            resembling truth or purpose. The Forge stands against that trend.
+            To cultivate a brotherhood of God-fearing men who sharpen one another, stand on Scripture, walk in biblical
+            masculinity, and grow strong in the Lord through accountability, truth, and brotherly support.
           </p>
-          <ul class="card-list">
-            <li>
-              <span class="card-list-bullet"></span>
-              Built on Scripture — not feelings or trends
-            </li>
-            <li>
-              <span class="card-list-bullet"></span>
-              Designed for real transformation
-            </li>
-            <li>
-              <span class="card-list-bullet"></span>
-              Community-driven accountability
-            </li>
-          </ul>
-          <p class="scripture-ref">“Stand firm in the faith, act like men, be strong.” — 1 Corinthians 16:13</p>
-        </div>
 
-        <div class="card">
-          <h3 class="card-title">Iron Sharpens Iron</h3>
-          <p class="card-text">
-            Men don’t grow alone. We grow through challenge. Through brotherhood. Through correction. Through standing in
-            the fire and coming out sharper.
-          </p>
           <ul class="card-list">
             <li>
               <span class="card-list-bullet"></span>
-              Shared struggles, shared victories
+              <span>Masculine, direct, and Scripture-based — not soft or “churchy,” but biblical and serious.</span>
             </li>
             <li>
               <span class="card-list-bullet"></span>
-              A place to confess, confront, and conquer
+              <span>No fluff, no clichés. Real growth, real accountability, and a safe, adult-only environment (18+).</span>
             </li>
             <li>
               <span class="card-list-bullet"></span>
-              Built for discipline, not comfort
+              <span>A place for men to lean on one another — something rare in today’s culture.</span>
             </li>
           </ul>
-          <p class="scripture-ref">“As iron sharpens iron…” — Proverbs 27:17</p>
-        </div>
+        </article>
+
+        <article class="card">
+          <h3 class="card-title">How We Meet</h3>
+          <p class="card-text">
+            The group primarily meets through WhatsApp. This website serves as the home base for:
+          </p>
+
+          <ul class="card-list">
+            <li>
+              <span class="card-list-bullet"></span>
+              <span>New member onboarding and expectations.</span>
+            </li>
+            <li>
+              <span class="card-list-bullet"></span>
+              <span>Access to the Statement of Beliefs and community rules.</span>
+            </li>
+            <li>
+              <span class="card-list-bullet"></span>
+              <span>Resources for spiritual growth and event information.</span>
+            </li>
+          </ul>
+          <p class="card-text">
+            Gatherings are virtual-first, with optional in-person meetups as schedules allow.
+          </p>
+        </article>
       </div>
     </section>
 
-          <!-- WHY THE FORGE EXISTS -->
+    <!-- WHY THE FORGE EXISTS -->
     <section id="why" class="section">
       <div class="section-header">
         <div>
@@ -782,232 +1475,264 @@
       </div>
     </section>
 
-          <!-- RULES -->
+    <!-- RULES -->
     <section id="rules" class="section">
       <div class="section-header">
         <div>
-          <div class="section-kicker">Rules</div>
-          <h2 class="section-title">Community Rules</h2>
+          <div class="section-kicker">Community Rules</div>
+          <h2 class="section-title">How We Guard The Forge</h2>
         </div>
         <p class="section-subtitle">
-          These rules protect the brotherhood and preserve a culture of seriousness, strength, and biblical truth.
-        </p>
-      </div>
-
-      <ul class="rules-list">
-        <li>
-          <div class="rule-number">1</div>
-          <div class="rule-content">
-            <strong>18+ only.</strong> No minors in the group for safety and maturity.
-          </div>
-        </li>
-
-        <li>
-          <div class="rule-number">2</div>
-          <div class="rule-content">
-            <strong>No heresy or unbiblical teachings.</strong> Scripture is the final authority.
-          </div>
-        </li>
-
-        <li>
-          <div class="rule-number">3</div>
-          <div class="rule-content">
-            <strong>No hostility, shaming, or tearing others down.</strong> Correction is done biblically and in love.
-          </div>
-        </li>
-
-        <li>
-          <div class="rule-number">4</div>
-          <div class="rule-content">
-            <strong>Confidentiality is required.</strong> What’s shared in the brotherhood stays in the brotherhood.
-          </div>
-        </li>
-
-        <li>
-          <div class="rule-number">5</div>
-          <div class="rule-content">
-            <strong>No spiritual laziness.</strong> Be committed to growth — reading Scripture, praying, participating.
-          </div>
-        </li>
-
-        <li>
-          <div class="rule-number">6</div>
-          <div class="rule-content">
-            <strong>Hold other men accountable.</strong> Iron sharpening iron is uncomfortable — and necessary.
-          </div>
-        </li>
-
-        <li>
-          <div class="rule-number">7</div>
-          <div class="rule-content">
-            <strong>Respect leadership and structure.</strong> This community is shepherded intentionally.
-          </div>
-        </li>
-
-        <li>
-          <div class="rule-number">8</div>
-          <div class="rule-content">
-            <strong>No pornography.</strong> No exceptions. No compromise. Confess and fight it.
-          </div>
-        </li>
-
-        <li>
-          <div class="rule-number">9</div>
-          <div class="rule-content">
-            <strong>No gossip or slander.</strong> We build men up — we don’t tear brothers apart.
-          </div>
-        </li>
-
-        <li>
-          <div class="rule-number">10</div>
-          <div class="rule-content">
-            <strong>Show up.</strong> This is not a passive community — you get sharpened by participating.
-          </div>
-        </li>
-      </ul>
-
-      <p class="notice">
-        Violating these rules may result in removal for the sake of the group’s health and spiritual integrity.
-      </p>
-    </section>
-
-    <!-- JOIN SECTION -->
-    <section id="join" class="section">
-      <div class="section-header">
-        <div>
-          <div class="section-kicker">Join</div>
-          <h2 class="section-title">Join The Forge</h2>
-        </div>
-        <p class="section-subtitle">
-          The community operates on WhatsApp as the primary hub for discussion, accountability, and brotherhood.
+          These rules protect safety, clarity, and a serious, Scripture-first culture.
         </p>
       </div>
 
       <div class="card-grid">
-        <div class="card">
-          <h3 class="card-title">Join the WhatsApp Group</h3>
+        <article class="card">
+          <h3 class="card-title">Core Rules</h3>
+          <ol class="rules-list">
+            <li>
+              <div class="rule-number">1</div>
+              <div class="rule-content">
+                <strong>Scripture First</strong><br />
+                All discussions, decisions, and disagreements are measured against God’s Word.
+              </div>
+            </li>
+            <li>
+              <div class="rule-number">2</div>
+              <div class="rule-content">
+                <strong>Speak the Truth in Love (Ephesians 4:15)</strong><br />
+                Accountability is done with humility, honesty, and grace.
+              </div>
+            </li>
+            <li>
+              <div class="rule-number">3</div>
+              <div class="rule-content">
+                <strong>Iron Sharpens Iron (Proverbs 27:17)</strong><br />
+                We build — not tear down.
+              </div>
+            </li>
+            <li>
+              <div class="rule-number">4</div>
+              <div class="rule-content">
+                <strong>Confidentiality</strong><br />
+                What is shared here stays here unless safety is at risk.
+              </div>
+            </li>
+            <li>
+              <div class="rule-number">5</div>
+              <div class="rule-content">
+                <strong>No Gossip or Slander</strong><br />
+                We protect each other’s integrity.
+              </div>
+            </li>
+            <li>
+              <div class="rule-number">6</div>
+              <div class="rule-content">
+                <strong>Respect Schedules</strong><br />
+                Most gatherings are virtual; participation is voluntary. We respect each other’s time and responsibilities.
+              </div>
+            </li>
+            <li>
+              <div class="rule-number">7</div>
+              <div class="rule-content">
+                <strong>18+ Only — For Safety</strong><br />
+                Men only, adults only. This protects everyone. No minors for any reason.
+              </div>
+            </li>
+            <li>
+              <div class="rule-number">8</div>
+              <div class="rule-content">
+                <strong>Group Chat Courtesy</strong><br />
+                Private conversations between 2–3 men should move to direct messages. If a discussion is open, relevant, or
+                others can join naturally, that is strongly encouraged.
+              </div>
+            </li>
+            <li>
+              <div class="rule-number">9</div>
+              <div class="rule-content">
+                <strong>Brotherhood</strong><br />
+                We pray for each other, support each other, and show up when we can.
+              </div>
+            </li>
+          </ol>
+        </article>
+
+        <article class="card">
+          <h3 class="card-title">Culture & Safety</h3>
           <p class="card-text">
-            The Forge’s main communication happens in a dedicated WhatsApp group for men 18+. This is where we share
-            Scripture, encouragement, accountability, prayer needs, and weekly challenges.
+            The goal is a strong, clean, bold environment — masculine, direct, and firmly rooted in Scripture. Not soft,
+            not watered down, and not reckless.
+          </p>
+          <p class="card-text">
+            These rules create a safe space where men can be honest, challenged, and built up without worrying about
+            manipulation, gossip, or immaturity.
+          </p>
+          <p class="notice">
+            18+ ONLY: By joining, you affirm you are an adult male. This is non-negotiable for the protection of everyone.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- JOIN -->
+    <section id="join" class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">Join</div>
+          <h2 class="section-title">Step Into The Forge</h2>
+        </div>
+        <p class="section-subtitle">
+          Joining is simple — but not casual. Read, consider, and then step in with intention.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        <article class="card">
+          <h3 class="card-title">How Joining Works</h3>
+          <p class="card-text">
+            The Forge is hosted primarily in a gated WhatsApp community. To join:
+          </p>
+          <ul class="card-list">
+            <li>
+              <span class="card-list-bullet"></span>
+              <span>Review the <strong>Statement of Beliefs</strong> and community rules.</span>
+            </li>
+            <li>
+              <span class="card-list-bullet"></span>
+              <span>Confirm you are an adult male (18+).</span>
+            </li>
+            <li>
+              <span class="card-list-bullet"></span>
+              <span>Use the WhatsApp join link below or reach out via the contact form if you want to talk first.</span>
+            </li>
+          </ul>
+          <p class="join-note">
+            This is a place for men who are serious about following Christ, growing in biblical masculinity, and sharpening
+            one another.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3 class="card-title">Join The WhatsApp Community</h3>
+          <p class="card-text">
+            The link below connects you to the primary Forge WhatsApp community. This link may be periodically rotated for
+            security and stewardship.
           </p>
 
           <a
             href="https://chat.whatsapp.com/EbhasjvwtbD21iq9Mu3ky2"
             class="btn btn-primary"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
           >
             <span class="icon">💬</span>
-            <span>Join on WhatsApp</span>
+            <span>Enter The Forge on WhatsApp</span>
           </a>
 
           <p class="join-note">
-            You must agree to the rules and beliefs before joining.
+            If you’re unsure or want a conversation before joining, scroll down to the contact section. It’s okay to take
+            a step first, ask questions, and move forward with clarity.
           </p>
-        </div>
-
-        <div class="card">
-          <h3 class="card-title">What to Expect</h3>
-          <p class="card-text">
-            The Forge is not passive. Once inside, expect:
-          </p>
-
-          <ul class="card-list">
-            <li><span class="card-list-bullet"></span>Weekly Scripture-based growth challenges</li>
-            <li><span class="card-list-bullet"></span>Prayer and accountability threads</li>
-            <li><span class="card-list-bullet"></span>Sharpening conversations</li>
-            <li><span class="card-list-bullet"></span>Biblical encouragement and correction</li>
-          </ul>
-
-          <p class="card-text">
-            We grow together — with purpose.
-          </p>
-        </div>
+        </article>
       </div>
     </section>
 
-          <!-- CONTACT SECTION -->
+    <!-- CONTACT -->
     <section id="contact" class="section">
       <div class="section-header">
         <div>
           <div class="section-kicker">Contact</div>
-          <h2 class="section-title">Get In Touch</h2>
+          <h2 class="section-title">Talk Before You Join</h2>
         </div>
         <p class="section-subtitle">
-          Have questions about joining, expectations, or next steps? Reach out anytime.
+          Some men need a real conversation before stepping into a group. That’s not weakness — it’s wisdom.
         </p>
       </div>
 
       <div class="contact-grid">
-        <div class="contact-form">
-          <div class="field">
-            <label for="contact-name">Name</label>
-            <input id="contact-name" type="text" placeholder="Your name" />
+        <article class="card">
+          <h3 class="card-title">Reach Out</h3>
+          <form
+            class="contact-form"
+            action="mailto:aviationministries@faithbasedpilot.com"
+            method="post"
+            enctype="text/plain"
+          >
+            <div class="field">
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" required />
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required />
+            </div>
+            <div class="field">
+              <label for="message">Message</label>
+              <textarea
+                id="message"
+                name="message"
+                rows="4"
+                required
+                placeholder="Share briefly where you’re at and what you’re looking for."
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-outline">
+              <span class="icon">📨</span>
+              <span>Send Message</span>
+            </button>
+          </form>
+        </article>
+
+        <article class="card">
+          <h3 class="card-title">Before You Step In</h3>
+          <div class="contact-meta">
+            <p>
+              This isn’t a casual chat room. It’s a brotherhood. If you want to talk one-on-one before joining, that’s
+              encouraged.
+            </p>
+            <p>
+              Use the form or email
+              <a href="mailto:aviationministries@faithbasedpilot.com">
+                aviationministries@faithbasedpilot.com
+              </a>
+              if you:
+            </p>
+            <ul class="card-list" style="margin-top: 0.4rem;">
+              <li>
+                <span class="card-list-bullet"></span>
+                <span>Have questions about the Statement of Beliefs.</span>
+              </li>
+              <li>
+                <span class="card-list-bullet"></span>
+                <span>Are coming from a rough church or life experience.</span>
+              </li>
+              <li>
+                <span class="card-list-bullet"></span>
+                <span>Need clarity on what “biblical masculinity” actually means here.</span>
+              </li>
+            </ul>
+            <p>
+              <strong>The goal:</strong> men who are serious about Christ, clear about what this is, and committed to
+              sharpening one another in truth and love.
+            </p>
           </div>
-
-          <div class="field">
-            <label for="contact-email">Email</label>
-            <input id="contact-email" type="email" placeholder="your@email.com" />
-          </div>
-
-          <div class="field">
-            <label for="contact-message">Message</label>
-            <textarea id="contact-message" rows="5" placeholder="Ask your question..."></textarea>
-          </div>
-
-          <button class="btn btn-primary" type="button" id="contact-send">
-            <span class="icon">📨</span>
-            <span>Send Message</span>
-          </button>
-
-          <p class="join-note">
-            Or email us directly at: <strong>aviationministries@faithbasedpilot.com</strong>
-          </p>
-        </div>
-
-        <div class="contact-meta">
-          <p>
-            The Forge is committed to sharpening men through biblical truth, accountability, and community.
-            If you have questions about the group, its rules, or how we operate, reach out anytime.
-          </p>
-
-          <p>
-            Messages submitted here go directly to leadership for review. Expect a response within 24–48 hours.
-          </p>
-
-          <p>
-            <strong>Note:</strong> This form does <em>not</em> create an account. To join the private brotherhood,
-            you must enter the WhatsApp group and agree to the rules.
-          </p>
-        </div>
+        </article>
       </div>
     </section>
 
-    <!-- FOOTER -->
     <footer>
-      <div>&copy; <script>document.write(new Date().getFullYear());</script> The Forge · Faith Based Pilot</div>
-      <div class="auth-status-text" id="authStatus">Not signed in</div>
+      <div>© <span id="year"></span> The Forge · ESTD 2025</div>
+      <div class="auth-status-text" id="authStatus">
+        Account system not connected yet. You’ll sign in here once Firebase is wired up.
+      </div>
     </footer>
   </main>
 
-    <!-- AUTH MODAL (wired by auth.js) -->
-  <div
-    class="auth-overlay"
-    id="authOverlay"
-    aria-modal="true"
-    role="dialog"
-    aria-hidden="true"
-  >
+  <!-- AUTH MODAL (UI ONLY) -->
+  <div class="auth-overlay" id="authOverlay" aria-modal="true" role="dialog" aria-hidden="true">
     <div class="auth-card">
-      <button
-        type="button"
-        class="auth-close-btn"
-        id="authCloseBtn"
-        aria-label="Close account window"
-      >
-        ✕
-      </button>
-
+      <button type="button" class="auth-close-btn" id="authCloseBtn" aria-label="Close account window">✕</button>
       <div class="auth-card-inner">
         <div class="auth-card-header">
           <div class="auth-card-title">Forge Account</div>
@@ -1016,61 +1741,21 @@
           </div>
         </div>
 
-        <!-- Sign In / Sign Up toggle -->
         <div class="auth-toggle-row">
-          <button
-            type="button"
-            class="auth-toggle-btn active"
-            data-mode="signin"
-            id="authToggleSignIn"
-          >
-            Sign In
-          </button>
-          <button
-            type="button"
-            class="auth-toggle-btn"
-            data-mode="signup"
-            id="authToggleSignUp"
-          >
-            Create Account
-          </button>
+          <button type="button" class="auth-toggle-btn active" data-mode="signin">Sign In</button>
+          <button type="button" class="auth-toggle-btn" data-mode="signup">Create Account</button>
         </div>
 
-        <!-- SIGN IN FORM -->
+        <!-- Sign In form (no Firebase wiring yet) -->
         <form id="authSignInForm" class="auth-form">
           <div class="auth-field">
             <label class="auth-label" for="signinEmail">Email</label>
-            <input
-              id="signinEmail"
-              type="email"
-              class="auth-input"
-              autocomplete="email"
-              required
-            />
+            <input id="signinEmail" type="email" class="auth-input" autocomplete="email" required />
           </div>
-
           <div class="auth-field">
             <label class="auth-label" for="signinPassword">Password</label>
-            <input
-              id="signinPassword"
-              type="password"
-              class="auth-input"
-              autocomplete="current-password"
-              required
-            />
+            <input id="signinPassword" type="password" class="auth-input" autocomplete="current-password" required />
           </div>
-
-          <!-- Forgot password -->
-          <div class="forgot-password-row">
-            <button
-              type="button"
-              class="linkish-btn"
-              id="forgotPasswordButton"
-            >
-              Forgot password?
-            </button>
-          </div>
-
           <button type="submit" class="auth-btn">Sign In</button>
           <div class="auth-error" id="authError"></div>
           <div class="auth-footnote">
@@ -1078,185 +1763,209 @@
           </div>
         </form>
 
-        <!-- SIGN UP FORM -->
-        <form
-          id="authSignUpForm"
-          class="auth-form"
-          style="display: none;"
-        >
+        <!-- Sign Up form (no Firebase wiring yet) -->
+        <form id="authSignUpForm" class="auth-form" style="display:none;">
           <div class="auth-field">
-            <label class="auth-label" for="signupDisplayName">
-              Display Name (optional)
-            </label>
-            <input
-              id="signupDisplayName"
-              type="text"
-              class="auth-input"
-              placeholder="Name other men will see"
-            />
+            <label class="auth-label" for="signupDisplayName">Display Name (optional)</label>
+            <input id="signupDisplayName" type="text" class="auth-input" placeholder="Name other men will see" />
           </div>
-
           <div class="auth-field">
             <label class="auth-label" for="signupEmail">Email</label>
-            <input
-              id="signupEmail"
-              type="email"
-              class="auth-input"
-              autocomplete="email"
-              required
-            />
+            <input id="signupEmail" type="email" class="auth-input" autocomplete="email" required />
           </div>
-
           <div class="auth-field">
             <label class="auth-label" for="signupPassword">Password</label>
-            <input
-              id="signupPassword"
-              type="password"
-              class="auth-input"
-              autocomplete="new-password"
-              required
-            />
+            <input id="signupPassword" type="password" class="auth-input" autocomplete="new-password" required />
           </div>
-
           <div class="auth-field">
-            <label class="auth-label" for="signupPassword2">
-              Confirm Password
-            </label>
-            <input
-              id="signupPassword2"
-              type="password"
-              class="auth-input"
-              autocomplete="new-password"
-              required
-            />
+            <label class="auth-label" for="signupPassword2">Confirm Password</label>
+            <input id="signupPassword2" type="password" class="auth-input" autocomplete="new-password" required />
           </div>
-
           <div class="auth-field">
             <label class="auth-label" for="signupInvite">Invite Code</label>
-            <input
-              id="signupInvite"
-              type="text"
-              class="auth-input"
-              placeholder="Enter your invite code"
-              required
-            />
+            <input id="signupInvite" type="text" class="auth-input" placeholder="Enter your invite code" required />
           </div>
-
           <button type="submit" class="auth-btn">Create Account</button>
           <div class="auth-error" id="authErrorSignup"></div>
           <div class="auth-footnote">
-            The real invite code is stored securely in Firebase, not in this
-            page.
+            The real invite code is stored securely in Firebase, not in this page.
           </div>
         </form>
       </div>
     </div>
   </div>
 
-  <!-- LOCAL UI SCRIPTS (theme, mobile nav, contact handler) -->
   <script>
     // THEME TOGGLE
     (function () {
       const root = document.documentElement;
-      const toggle = document.getElementById("themeToggle");
-      if (!toggle) return;
+      const toggle = document.getElementById('themeToggle');
+      const stored = localStorage.getItem('forge-theme');
 
-      const stored = localStorage.getItem("forge-theme");
-      if (stored === "light" || stored === "dark") {
-        root.setAttribute("data-theme", stored);
+      if (stored === 'light' || stored === 'dark') {
+        root.setAttribute('data-theme', stored);
       } else {
-        root.setAttribute("data-theme", "dark");
+        root.setAttribute('data-theme', 'dark');
       }
 
       function updateIcon() {
-        const theme = root.getAttribute("data-theme");
-        const iconSpan = toggle.querySelector(".icon");
-        if (!iconSpan) return;
-        iconSpan.textContent = theme === "light" ? "🌙" : "☀️";
+        const theme = root.getAttribute('data-theme');
+        const iconSpan = toggle.querySelector('.icon');
+        if (theme === 'light') {
+          iconSpan.textContent = '🌙';
+        } else {
+          iconSpan.textContent = '☀️';
+        }
       }
 
       updateIcon();
 
-      toggle.addEventListener("click", () => {
-        const current = root.getAttribute("data-theme") || "dark";
-        const next = current === "dark" ? "light" : "dark";
-        root.setAttribute("data-theme", next);
-        localStorage.setItem("forge-theme", next);
+      toggle.addEventListener('click', () => {
+        const current = root.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        localStorage.setItem('forge-theme', next);
         updateIcon();
       });
     })();
 
     // MOBILE NAV TOGGLE
     (function () {
-      const hamburger = document.getElementById("hamburger");
-      const mobileNav = document.getElementById("mobileNav");
+      const hamburger = document.getElementById('hamburger');
+      const mobileNav = document.getElementById('mobileNav');
+
       if (!hamburger || !mobileNav) return;
 
       function closeNav() {
-        mobileNav.classList.remove("open");
-        hamburger.classList.remove("is-open");
-        hamburger.setAttribute("aria-expanded", "false");
+        mobileNav.classList.remove('open');
+        hamburger.classList.remove('is-open');
+        hamburger.setAttribute('aria-expanded', 'false');
       }
 
       function openNav() {
-        mobileNav.classList.add("open");
-        hamburger.classList.add("is-open");
-        hamburger.setAttribute("aria-expanded", "true");
+        mobileNav.classList.add('open');
+        hamburger.classList.add('is-open');
+        hamburger.setAttribute('aria-expanded', 'true');
       }
 
-      hamburger.addEventListener("click", () => {
-        if (mobileNav.classList.contains("open")) {
+      hamburger.addEventListener('click', () => {
+        if (mobileNav.classList.contains('open')) {
           closeNav();
         } else {
           openNav();
         }
       });
 
-      // Close menu when clicking a link/button inside overlay
-      mobileNav.querySelectorAll("a, button").forEach((el) => {
-        el.addEventListener("click", closeNav);
+      mobileNav.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => {
+          closeNav();
+        });
       });
     })();
 
-    // CONTACT "SEND" → opens email client
+    // YEAR IN FOOTER
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // AUTH MODAL UI (no Firebase wiring yet)
     (function () {
-      const btn = document.getElementById("contact-send");
-      if (!btn) return;
+      const overlay = document.getElementById('authOverlay');
+      const openBtn = document.getElementById('accountButton');
+      const mobileOpenBtn = document.getElementById('mobileAccountButton');
+      const closeBtn = document.getElementById('authCloseBtn');
+      const toggleButtons = overlay.querySelectorAll('.auth-toggle-btn');
+      const signInForm = document.getElementById('authSignInForm');
+      const signUpForm = document.getElementById('authSignUpForm');
+      const errorSignIn = document.getElementById('authError');
+      const errorSignUp = document.getElementById('authErrorSignup');
 
-      btn.addEventListener("click", () => {
-        const name = document.getElementById("contact-name")?.value.trim() || "";
-        const email =
-          document.getElementById("contact-email")?.value.trim() || "";
-        const message =
-          document.getElementById("contact-message")?.value.trim() || "";
+      function openOverlay() {
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+      }
 
-        if (!email || !message) {
-          alert("Please include at least your email and a message.");
-          return;
-        }
+      function closeOverlay() {
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+      }
 
-        const subject = `The Forge contact from ${name || "a visitor"}`;
-        const bodyLines = [
-          `Name: ${name || "(not provided)"}`,
-          `Email: ${email}`,
-          "",
-          "Message:",
-          message,
-        ];
-        const body = encodeURIComponent(bodyLines.join("\n"));
-        const mailto = `mailto:aviationministries@faithbasedpilot.com?subject=${encodeURIComponent(
-          subject
-        )}&body=${body}`;
-
-        window.location.href = mailto;
+      if (openBtn) openBtn.addEventListener('click', openOverlay);
+      if (mobileOpenBtn) mobileOpenBtn.addEventListener('click', () => {
+        closeNavIfOpen();
+        openOverlay();
       });
+      if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeOverlay();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('open')) {
+          closeOverlay();
+        }
+      });
+
+      function setMode(mode) {
+        toggleButtons.forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.mode === mode);
+        });
+        if (mode === 'signin') {
+          signInForm.style.display = 'grid';
+          signUpForm.style.display = 'none';
+          errorSignIn.textContent = '';
+          errorSignUp.textContent = '';
+        } else {
+          signInForm.style.display = 'grid';
+          signInForm.style.display = 'none';
+        }
+      }
+
+      function setModeCorrect(mode) {
+        toggleButtons.forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.mode === mode);
+        });
+        if (mode === 'signin') {
+          signInForm.style.display = 'grid';
+          signUpForm.style.display = 'none';
+        } else {
+          signInForm.style.display = 'none';
+          signUpForm.style.display = 'grid';
+        }
+        errorSignIn.textContent = '';
+        errorSignUp.textContent = '';
+      }
+
+      // fix typo from helper
+      setModeCorrect('signin');
+
+      toggleButtons.forEach((btn) => {
+        btn.addEventListener('click', () => setModeCorrect(btn.dataset.mode));
+      });
+
+      // For now, prevent submit and just show a message so we don't pretend it's wired up
+      signInForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        errorSignIn.textContent = "Firebase sign-in isn't connected yet. This is just the UI.";
+      });
+
+      signUpForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        errorSignUp.textContent = "Firebase account creation isn't connected yet. This is just the UI.";
+      });
+
+      // Helper for closing mobile nav before opening account modal
+      function closeNavIfOpen() {
+        const mobileNav = document.getElementById('mobileNav');
+        const hamburger = document.getElementById('hamburger');
+        if (mobileNav && mobileNav.classList.contains('open')) {
+          mobileNav.classList.remove('open');
+        }
+        if (hamburger && hamburger.classList.contains('is-open')) {
+          hamburger.classList.remove('is-open');
+          hamburger.setAttribute('aria-expanded', 'false');
+        }
+      }
     })();
   </script>
-
-  <!-- FIREBASE AUTH / PROFILE / PRAYER LOGIC -->
-  <!-- Make sure auth.js is in the same folder and contains your Firebase config -->
-  <script type="module" src="auth.js"></script>
 </body>
 </html>
-
-          

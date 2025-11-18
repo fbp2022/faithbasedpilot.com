@@ -11,6 +11,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
+  sendPasswordResetEmail,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore,
@@ -21,7 +22,6 @@ import {
   collection,
   serverTimestamp,
   onSnapshot,
-  orderBy,
   deleteDoc,
   updateDoc,
   increment,
@@ -37,7 +37,6 @@ const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
   projectId: "YOUR_PROJECT_ID",
-  // storageBucket, messagingSenderId, appId are optional for this page
 };
 
 const app = initializeApp(firebaseConfig);
@@ -46,33 +45,12 @@ const db = getFirestore(app);
 
 // global-ish state
 let currentUser = null;
-let cachedInviteCode = null;
+
+// Tristan (the only delete-admin, must match rules)
+const TRISTAN_UID = "1zs1eFu7K8cWKRZE7k7TwPCW3X32";
 
 /* ==============================
-   2. INVITE CODE HELPER
-   ============================== */
-
-async function fetchInviteCode() {
-  if (cachedInviteCode !== null) return cachedInviteCode;
-
-  try {
-    const ref = doc(db, "config", "auth");
-    const snap = await getDoc(ref);
-    if (snap.exists()) {
-      cachedInviteCode = String(snap.data().invitecode || "").trim();
-      return cachedInviteCode;
-    } else {
-      console.error("config/auth document does not exist – invite code missing");
-      return null;
-    }
-  } catch (err) {
-    console.error("Error fetching invite code:", err);
-    return null;
-  }
-}
-
-/* ==============================
-   3. AUTH UI HELPERS
+   2. DOM HELPERS
    ============================== */
 
 function $(id) {
@@ -111,7 +89,7 @@ function updateAuthStatusUI() {
 }
 
 /* ==============================
-   4. SIGNUP + LOGIN HANDLERS
+   3. SIGNUP + LOGIN HANDLERS
    ============================== */
 
 async function handleSignupSubmit(event) {
@@ -145,25 +123,16 @@ async function handleSignupSubmit(event) {
     return;
   }
 
-  const storedInvite = await fetchInviteCode();
-  if (!storedInvite) {
-    alert("Invite code configuration is missing. Contact the site owner.");
-    return;
-  }
-
-  if (invite !== storedInvite) {
-    alert("Invalid invite code.");
-    return;
-  }
-
   try {
+    // Create Auth account
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     const user = cred.user;
 
     // Update displayName in Auth profile
     await updateProfile(user, { displayName });
 
-    // Create profile document (or update if exists)
+    // Create profile document
+    // Your Firestore rules use request.resource.data.invitecode to validate
     const profRef = doc(db, "profiles", user.uid);
     await setDoc(
       profRef,
@@ -172,6 +141,7 @@ async function handleSignupSubmit(event) {
         email,
         role: "member",
         createdAt: serverTimestamp(),
+        invitecode: invite, // used by security rules
       },
       { merge: true }
     );
@@ -180,7 +150,11 @@ async function handleSignupSubmit(event) {
     alert("Account created. You are now signed in.");
   } catch (err) {
     console.error("Signup error:", err);
-    alert(err.message || "Could not create account.");
+    alert(
+      err && err.message
+        ? err.message
+        : "Could not create account. The invite code may be incorrect or configuration is missing."
+    );
   }
 }
 
@@ -215,8 +189,32 @@ async function handleLogoutClick() {
   }
 }
 
+async function handleForgotPassword(event) {
+  event.preventDefault();
+  const emailInput = $("loginEmail");
+
+  if (!emailInput) {
+    alert("Please open the sign in form and enter your email first.");
+    return;
+  }
+
+  const email = emailInput.value.trim();
+  if (!email) {
+    alert("Please enter your email address in the sign in form first.");
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    alert("Password reset email sent. Please check your inbox (and spam folder).");
+  } catch (err) {
+    console.error("Forgot password error:", err);
+    alert(err.message || "Could not send password reset email.");
+  }
+}
+
 /* ==============================
-   5. PRAYER REQUESTS (FIRESTORE)
+   4. PRAYER REQUESTS (FIRESTORE)
    ============================== */
 
 function setupPrayerPage() {
@@ -256,41 +254,30 @@ function setupPrayerPage() {
       await addDoc(collection(db, "prayers"), {
         title,
         message,
-        name: storedName,                // can be empty string
-        ownerUid: currentUser.uid,       // still track owner for deletion
+        name: storedName, // can be empty string
+        ownerUid: currentUser.uid, // tracking owner (even though only Tristan can delete)
         ownerDisplayName: currentUser.displayName || null,
         createdAt: serverTimestamp(),
         prayerCount: 0,
       });
 
       // Clear fields; we keep name so they don't have to retype it
-      titleInput.value = "";
-      messageInput.value = "";
+      if (titleInput) titleInput.value = "";
+      if (messageInput) messageInput.value = "";
     } catch (err) {
       console.error("Error adding prayer:", err);
       alert("Could not submit prayer request. Try again.");
     }
   });
 
-  // --- Live listener for prayers ---
-  const prayersRef = collection(db, "prayers");
-  const q = orderBy("createdAt", "desc");
-
+  // --- Live listener for prayers (NO 60-day cutoff anymore) ---
   onSnapshot(
     collection(db, "prayers"),
     (snapshot) => {
-      const now = new Date();
-      const cutoff = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000); // 60 days
-
       const prayers = [];
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         const createdAt = data.createdAt instanceof Timestamp ? data.createdAt.toDate() : null;
-
-        // Hide prayers older than 60 days in the UI
-        if (createdAt && createdAt < cutoff) {
-          return;
-        }
 
         prayers.push({
           id: docSnap.id,
@@ -357,7 +344,7 @@ function createPrayerCard(prayer) {
   const safeName = sanitizeName(prayer.name);
   const dateText = prayer.createdAt ? formatDateTime(prayer.createdAt) : "";
   const count = prayer.prayerCount || 0;
-  const youOwnIt = currentUser && prayer.ownerUid === currentUser.uid;
+  const canDelete = currentUser && currentUser.uid === TRISTAN_UID;
 
   card.innerHTML = `
     <div class="prayer-header">
@@ -381,7 +368,7 @@ function createPrayerCard(prayer) {
             I'm praying
           </button>
           ${
-            youOwnIt
+            canDelete
               ? `<button type="button" class="delete-button" style="padding:3px 10px; border-radius:999px; border:1px solid rgba(239,68,68,0.8); background:transparent; color:#fecaca; cursor:pointer;">
                    Delete
                  </button>`
@@ -406,6 +393,7 @@ function createPrayerCard(prayer) {
       });
       card.classList.remove("open");
     } else {
+      // Close any other open cards so only one is open at a time
       document.querySelectorAll(".prayer-card.open").forEach((openCard) => {
         if (openCard === card) return;
         const openBody = openCard.querySelector(".prayer-body");
@@ -439,7 +427,7 @@ function createPrayerCard(prayer) {
     }
   });
 
-  // “I’m praying” button
+  // “I’m praying” button (only once per user)
   const prayBtn = card.querySelector(".pray-button");
   const countEl = card.querySelector(".prayer-count");
   if (prayBtn && countEl) {
@@ -449,26 +437,49 @@ function createPrayerCard(prayer) {
         alert("You must be signed in to mark that you are praying.");
         return;
       }
+
       try {
-        const ref = doc(db, "prayers", prayer.id);
-        await updateDoc(ref, { prayerCount: increment(1) });
+        const voteRef = doc(db, "prayers", prayer.id, "votes", currentUser.uid);
+        const voteSnap = await getDoc(voteRef);
+
+        if (voteSnap.exists()) {
+          alert("You’ve already marked that you are praying for this request.");
+          return;
+        }
+
+        // Record this user's "I'm praying" once
+        await Promise.all([
+          setDoc(
+            voteRef,
+            {
+              uid: currentUser.uid,
+              createdAt: serverTimestamp(),
+            },
+            { merge: true }
+          ),
+          updateDoc(doc(db, "prayers", prayer.id), {
+            prayerCount: increment(1),
+          }),
+        ]);
+
         const newCount = (prayer.prayerCount || 0) + 1;
         prayer.prayerCount = newCount;
         countEl.textContent =
           newCount === 1 ? "1 person praying" : newCount + " people praying";
       } catch (err) {
         console.error("Error incrementing prayer count:", err);
+        alert("Could not update prayer count. Please try again.");
       }
     });
   }
 
-  // Delete button (only rendered if youOwnIt === true)
+  // Delete button (ONLY Tristan UID)
   const delBtn = card.querySelector(".delete-button");
   if (delBtn) {
     delBtn.addEventListener("click", async (e) => {
       e.stopPropagation();
-      if (!currentUser || currentUser.uid !== prayer.ownerUid) {
-        alert("You can only delete prayer requests you created.");
+      if (!currentUser || currentUser.uid !== TRISTAN_UID) {
+        alert("Only the site admin can delete prayer requests.");
         return;
       }
       if (!confirm("Delete this prayer request?")) return;
@@ -485,7 +496,7 @@ function createPrayerCard(prayer) {
 }
 
 /* ==============================
-   6. SETUP LISTENERS ON LOAD
+   5. SETUP LISTENERS ON LOAD
    ============================== */
 
 function setupAuthUI() {
@@ -496,10 +507,15 @@ function setupAuthUI() {
   const closeSignup = $("closeSignup");
   const closeLogin = $("closeLogin");
   const logoutBtn = $("logoutBtn");
+  const forgotPasswordLink = $("forgotPasswordLink");
 
   if (signupForm) signupForm.addEventListener("submit", handleSignupSubmit);
   if (loginForm) loginForm.addEventListener("submit", handleLoginSubmit);
   if (logoutBtn) logoutBtn.addEventListener("click", handleLogoutClick);
+
+  if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener("click", handleForgotPassword);
+  }
 
   if (openSignup && $("signupModal")) {
     openSignup.addEventListener("click", () => showEl($("signupModal")));

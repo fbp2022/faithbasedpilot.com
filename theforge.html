@@ -9,117 +9,58 @@
 
   <style>
     /* ================== BASE / THEME ================== */
-    /* ===================== THEME TOKENS (REPLACE EVERYTHING IN YOUR OLD ROOT BLOCK) ===================== */
-:root {
-  /* default = dark theme */
-  --bg: #020617;
-  --bg-soft: #020918;
-  --bg-elevated: #050b1a;
-  --bg-card: #070f23;
-  --border-subtle: rgba(148, 163, 184, 0.15);
+    :root {
+      --bg-main: #05070f;
+      --bg-elevated: rgba(10, 14, 30, 0.95);
+      --bg-card: rgba(9, 14, 32, 0.95);
+      --bg-card-soft: rgba(18, 24, 48, 0.9);
+      --bg-deep: #000000;
 
-  --text-main: #e5f0ff;
-  --text-muted: #8b9bb8;
-  --text-soft: #64748b;
+      --bg-header-strong: rgba(0, 0, 0, 0.9);
+      --bg-header-soft: rgba(0, 0, 0, 0.7);
+      --bg-mobile-overlay: rgba(2, 4, 10, 0.97);
 
-  --accent: #22d3ee;
-  --accent-soft: rgba(45, 212, 191, 0.2);
-  --accent-strong: #38bdf8;
-  --accent-warm: #f97316;
+      --border-subtle: rgba(0, 255, 200, 0.25);
+      --accent: #00ffd0;
+      --accent-soft: rgba(0, 255, 200, 0.5);
+      --accent-alt: #00aaff;
 
-  --glow-strong: 0 0 40px rgba(56, 189, 248, 0.45);
-  --glow-soft: 0 0 30px rgba(148, 163, 184, 0.3);
+      --text-main: #e3f6ff;
+      --text-muted: #a6bfdc;
+      --text-soft: #7e91b8;
+      --danger: #ff4b4b;
 
-  --card-radius: 18px;
-  --card-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
+      --shadow-strong: 0 0 35px rgba(0, 0, 0, 0.9);
+      --shadow-accent: 0 0 24px rgba(0, 255, 200, 0.45);
 
-  --nav-blur: 20px;
-}
+      --nav-height: 64px;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-full: 999px;
+      --transition-fast: 0.18s ease;
+      --transition-med: 0.25s ease;
+    }
 
-/* ===================== LIGHT THEME — STILL LOOKS FUTURISTIC ===================== */
-:root[data-theme="light"] {
-  --bg: #e8f1ff;
-  --bg-soft: #f1f5ff;
-  --bg-elevated: #ffffff;
-  --bg-card: #f7f9ff;
-  --border-subtle: rgba(15, 23, 42, 0.08);
+    :root[data-theme="light"] {
+      --bg-main: #f5f7fb;
+      --bg-elevated: rgba(255, 255, 255, 0.98);
+      --bg-card: rgba(255, 255, 255, 0.98);
+      --bg-card-soft: rgba(245, 247, 252, 0.98);
+      --bg-deep: #c7d2fe;
 
-  --text-main: #020617;
-  --text-muted: #475569;
-  --text-soft: #64748b;
+      --bg-header-strong: rgba(255, 255, 255, 0.98);
+      --bg-header-soft: rgba(248, 250, 252, 0.9);
+      --bg-mobile-overlay: rgba(245, 247, 252, 0.98);
 
-  --accent: #0ea5e9;
-  --accent-soft: rgba(56, 189, 248, 0.18);
-  --accent-strong: #0369a1;
-  --accent-warm: #f97316;
+      --border-subtle: rgba(0, 140, 255, 0.25);
+      --accent: #0074ff;
+      --accent-soft: rgba(0, 116, 255, 0.5);
+      --accent-alt: #00b8ff;
 
-  --glow-strong: 0 0 35px rgba(14, 165, 233, 0.45);
-  --glow-soft: 0 0 25px rgba(148, 163, 184, 0.35);
-
-  --card-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
-}
-
-/* ================= GLOBAL THEME-BASED STYLING ================= */
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: radial-gradient(circle at top, #020617 0, var(--bg) 40%, #000 100%);
-  color: var(--text-main);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-    "Inter", "Segoe UI", sans-serif;
-}
-
-.main-shell,
-.page-wrapper {
-  background: radial-gradient(circle at top, var(--bg-soft) 0, var(--bg) 40%, #000 100%);
-  color: var(--text-main);
-}
-
-.card,
-.forge-card,
-.identity-card,
-.mission-card {
-  background: radial-gradient(circle at top left, var(--bg-card), var(--bg-elevated));
-  border-radius: var(--card-radius);
-  box-shadow: var(--card-shadow);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-main);
-}
-
-.btn-primary,
-.join-btn {
-  background: radial-gradient(circle at 0 0, #facc15, var(--accent-warm), var(--accent-strong));
-  color: #020617;
-  box-shadow: 0 0 30px rgba(248, 250, 252, 0.35);
-}
-
-.btn-ghost,
-.secondary-btn {
-  background: rgba(15, 23, 42, 0.4);
-  color: var(--text-main);
-  border: 1px solid var(--border-subtle);
-}
-
-h1, h2, h3, h4, h5, h6 {
-  color: var(--text-main);
-}
-
-p, li, small, span {
-  color: var(--text-muted);
-}
-
-.site-nav {
-  background: radial-gradient(circle at top, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.85));
-  backdrop-filter: blur(var(--nav-blur));
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.theme-toggle {
-  background: rgba(15, 23, 42, 0.7);
-  border-radius: 999px;
-  border: 1px solid var(--border-subtle);
-  color: var(--text-soft);
-}
+      --text-main: #071420;
+      --text-muted: #4f5c77;
+      --text-soft: #7a8799;
+    }
 
     * {
       box-sizing: border-box;
@@ -127,14 +68,20 @@ p, li, small, span {
       padding: 0;
     }
 
-    html, body {
+    html,
+    body {
       height: 100%;
       scroll-behavior: smooth;
     }
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at 0% 0%, #071226 0, #02040a 40%, #000000 100%);
+      background: radial-gradient(
+        circle at 0% 0%,
+        var(--bg-card-soft) 0,
+        var(--bg-main) 40%,
+        var(--bg-deep) 100%
+      );
       color: var(--text-main);
       -webkit-font-smoothing: antialiased;
     }
@@ -180,11 +127,11 @@ p, li, small, span {
       backdrop-filter: blur(16px);
       background: linear-gradient(
         to bottom,
-        rgba(0, 0, 0, 0.9),
-        rgba(0, 0, 0, 0.7),
+        var(--bg-header-strong),
+        var(--bg-header-soft),
         transparent
       );
-      border-bottom: 1px solid rgba(0, 255, 200, 0.18);
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .nav {
@@ -282,7 +229,7 @@ p, li, small, span {
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.16em;
-      background: rgba(4, 10, 20, 0.9);
+      background: var(--bg-elevated);
       color: var(--text-muted);
       cursor: pointer;
       display: inline-flex;
@@ -314,7 +261,7 @@ p, li, small, span {
       height: 34px;
       border-radius: 999px;
       border: 1px solid var(--border-subtle);
-      background: rgba(4, 10, 20, 0.95);
+      background: var(--bg-elevated);
       cursor: pointer;
       align-items: center;
       justify-content: center;
@@ -339,7 +286,7 @@ p, li, small, span {
     }
 
     .hamburger:hover {
-      background: rgba(4, 14, 28, 0.98);
+      background: var(--bg-card-soft);
       box-shadow: 0 0 15px rgba(0, 255, 200, 0.35);
       transform: translateY(-1px);
     }
@@ -363,9 +310,10 @@ p, li, small, span {
       display: none;
       position: fixed;
       inset: var(--nav-height) 0 0 0;
-      background: radial-gradient(circle at 0 0, rgba(0, 255, 200, 0.16), transparent 60%),
+      background:
+        radial-gradient(circle at 0 0, rgba(0, 255, 200, 0.16), transparent 60%),
         radial-gradient(circle at 100% 100%, rgba(0, 140, 255, 0.18), transparent 60%),
-        rgba(2, 4, 10, 0.97);
+        var(--bg-mobile-overlay);
       backdrop-filter: blur(20px);
       z-index: 35;
     }
@@ -528,7 +476,7 @@ p, li, small, span {
     }
 
     .btn-outline {
-      background: rgba(4, 10, 20, 0.9);
+      background: var(--bg-elevated);
       color: var(--text-main);
     }
 
@@ -860,7 +808,7 @@ p, li, small, span {
     .field textarea {
       border-radius: 12px;
       border: 1px solid var(--border-subtle);
-      background: rgba(2, 4, 10, 0.85);
+      background: var(--bg-elevated);
       color: var(--text-main);
       padding: 0.55rem 0.75rem;
       font-size: 0.9rem;
@@ -968,8 +916,8 @@ p, li, small, span {
       </div>
 
       <div class="nav-actions">
-       <button class="theme-toggle" id="themeToggle" data-theme-toggle type="button">
-          <span class="icon">Theme</span>
+        <button class="theme-toggle" id="themeToggle" type="button">
+          <span class="icon">🌙</span>
           <span>Theme</span>
         </button>
         <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
@@ -1543,13 +1491,13 @@ p, li, small, span {
     </section>
 
     <footer>
-      <div>© <span id="year"></span> The Forge · EST 2025</div>
+      <div>© <span id="year"></span> The Forge · Faith Based Pilot</div>
       <div>Built for men who fear God, love truth, and refuse to walk alone.</div>
     </footer>
   </main>
 
   <script>
-    // THEME TOGGLE (matches prayerrequests behavior)
+    // THEME TOGGLE
     (function () {
       const root = document.documentElement;
       const toggle = document.getElementById('themeToggle');
@@ -1620,33 +1568,5 @@ p, li, small, span {
     // YEAR IN FOOTER
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
-<script>
-  (function () {
-    const root = document.documentElement;
-    const toggleBtn = document.querySelector('[data-theme-toggle]');
-
-    if (!toggleBtn) return;
-
-    // Initialize from localStorage or system preference
-    const stored = localStorage.getItem('forge-theme');
-    const prefersLight = window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: light)').matches;
-
-    const initialTheme = stored || (prefersLight ? 'light' : 'dark');
-    root.setAttribute('data-theme', initialTheme);
-    setLabel(initialTheme);
-
-    toggleBtn.addEventListener('click', () => {
-      const current = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      root.setAttribute('data-theme', current);
-      localStorage.setItem('forge-theme', current);
-      setLabel(current);
-    });
-
-    function setLabel(theme) {
-      toggleBtn.textContent = theme === 'dark' ? 'THEME • DARK' : 'THEME • LIGHT';
-    }
-  })();
-</script>
 </body>
 </html>

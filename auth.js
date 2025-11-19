@@ -215,6 +215,9 @@ async function handleForgotPassword(event) {
 
 /* ==============================
    4. PRAYER REQUESTS (FIRESTORE)
+   Aligned to rules under:
+   /prayerRequests/{requestId}
+   /prayerRequests/{requestId}/prayers/{uid}
    ============================== */
 
 function setupPrayerPage() {
@@ -250,12 +253,19 @@ function setupPrayerPage() {
     }
 
     const storedName = (rawName || "").trim(); // may be blank (Anonymous)
+    const isAnonymous = storedName === "";
+
     try {
-      await addDoc(collection(db, "prayers"), {
+      // Firestore rules require:
+      // title (string), body (string), isAnonymous (bool),
+      // createdByUid == request.auth.uid, createdAt (timestamp)
+      await addDoc(collection(db, "prayerRequests"), {
         title,
-        message,
-        name: storedName, // can be empty string
-        ownerUid: currentUser.uid, // tracking owner (even though only Tristan can delete)
+        body: message,
+        isAnonymous,
+        // extra fields (allowed by rules):
+        name: storedName || null,
+        createdByUid: currentUser.uid,
         ownerDisplayName: currentUser.displayName || null,
         createdAt: serverTimestamp(),
         prayerCount: 0,
@@ -270,14 +280,15 @@ function setupPrayerPage() {
     }
   });
 
-  // --- Live listener for prayers (NO 60-day cutoff anymore) ---
+  // --- Live listener for prayer requests (NO 60-day cutoff anymore) ---
   onSnapshot(
-    collection(db, "prayers"),
+    collection(db, "prayerRequests"),
     (snapshot) => {
       const prayers = [];
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        const createdAt = data.createdAt instanceof Timestamp ? data.createdAt.toDate() : null;
+        const createdAt =
+          data.createdAt instanceof Timestamp ? data.createdAt.toDate() : null;
 
         prayers.push({
           id: docSnap.id,
@@ -287,11 +298,22 @@ function setupPrayerPage() {
       });
 
       // sort newest at top
-      prayers.sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+      prayers.sort(
+        (a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0)
+      );
       renderPrayerList(prayers, listEl, countLabelEl);
     },
     (err) => {
-      console.error("Error listening to prayers:", err);
+      console.error("Error listening to prayerRequests:", err);
+      if (countLabelEl) {
+        // Most likely when not signed in or profile missing, rules deny read
+        if (err.code === "permission-denied") {
+          countLabelEl.textContent =
+            "Please sign in (and ensure your profile is set up) to view prayer requests.";
+        } else {
+          countLabelEl.textContent = "Unable to load prayer requests.";
+        }
+      }
     }
   );
 }
@@ -346,6 +368,11 @@ function createPrayerCard(prayer) {
   const count = prayer.prayerCount || 0;
   const canDelete = currentUser && currentUser.uid === TRISTAN_UID;
 
+  const bodyHtml = (prayer.body || prayer.message || "").replace(
+    /\n/g,
+    "<br>"
+  );
+
   card.innerHTML = `
     <div class="prayer-header">
       <div class="chevron" aria-hidden="true">
@@ -361,9 +388,11 @@ function createPrayerCard(prayer) {
     </div>
     <div class="prayer-body">
       <div class="prayer-body-inner">
-        <p>${(prayer.message || "").replace(/\n/g, "<br>")}</p>
+        <p>${bodyHtml}</p>
         <div class="prayer-footer" style="margin-top:8px; font-size:0.8rem; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-          <span class="prayer-count">${count === 1 ? "1 person praying" : count + " people praying"}</span>
+          <span class="prayer-count">${
+            count === 1 ? "1 person praying" : count + " people praying"
+          }</span>
           <button type="button" class="pray-button" style="padding:3px 10px; border-radius:999px; border:1px solid rgba(148,163,255,0.6); background:transparent; cursor:pointer;">
             I'm praying
           </button>
@@ -439,25 +468,33 @@ function createPrayerCard(prayer) {
       }
 
       try {
-        const voteRef = doc(db, "prayers", prayer.id, "votes", currentUser.uid);
-        const voteSnap = await getDoc(voteRef);
+        // Subcollection path aligned with rules:
+        // /prayerRequests/{requestId}/prayers/{uid}
+        const prayerRef = doc(db, "prayerRequests", prayer.id);
+        const prayRef = doc(
+          db,
+          "prayerRequests",
+          prayer.id,
+          "prayers",
+          currentUser.uid
+        );
 
-        if (voteSnap.exists()) {
+        const praySnap = await getDoc(prayRef);
+        if (praySnap.exists()) {
           alert("You’ve already marked that you are praying for this request.");
           return;
         }
 
-        // Record this user's "I'm praying" once
         await Promise.all([
           setDoc(
-            voteRef,
+            prayRef,
             {
               uid: currentUser.uid,
-              createdAt: serverTimestamp(),
+              prayedAt: serverTimestamp(),
             },
             { merge: true }
           ),
-          updateDoc(doc(db, "prayers", prayer.id), {
+          updateDoc(prayerRef, {
             prayerCount: increment(1),
           }),
         ]);
@@ -484,7 +521,7 @@ function createPrayerCard(prayer) {
       }
       if (!confirm("Delete this prayer request?")) return;
       try {
-        await deleteDoc(doc(db, "prayers", prayer.id));
+        await deleteDoc(doc(db, "prayerRequests", prayer.id));
       } catch (err) {
         console.error("Error deleting prayer:", err);
         alert("Could not delete prayer request.");

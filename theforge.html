@@ -7,10 +7,6 @@
   <meta name="color-scheme" content="dark light" />
   <meta name="description" content="The Forge is a biblically grounded men's community focused on real spiritual growth, accountability, and brotherhood." />
 
-   <!-- reCAPTCHA Enterprise -->
-  <script 
-    src="https://www.google.com/recaptcha/enterprise.js?render=6LcFj-grAAAAAHkCqd7KHorciNrbZmX81Tq4Fens" 
-    async defer></script>
   
   <style>
     /* ================== BASE / THEME ================== */
@@ -394,15 +390,20 @@
       border-color: rgba(0, 255, 200, 0.5);
     }
 
-    @media (max-width: 840px) {
-      .nav-links {
-        display: none;
-      }
+  @media (max-width: 840px) {
+  .nav-links {
+    display: none;
+  }
 
-      .hamburger {
-        display: flex;
-      }
-    }
+  .hamburger {
+    display: flex;
+  }
+
+  /* HIDE DESKTOP ACCOUNT BUTTON ON MOBILE */
+  .account-btn {
+    display: none;
+  }
+}
 
     /* ================== HERO ================== */
 

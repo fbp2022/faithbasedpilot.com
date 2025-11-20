@@ -1500,63 +1500,81 @@
           </div>
         </form>
 
-        <!-- Sign Up form -->
-        <form id="signupForm" class="auth-form" style="display:none;">
-          <div class="auth-field">
-            <label class="auth-label" for="signupName">Display Name (optional)</label>
-            <input
-              id="signupName"
-              type="text"
-              class="auth-input"
-              placeholder="Name other men will see"
-            />
-          </div>
-          <div class="auth-field">
-            <label class="auth-label" for="signupEmail">Email</label>
-            <input
-              id="signupEmail"
-              type="email"
-              class="auth-input"
-              autocomplete="email"
-              required
-            />
-          </div>
-          <div class="auth-field">
-            <label class="auth-label" for="signupPassword">Password</label>
-            <input
-              id="signupPassword"
-              type="password"
-              class="auth-input"
-              autocomplete="new-password"
-              required
-            />
-          </div>
-          <div class="auth-field">
-            <label class="auth-label" for="signupPassword2">Confirm Password</label>
-            <input
-              id="signupPassword2"
-              type="password"
-              class="auth-input"
-              autocomplete="new-password"
-              required
-            />
-          </div>
-          <div class="auth-field">
-            <label class="auth-label" for="signupInvite">Invite Code</label>
-            <input
-              id="signupInvite"
-              type="text"
-              class="auth-input"
-              placeholder="Enter your invite code"
-              required
-            />
-          </div>
-          <button type="submit" class="auth-btn">Create Account</button>
-          <div class="auth-error" id="authErrorSignup"></div>
-          <div class="auth-footnote">
-            The real invite code is stored securely in Firebase, not in this page.
-          </div>
-        </form>
+<!-- Sign Up form -->
+<form id="signupForm" class="auth-form" style="display:none;">
+  <div class="auth-field">
+    <label class="auth-label" for="signupFirstName">First Name</label>
+    <input
+      id="signupFirstName"
+      type="text"
+      class="auth-input"
+      autocomplete="given-name"
+      required
+    />
+  </div>
+
+  <div class="auth-field">
+    <label class="auth-label" for="signupLastName">Last Name</label>
+    <input
+      id="signupLastName"
+      type="text"
+      class="auth-input"
+      autocomplete="family-name"
+      required
+    />
+  </div>
+
+  <div class="auth-field">
+    <label class="auth-label" for="signupEmail">Email</label>
+    <input
+      id="signupEmail"
+      type="email"
+      class="auth-input"
+      autocomplete="email"
+      required
+    />
+  </div>
+
+  <div class="auth-field">
+    <label class="auth-label" for="signupPassword">Password</label>
+    <input
+      id="signupPassword"
+      type="password"
+      class="auth-input"
+      autocomplete="new-password"
+      required
+    />
+  </div>
+
+  <div class="auth-field">
+    <label class="auth-label" for="signupPassword2">Confirm Password</label>
+    <input
+      id="signupPassword2"
+      type="password"
+      class="auth-input"
+      autocomplete="new-password"
+      required
+    />
+  </div>
+
+  <div class="auth-field">
+    <label class="auth-label" for="signupInvite">Invite Code</label>
+    <input
+      id="signupInvite"
+      type="text"
+      class="auth-input"
+      placeholder="Enter your invite code"
+      required
+    />
+  </div>
+
+  <button type="submit" class="auth-btn">Create Account</button>
+  <div class="auth-error" id="authErrorSignup"></div>
+  <div class="auth-footnote">
+    The real invite code is stored securely in Firebase, not in this page.
+  </div>
+</form>
+
       </div>
     </div>
   </div>

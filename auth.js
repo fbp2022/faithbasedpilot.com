@@ -29,10 +29,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* ================== FIREBASE SETUP ================== */
-/* IMPORTANT:
- * 1) KEEP your real config values (apiKey, projectId, etc.) from the old auth.js.
- * 2) Replace the placeholder fields below with your actual values.
- */
+
 const firebaseConfig = {
   apiKey: "AIzaSyCMoC0EjB83EDALTMPiGJNSdyRajJO5mBs",
   authDomain: "theforge-2e7bb.firebaseapp.com",
@@ -70,15 +67,16 @@ const authToggleButtons = authOverlay
 const loginEmailInput = document.getElementById("loginEmail");
 const loginPasswordInput = document.getElementById("loginPassword");
 
-// Signup fields (we’ll use first+last name now)
+// Signup fields (first + last name) + optional legacy single-name field
 const signupFirstNameInput = document.getElementById("signupFirstName");
 const signupLastNameInput = document.getElementById("signupLastName");
+const signupNameInput = document.getElementById("signupName"); // legacy, optional
 const signupEmailInput = document.getElementById("signupEmail");
 const signupPasswordInput = document.getElementById("signupPassword");
 const signupPassword2Input = document.getElementById("signupPassword2");
 const signupInviteInput = document.getElementById("signupInvite");
 
-// Sign-out button (if you add it in HTML)
+// Sign-out button (if present in HTML)
 const signOutButton = document.getElementById("signOutButton");
 
 // Prayer Requests page elements
@@ -289,8 +287,20 @@ if (signupForm) {
     e.preventDefault();
     clearAuthErrors();
 
-    const firstName = signupFirstNameInput ? signupFirstNameInput.value.trim() : "";
-    const lastName = signupLastNameInput ? signupLastNameInput.value.trim() : "";
+    // New preferred fields
+    let firstName = signupFirstNameInput ? signupFirstNameInput.value.trim() : "";
+    let lastName = signupLastNameInput ? signupLastNameInput.value.trim() : "";
+
+    // Fallback: legacy single "signupName" field (if present & used)
+    if (!firstName && !lastName && signupNameInput) {
+      const full = signupNameInput.value.trim();
+      if (full) {
+        const parts = full.split(" ");
+        firstName = parts.shift() || "";
+        lastName = parts.join(" ") || "";
+      }
+    }
+
     const email = signupEmailInput ? signupEmailInput.value.trim() : "";
     const pass1 = signupPasswordInput ? signupPasswordInput.value : "";
     const pass2 = signupPassword2Input ? signupPassword2Input.value : "";
@@ -338,7 +348,9 @@ if (signupForm) {
         console.warn("updateProfile failed (displayName)", e2);
       }
 
-      // Create profile document
+      // Create profile document.
+      // IMPORTANT: include "invitecode" so your Firestore rules' inviteCodeValid()
+      // passes when the profile doc is created.
       const profileRef = doc(db, "profiles", user.uid);
       await setDoc(
         profileRef,
@@ -347,6 +359,7 @@ if (signupForm) {
           firstName,
           lastName,
           displayName,
+          invitecode: inviteEntered,
           createdAt: serverTimestamp(),
         },
         { merge: true }
@@ -396,7 +409,9 @@ function renderPrayerList(snapshot, user) {
 
   if (requestCountLabel) {
     requestCountLabel.textContent =
-      docs.length === 1 ? "1 request currently posted." : `${docs.length} requests currently posted.`;
+      docs.length === 1
+        ? "1 request currently posted."
+        : `${docs.length} requests currently posted.`;
   }
 
   currentlyOpenPrayerId = null;
@@ -408,7 +423,8 @@ function renderPrayerList(snapshot, user) {
     const title = data.title || "(No title)";
     const postedBy = data.name || "Anonymous";
     const createdAt = formatDateTime(data.createdAt);
-    const prayerCount = typeof data.prayerCount === "number" ? data.prayerCount : 0;
+    const prayerCount =
+      typeof data.prayerCount === "number" ? data.prayerCount : 0;
     const prayedBy = Array.isArray(data.prayedBy) ? data.prayedBy : [];
     const hasPrayed = !!(user && prayedBy.includes(user.uid));
     const message = data.message || "";
@@ -530,7 +546,8 @@ function renderPrayerList(snapshot, user) {
     }
 
     header.addEventListener("click", () => {
-      const alreadyOpen = currentlyOpenPrayerId === id && card.classList.contains("open");
+      const alreadyOpen =
+        currentlyOpenPrayerId === id && card.classList.contains("open");
 
       // close all cards
       const openCards = prayerListEl.querySelectorAll(".prayer-card.open");
@@ -602,13 +619,12 @@ if (prayerForm) {
 
       // Hard refresh so the new request appears exactly once & list is fresh
       window.location.reload();
-} catch (error) {
-  console.error("Error adding prayer request:", error);
-  if (newPrayerError) {
-    newPrayerError.textContent = "Could not post request. Try again.";
-  }
-}
-
+    } catch (error) {
+      console.error("Error adding prayer request:", error);
+      if (newPrayerError) {
+        newPrayerError.textContent = "Could not post request. Try again.";
+      }
+    }
   });
 }
 

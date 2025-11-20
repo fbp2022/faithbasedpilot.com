@@ -642,7 +642,7 @@ onAuthStateChanged(auth, (user) => {
   // Nice label to show for the user
   const signedInLabel = user
     ? user.displayName || user.email || "Signed in"
-    : "Account";
+    : "Guest";
 
   // Update footer status
   if (authStatusEl) {

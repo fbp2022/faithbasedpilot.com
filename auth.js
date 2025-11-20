@@ -34,12 +34,13 @@ import {
  * 2) Replace the placeholder fields below with your actual values.
  */
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",
-  authDomain: "YOUR_AUTH_DOMAIN_HERE",
-  projectId: "YOUR_PROJECT_ID_HERE",
-  storageBucket: "YOUR_STORAGE_BUCKET_HERE",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID_HERE",
-  appId: "YOUR_APP_ID_HERE",
+  apiKey: "AIzaSyCMoC0EjB83EDALTMPiGJNSdyRajJO5mBs",
+  authDomain: "theforge-2e7bb.firebaseapp.com",
+  projectId: "theforge-2e7bb",
+  storageBucket: "theforge-2e7bb.firebasestorage.app",
+  messagingSenderId: "463141276936",
+  appId: "1:463141276936:web:978172363e020b9f09f0bd",
+  measurementId: "G-333M1YRYLR",
 };
 
 const app = initializeApp(firebaseConfig);

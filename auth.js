@@ -79,6 +79,12 @@ const signupInviteInput = document.getElementById("signupInvite");
 // Sign-out button (if present in HTML)
 const signOutButton = document.getElementById("signOutButton");
 
+// NEW: nav/account labels (for theforge.html / prayerrequests.html nav bars)
+const navUserLabel = document.getElementById("navUserLabel");
+const navAuthButtonLabel = document.getElementById("navAuthButtonLabel");
+const navMobileUserLabel = document.getElementById("navMobileUserLabel");
+const navMobileAuthButtonLabel = document.getElementById("navMobileAuthButtonLabel");
+
 // Prayer Requests page elements
 const prayerForm = document.getElementById("prayerForm");
 const newPrayerError = document.getElementById("newPrayerError");
@@ -633,14 +639,32 @@ if (prayerForm) {
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
 
+  // Nice label to show for the user
+  const signedInLabel = user
+    ? user.displayName || user.email || "Signed in"
+    : "Guest";
+
   // Update footer status
   if (authStatusEl) {
     if (user) {
-      const label = user.displayName || user.email || "Signed in";
-      authStatusEl.textContent = `Signed in as ${label}`;
+      authStatusEl.textContent = `Signed in as ${signedInLabel}`;
     } else {
       authStatusEl.textContent = "Not signed in";
     }
+  }
+
+  // NEW: Update nav/account labels if those elements exist
+  if (navUserLabel) {
+    navUserLabel.textContent = user ? signedInLabel : "Guest";
+  }
+  if (navMobileUserLabel) {
+    navMobileUserLabel.textContent = user ? signedInLabel : "Guest";
+  }
+  if (navAuthButtonLabel) {
+    navAuthButtonLabel.textContent = user ? "My Account" : "Sign In";
+  }
+  if (navMobileAuthButtonLabel) {
+    navMobileAuthButtonLabel.textContent = user ? "My Account" : "Sign In / Create";
   }
 
   // Toggle sign out button visibility if present

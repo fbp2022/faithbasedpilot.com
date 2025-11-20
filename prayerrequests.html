@@ -24,6 +24,7 @@
 
       --bg-header-strong: rgba(0, 0, 0, 0.9);
       --bg-header-soft: rgba(0, 0, 0, 0.75);
+      --bg-mobile-overlay: rgba(3, 7, 18, 0.96);
 
       --border-subtle: rgba(0, 255, 200, 0.25);
       --border-strong: rgba(0, 255, 200, 0.5);
@@ -245,19 +246,20 @@
       outline-offset: 3px;
     }
 
+    /* Hamburger (mobile) */
     .hamburger {
       display: none;
+      width: 40px;
+      height: 34px;
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      padding: 6px 10px;
-      background: radial-gradient(
-        circle at 20% 0%,
-        rgba(148, 163, 184, 0.16),
-        rgba(15, 23, 42, 0.96)
-      );
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
       cursor: pointer;
       align-items: center;
-      gap: 0;
+      justify-content: center;
+      gap: 4px;
+      flex-direction: column;
+      padding: 6px 0;
       transition:
         background var(--transition-fast),
         box-shadow var(--transition-fast),
@@ -271,98 +273,95 @@
       background: var(--text-muted);
       transition:
         transform var(--transition-fast),
-        opacity var(--transition-fast);
+        opacity var(--transition-fast),
+        background var(--transition-fast);
     }
 
-    .hamburger-line + .hamburger-line {
-      margin-top: 3px;
+    .hamburger:hover {
+      background: var(--bg-card-soft);
+      box-shadow: 0 0 15px rgba(0, 255, 200, 0.35);
+      transform: translateY(-1px);
     }
 
-    @media (max-width: 768px) {
-      .nav-links {
-        display: none;
-      }
-      .hamburger {
-        display: inline-flex;
-      }
-      /* Hide desktop account + sign out buttons on mobile; use hamburger menu instead */
-      .nav-actions .account-btn {
-        display: none;
-      }
+    .hamburger.is-open .hamburger-line:nth-child(1) {
+      transform: translateY(4px) rotate(45deg);
+      background: var(--accent);
     }
 
-    /* MOBILE NAV OVERLAY */
+    .hamburger.is-open .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.is-open .hamburger-line:nth-child(3) {
+      transform: translateY(-4px) rotate(-45deg);
+      background: var(--accent);
+    }
+
+    /* Mobile nav overlay */
     .mobile-nav {
-      position: fixed;
-      inset: 0;
-      z-index: 35;
-      background: radial-gradient(
-          circle at top,
-          rgba(15, 23, 42, 0.98),
-          rgba(2, 6, 23, 0.98)
-        ),
-        radial-gradient(circle at bottom, rgba(15, 23, 42, 0.9), #020617);
-      backdrop-filter: blur(22px);
       display: none;
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: flex-start;
-      padding: 1.2rem 1.2rem 2rem;
-      color: #e5e7eb;
+      position: fixed;
+      inset: var(--nav-height) 0 0 0;
+      background:
+        radial-gradient(circle at 0 0, rgba(0, 255, 200, 0.16), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(0, 140, 255, 0.18), transparent 60%),
+        var(--bg-mobile-overlay);
+      backdrop-filter: blur(20px);
+      z-index: 35;
     }
 
     .mobile-nav.open {
-      display: flex;
+      display: block;
     }
 
-    .mobile-nav-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-bottom: 0.5rem;
-    }
-
-    .mobile-nav-links {
-      margin-top: 1.5rem;
+    .mobile-nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem 2rem;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.5rem;
     }
 
-    .mobile-nav-links a,
-    .mobile-nav-links button {
+    .mobile-nav-inner a,
+    .mobile-nav-inner button.mobile-account-btn {
+      text-decoration: none;
       font-size: 0.9rem;
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      padding: 0.7rem 0.1rem;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
-      text-align: left;
-      color: #e5e7eb;
-      text-decoration: none;
-      background: none;
-      border-radius: 0;
-      border-top: none;
-      border-left: none;
-      border-right: none;
+      color: var(--text-muted);
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       cursor: pointer;
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+      background: transparent;
+      text-align: left;
     }
 
-    .mobile-nav-links a:hover,
-    .mobile-nav-links button:hover {
+    .mobile-nav-inner a:last-child,
+    .mobile-nav-inner button.mobile-account-btn:last-child {
+      border-bottom: none;
+    }
+
+    .mobile-nav-inner a:hover,
+    .mobile-nav-inner button.mobile-account-btn:hover {
       color: var(--accent);
-      border-color: var(--accent);
+      border-color: rgba(0, 255, 200, 0.5);
     }
 
-    .mobile-nav-footer {
-      margin-top: auto;
-      padding-top: 1.25rem;
-      border-top: 1px solid rgba(148, 163, 184, 0.35);
-      font-size: 0.78rem;
-      color: #9ca3af;
-      display: flex;
-      justify-content: space-between;
-      gap: 0.75rem;
-      flex-wrap: wrap;
+    @media (max-width: 840px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      /* HIDE DESKTOP ACCOUNT BUTTON ON MOBILE (but keep Sign Out visible) */
+      #accountButton {
+        display: none;
+      }
     }
 
     /* ================== HERO / INTRO ================== */
@@ -1313,36 +1312,17 @@
 
     <!-- MOBILE NAV -->
     <div class="mobile-nav" id="mobileNav" aria-hidden="true">
-      <div class="mobile-nav-top">
-        <div class="brand">
-          <img src="images/theforgelogo.png" alt="The Forge logo" class="brand-logo" />
-          <div>
-            <div class="brand-text-main">The Forge</div>
-            <div class="brand-text-sub">Prayer Requests</div>
-          </div>
-        </div>
-        <button
-          class="hamburger"
-          id="mobileNavClose"
-          type="button"
-          aria-label="Close navigation menu"
-        >
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-        </button>
-      </div>
-
-      <div class="mobile-nav-links">
+      <div class="mobile-nav-inner">
         <a href="theforge.html">Forge Home</a>
         <a href="#newRequest">New Request</a>
         <a href="#requests">All Requests</a>
-        <button type="button" id="mobileAccountButton">Account</button>
-      </div>
-
-      <div class="mobile-nav-footer">
-        <span>Tap “Account” to sign in or create an account.</span>
-        <span>Only members can view and post requests.</span>
+        <button
+          type="button"
+          class="mobile-account-btn"
+          id="mobileAccountButton"
+        >
+          Account
+        </button>
       </div>
     </div>
   </header>
@@ -1632,10 +1612,9 @@
       yearEl.textContent = new Date().getFullYear();
     }
 
-    // MOBILE NAV OPEN/CLOSE
+    // MOBILE NAV OPEN/CLOSE + HAMBURGER ANIMATION
     const hamburger = document.getElementById("hamburger");
     const mobileNav = document.getElementById("mobileNav");
-    const mobileClose = document.getElementById("mobileNavClose");
 
     function openMobileNav() {
       if (!mobileNav) return;
@@ -1649,14 +1628,34 @@
       mobileNav.setAttribute("aria-hidden", "true");
     }
 
-    if (hamburger) hamburger.addEventListener("click", openMobileNav);
-    if (mobileClose) mobileClose.addEventListener("click", closeMobileNav);
+    if (hamburger) {
+      hamburger.addEventListener("click", () => {
+        const isOpen = hamburger.classList.toggle("is-open");
+        if (isOpen) {
+          openMobileNav();
+        } else {
+          closeMobileNav();
+        }
+      });
+    }
 
-    // Expose so auth.js can close the nav when opening the Account modal
-    window.__forgeCloseMobileNav = closeMobileNav;
+    // Close mobile nav when clicking any link inside it
+    const mobileNavLinks = document.querySelectorAll(".mobile-nav-inner a");
+    mobileNavLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        closeMobileNav();
+        if (hamburger) hamburger.classList.remove("is-open");
+      });
+    });
+
+    // Expose close so auth.js can shut the nav when opening Account modal
+    window.__forgeCloseMobileNav = function () {
+      closeMobileNav();
+      if (hamburger) hamburger.classList.remove("is-open");
+    };
   </script>
 
-  <!-- Live Firebase logic for auth + prayerRequests -->
+  <!-- Live Firebase logic for auth + prayerRequests (handles hard reloads on submit / I'm praying / auth) -->
   <script type="module" src="auth.js"></script>
 </body>
 </html>

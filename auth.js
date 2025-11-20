@@ -642,7 +642,7 @@ onAuthStateChanged(auth, (user) => {
   // Nice label to show for the user
   const signedInLabel = user
     ? user.displayName || user.email || "Signed in"
-    : "Guest";
+    : "Account";
 
   // Update footer status
   if (authStatusEl) {
@@ -655,10 +655,10 @@ onAuthStateChanged(auth, (user) => {
 
   // NEW: Update nav/account labels if those elements exist
   if (navUserLabel) {
-    navUserLabel.textContent = user ? signedInLabel : "Guest";
+    navUserLabel.textContent = user ? signedInLabel : "Account";
   }
   if (navMobileUserLabel) {
-    navMobileUserLabel.textContent = user ? signedInLabel : "Guest";
+    navMobileUserLabel.textContent = user ? signedInLabel : "Account";
   }
   if (navAuthButtonLabel) {
     navAuthButtonLabel.textContent = user ? "My Account" : "Sign In";

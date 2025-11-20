@@ -655,10 +655,10 @@ onAuthStateChanged(auth, (user) => {
 
   // NEW: Update nav/account labels if those elements exist
   if (navUserLabel) {
-    navUserLabel.textContent = user ? signedInLabel : "Account";
+    navUserLabel.textContent = user ? signedInLabel : "Guest";
   }
   if (navMobileUserLabel) {
-    navMobileUserLabel.textContent = user ? signedInLabel : "Account";
+    navMobileUserLabel.textContent = user ? signedInLabel : "Guest";
   }
   if (navAuthButtonLabel) {
     navAuthButtonLabel.textContent = user ? "My Account" : "Sign In";

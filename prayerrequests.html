@@ -2,36 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Forge · Prayer Requests</title>
-  <meta name="color-scheme" content="dark" />
   <meta
-    content="A private prayer wall for The Forge men's community. Submit requests, pray for one another, and track how many men are praying."
     name="description"
+    content="A private prayer wall for The Forge men's community. Submit requests, pray for one another, and track how many men are praying."
   />
 
   <style>
     /* ================== BASE / THEME ================== */
     :root {
       --bg-main: #05070f;
-      --bg-elevated: rgba(10, 14, 30, 0.95);
-      --bg-card: rgba(9, 14, 32, 0.95);
-      --bg-card-soft: rgba(18, 24, 48, 0.9);
+      --bg-elevated: rgba(10, 14, 30, 0.97);
+      --bg-card: rgba(9, 14, 32, 0.98);
+      --bg-card-soft: rgba(18, 24, 48, 0.96);
       --bg-deep: #000000;
+      --bg-mobile-overlay: rgba(3, 7, 18, 0.98);
 
-      --bg-header-strong: rgba(0, 0, 0, 0.9);
-      --bg-header-soft: rgba(0, 0, 0, 0.75);
+      --bg-header-strong: rgba(3, 7, 18, 0.96);
+      --bg-header-soft: rgba(3, 7, 18, 0.9);
 
       --border-subtle: rgba(0, 255, 200, 0.25);
       --border-strong: rgba(0, 255, 200, 0.5);
 
       --accent: #00ffd0;
-      --accent-soft: rgba(0, 255, 208, 0.14);
-      --accent-strong: rgba(0, 255, 208, 0.85);
-      --accent-soft-2: rgba(56, 189, 248, 0.24);
+      --accent-soft: rgba(0, 255, 208, 0.16);
+      --accent-strong: rgba(34, 197, 235, 0.95);
 
       --accent-warm: #f97316;
       --accent-danger: #f97373;
@@ -42,8 +38,8 @@
       --text-strong: #f9fafb;
       --text-accent: #a5f3fc;
 
-      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.78);
-      --shadow-glow: 0 0 40px rgba(34, 211, 238, 0.35);
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.8);
+      --shadow-glow: 0 0 40px rgba(0, 255, 208, 0.4);
 
       --radius-card: 1.4rem;
       --radius-pill: 999px;
@@ -64,9 +60,10 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
         "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 60%),
-        radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.18), transparent 60%),
-        linear-gradient(to bottom, var(--bg-deep), #020617 45%, #020617 100%);
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.14), transparent 60%),
+        radial-gradient(circle at top right, rgba(56, 189, 248, 0.12), transparent 58%),
+        radial-gradient(circle at bottom, rgba(15, 23, 42, 0.8), transparent 60%),
+        linear-gradient(to bottom, #020617 0%, #020617 55%, #020617 100%);
       color: var(--text-main);
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
@@ -92,14 +89,14 @@
       z-index: 40;
       background: radial-gradient(
           circle at top,
-          rgba(15, 23, 42, 0.9),
-          rgba(15, 23, 42, 0.98)
+          rgba(15, 23, 42, 0.98),
+          rgba(3, 7, 18, 0.98)
         );
       backdrop-filter: blur(18px);
-      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.9);
       box-shadow:
-        0 18px 45px rgba(15, 23, 42, 0.9),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
+        0 18px 45px rgba(15, 23, 42, 0.95),
+        0 0 0 1px rgba(15, 23, 42, 0.95);
     }
 
     .nav {
@@ -125,10 +122,10 @@
       height: 40px;
       border-radius: 999px;
       object-fit: cover;
-      border: 1px solid rgba(248, 250, 252, 0.5);
+      border: 1px solid rgba(248, 250, 252, 0.6);
       box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 0.9),
-        0 12px 30px rgba(0, 0, 0, 0.7);
+        0 0 0 1px rgba(15, 23, 42, 1),
+        0 12px 30px rgba(0, 0, 0, 0.8);
       background: radial-gradient(circle at 30% 30%, #facc15, #f97316);
     }
 
@@ -174,9 +171,9 @@
       border-radius: 999px;
       background: linear-gradient(
         90deg,
-        #22d3ee,
-        #06b6d4,
-        #0ea5e9
+        rgba(0, 255, 208, 0.2),
+        var(--accent),
+        rgba(0, 255, 208, 0.2)
       );
       transition: width 180ms ease-out;
     }
@@ -205,7 +202,7 @@
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.16em;
-      background: transparent;
+      background: rgba(15, 23, 42, 0.9);
       color: var(--accent);
       cursor: pointer;
       display: inline-flex;
@@ -227,11 +224,11 @@
       border-color: var(--accent-strong);
       background: radial-gradient(
         circle at 0% 0%,
-        rgba(34, 211, 238, 0.15),
-        rgba(15, 23, 42, 0.95)
+        var(--accent-soft),
+        rgba(15, 23, 42, 0.98)
       );
       color: #f9fafb;
-      box-shadow: 0 0 22px rgba(34, 211, 238, 0.4);
+      box-shadow: 0 0 22px rgba(0, 255, 208, 0.45);
       transform: translateY(-1px);
     }
 
@@ -245,19 +242,33 @@
       outline-offset: 3px;
     }
 
+    /* Sign-out button (same style, slightly muted text) */
+    #signOutButton {
+      display: none; /* auth.js will show it when signed in */
+      color: #fca5a5;
+      border-color: rgba(248, 113, 113, 0.55);
+    }
+
+    #signOutButton:hover {
+      color: #fee2e2;
+      border-color: rgba(248, 113, 113, 0.95);
+      box-shadow: 0 0 22px rgba(248, 113, 113, 0.45);
+    }
+
+    /* Hamburger (mobile) */
     .hamburger {
       display: none;
+      width: 40px;
+      height: 34px;
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      padding: 6px 10px;
-      background: radial-gradient(
-        circle at 20% 0%,
-        rgba(148, 163, 184, 0.16),
-        rgba(15, 23, 42, 0.96)
-      );
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
       cursor: pointer;
       align-items: center;
-      gap: 0;
+      justify-content: center;
+      gap: 4px;
+      flex-direction: column;
+      padding: 6px 0;
       transition:
         background var(--transition-fast),
         box-shadow var(--transition-fast),
@@ -271,98 +282,95 @@
       background: var(--text-muted);
       transition:
         transform var(--transition-fast),
-        opacity var(--transition-fast);
+        opacity var(--transition-fast),
+        background var(--transition-fast);
     }
 
-    .hamburger-line + .hamburger-line {
-      margin-top: 3px;
+    .hamburger:hover {
+      background: var(--bg-card-soft);
+      box-shadow: 0 0 15px rgba(0, 255, 200, 0.35);
+      transform: translateY(-1px);
     }
 
-    @media (max-width: 768px) {
-      .nav-links {
-        display: none;
-      }
-      .hamburger {
-        display: inline-flex;
-      }
-      /* Hide desktop account + sign out buttons on mobile; use hamburger menu instead */
-      .nav-actions .account-btn {
-        display: none;
-      }
+    .hamburger.is-open .hamburger-line:nth-child(1) {
+      transform: translateY(4px) rotate(45deg);
+      background: var(--accent);
     }
 
-    /* MOBILE NAV OVERLAY */
+    .hamburger.is-open .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.is-open .hamburger-line:nth-child(3) {
+      transform: translateY(-4px) rotate(-45deg);
+      background: var(--accent);
+    }
+
+    /* Mobile nav overlay */
     .mobile-nav {
-      position: fixed;
-      inset: 0;
-      z-index: 35;
-      background: radial-gradient(
-          circle at top,
-          rgba(15, 23, 42, 0.98),
-          rgba(2, 6, 23, 0.98)
-        ),
-        radial-gradient(circle at bottom, rgba(15, 23, 42, 0.9), #020617);
-      backdrop-filter: blur(22px);
       display: none;
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: flex-start;
-      padding: 1.2rem 1.2rem 2rem;
-      color: #e5e7eb;
+      position: fixed;
+      inset: var(--nav-height) 0 0 0;
+      background:
+        radial-gradient(circle at 0 0, rgba(0, 255, 200, 0.16), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(0, 140, 255, 0.18), transparent 60%),
+        var(--bg-mobile-overlay);
+      backdrop-filter: blur(20px);
+      z-index: 35;
     }
 
     .mobile-nav.open {
-      display: flex;
+      display: block;
     }
 
-    .mobile-nav-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-bottom: 0.5rem;
-    }
-
-    .mobile-nav-links {
-      margin-top: 1.5rem;
+    .mobile-nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem 2rem;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.5rem;
     }
 
-    .mobile-nav-links a,
-    .mobile-nav-links button {
+    .mobile-nav-inner a,
+    .mobile-nav-inner button.mobile-account-btn {
+      text-decoration: none;
       font-size: 0.9rem;
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      padding: 0.7rem 0.1rem;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
-      text-align: left;
-      color: #e5e7eb;
-      text-decoration: none;
-      background: none;
-      border-radius: 0;
-      border-top: none;
-      border-left: none;
-      border-right: none;
+      color: var(--text-muted);
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       cursor: pointer;
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+      background: transparent;
+      text-align: left;
     }
 
-    .mobile-nav-links a:hover,
-    .mobile-nav-links button:hover {
+    .mobile-nav-inner a:last-child,
+    .mobile-nav-inner button.mobile-account-btn:last-child {
+      border-bottom: none;
+    }
+
+    .mobile-nav-inner a:hover,
+    .mobile-nav-inner button.mobile-account-btn:hover {
       color: var(--accent);
-      border-color: var(--accent);
+      border-color: rgba(0, 255, 200, 0.5);
     }
 
-    .mobile-nav-footer {
-      margin-top: auto;
-      padding-top: 1.25rem;
-      border-top: 1px solid rgba(148, 163, 184, 0.35);
-      font-size: 0.78rem;
-      color: #9ca3af;
-      display: flex;
-      justify-content: space-between;
-      gap: 0.75rem;
-      flex-wrap: wrap;
+    @media (max-width: 840px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      /* Hide desktop account buttons on mobile */
+      .account-btn {
+        display: none;
+      }
     }
 
     /* ================== HERO / INTRO ================== */
@@ -399,12 +407,12 @@
       border-radius: 999px;
       background: radial-gradient(
         circle at 0% 50%,
-        rgba(45, 212, 191, 0.3),
+        var(--accent-soft),
         rgba(15, 23, 42, 0.98)
       );
-      border: 1px solid rgba(45, 212, 191, 0.5);
+      border: 1px solid var(--border-strong);
       box-shadow:
-        0 0 20px rgba(56, 189, 248, 0.4),
+        0 0 20px rgba(0, 255, 208, 0.4),
         0 2px 10px rgba(15, 23, 42, 0.95);
     }
 
@@ -438,10 +446,10 @@
       gap: 0.45rem;
       padding: 0.32rem 0.75rem;
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.5);
       background: radial-gradient(
         circle at 0% 0%,
-        rgba(148, 163, 184, 0.12),
+        rgba(15, 23, 42, 0.98),
         rgba(15, 23, 42, 0.96)
       );
     }
@@ -460,23 +468,23 @@
       padding: 1.2rem 1.2rem 1.1rem;
       background: radial-gradient(
           circle at 0 0,
-          rgba(56, 189, 248, 0.14),
+          rgba(0, 255, 208, 0.14),
           transparent 60%
         ),
         radial-gradient(
           circle at 100% 100%,
-          rgba(245, 158, 11, 0.16),
+          rgba(250, 204, 21, 0.16),
           transparent 55%
         ),
         linear-gradient(
           135deg,
           rgba(15, 23, 42, 0.98),
-          rgba(15, 23, 42, 0.92)
+          rgba(15, 23, 42, 0.94)
         );
       border: 1px solid rgba(148, 163, 184, 0.5);
       box-shadow:
         0 18px 45px rgba(15, 23, 42, 0.95),
-        0 0 30px rgba(34, 211, 238, 0.35);
+        0 0 30px rgba(0, 255, 208, 0.35);
       overflow: hidden;
     }
 
@@ -564,7 +572,7 @@
       padding: 1.1rem 1.1rem 0.9rem;
       background: radial-gradient(
           circle at 0 0,
-          rgba(56, 189, 248, 0.09),
+          rgba(0, 255, 208, 0.09),
           transparent 52%
         ),
         radial-gradient(
@@ -577,28 +585,11 @@
           rgba(15, 23, 42, 0.98),
           rgba(15, 23, 42, 0.97)
         );
-      border: 1px solid rgba(148, 163, 184, 0.6);
+      border: 1px solid rgba(15, 23, 42, 0.95);
       box-shadow:
         0 18px 45px rgba(15, 23, 42, 0.9),
         0 0 40px rgba(8, 47, 73, 0.75);
       overflow: hidden;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      background:
-        radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.16), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(245, 158, 11, 0.24), transparent 60%);
-      opacity: 0.4;
-      mix-blend-mode: screen;
-      pointer-events: none;
-    }
-
-    .card > * {
-      position: relative;
-      z-index: 1;
     }
 
     .card-title {
@@ -644,7 +635,7 @@
     input[type="password"],
     textarea {
       border-radius: 0.9rem;
-      border: 1px solid rgba(148, 163, 184, 0.6);
+      border: 1px solid rgba(30, 64, 175, 0.7);
       padding: 0.5rem 0.75rem;
       font-size: 0.85rem;
       background: radial-gradient(
@@ -676,8 +667,8 @@
     textarea:focus-visible {
       border-color: var(--accent);
       box-shadow:
-        0 0 0 1px rgba(34, 211, 238, 0.7),
-        0 0 25px rgba(56, 189, 248, 0.35);
+        0 0 0 1px rgba(0, 255, 208, 0.8),
+        0 0 25px rgba(0, 255, 208, 0.4);
       transform: translateY(-0.5px);
     }
 
@@ -727,59 +718,31 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #22d3ee, #06b6d4, #0ea5e9);
-      color: #0b1120;
-      border: 1px solid rgba(15, 23, 42, 0.9);
+      background: linear-gradient(135deg, var(--accent), #0ea5e9);
+      color: #020617;
+      border: 1px solid rgba(15, 23, 42, 0.95);
       box-shadow:
         0 12px 30px rgba(15, 23, 42, 1),
-        0 0 28px rgba(56, 189, 248, 0.65);
+        0 0 28px rgba(0, 255, 208, 0.6);
     }
 
     .btn-primary:hover {
       transform: translateY(-1px);
       box-shadow:
         0 16px 40px rgba(15, 23, 42, 1),
-        0 0 38px rgba(56, 189, 248, 0.8);
+        0 0 32px rgba(0, 255, 208, 0.8);
     }
 
     .btn-primary:active {
       transform: translateY(0);
       box-shadow:
         0 10px 22px rgba(15, 23, 42, 0.9),
-        0 0 26px rgba(56, 189, 248, 0.7);
+        0 0 26px rgba(0, 255, 208, 0.6);
     }
 
     .btn-primary:focus-visible {
-      outline: 2px solid #22d3ee;
+      outline: 2px solid #0ea5e9;
       outline-offset: 3px;
-    }
-
-    .btn-soft {
-      background: radial-gradient(
-        circle at 0 0,
-        rgba(56, 189, 248, 0.18),
-        rgba(15, 23, 42, 0.96)
-      );
-      color: #e5e7eb;
-      border: 1px solid rgba(148, 163, 184, 0.9);
-      box-shadow:
-        0 12px 26px rgba(15, 23, 42, 0.88),
-        0 0 22px rgba(34, 211, 238, 0.35);
-    }
-
-    .btn-soft:hover {
-      border-color: var(--accent-strong);
-      box-shadow:
-        0 14px 32px rgba(15, 23, 42, 0.96),
-        0 0 28px rgba(34, 211, 238, 0.5);
-      transform: translateY(-1px);
-    }
-
-    .btn-soft:active {
-      transform: translateY(0);
-      box-shadow:
-        0 10px 24px rgba(15, 23, 42, 0.85),
-        0 0 24px rgba(34, 211, 238, 0.35);
     }
 
     .badge-ttl {
@@ -814,21 +777,21 @@
     }
 
     .prayer-list::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.9);
       border-radius: 999px;
     }
 
     .prayer-list::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.7);
+      background: rgba(148, 163, 184, 0.75);
       border-radius: 999px;
     }
 
     .prayer-card {
       border-radius: 1rem;
-      border: 1px solid rgba(148, 163, 184, 0.65);
+      border: 1px solid rgba(15, 23, 42, 0.95);
       background: radial-gradient(
           circle at 0 0,
-          rgba(56, 189, 248, 0.1),
+          rgba(0, 255, 208, 0.1),
           transparent 45%
         ),
         radial-gradient(
@@ -841,7 +804,7 @@
           rgba(15, 23, 42, 0.98),
           rgba(15, 23, 42, 0.97)
         );
-      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.9);
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.95);
       padding: 0.7rem 0.75rem 0.55rem;
       cursor: pointer;
       display: flex;
@@ -857,19 +820,19 @@
     }
 
     .prayer-card:hover {
-      border-color: rgba(56, 189, 248, 0.8);
+      border-color: rgba(0, 255, 208, 0.85);
       box-shadow:
         0 16px 38px rgba(15, 23, 42, 1),
-        0 0 30px rgba(34, 211, 238, 0.4);
+        0 0 30px rgba(0, 255, 208, 0.4);
       transform: translateY(-1.5px);
       background-position: 100% 50%;
     }
 
     .prayer-card.open {
-      border-color: rgba(56, 189, 248, 0.9);
+      border-color: rgba(0, 255, 208, 0.95);
       box-shadow:
         0 18px 45px rgba(15, 23, 42, 1),
-        0 0 36px rgba(34, 211, 238, 0.45);
+        0 0 36px rgba(0, 255, 208, 0.45);
     }
 
     .prayer-header {
@@ -971,12 +934,12 @@
       transform: rotate(90deg);
       background: radial-gradient(
         circle at 0 0,
-        rgba(56, 189, 248, 0.2),
+        rgba(0, 255, 208, 0.2),
         rgba(15, 23, 42, 0.98)
       );
-      border-color: rgba(34, 211, 238, 0.9);
+      border-color: rgba(0, 255, 208, 0.9);
       box-shadow:
-        0 0 14px rgba(34, 211, 238, 0.7),
+        0 0 14px rgba(0, 255, 208, 0.7),
         0 0 0 1px rgba(15, 23, 42, 1);
     }
 
@@ -1041,7 +1004,7 @@
       background:
         radial-gradient(
           circle at 0 0,
-          rgba(56, 189, 248, 0.14),
+          rgba(0, 255, 208, 0.14),
           transparent 60%
         ),
         radial-gradient(
@@ -1090,7 +1053,7 @@
     .auth-close-btn:hover {
       border-color: var(--accent-strong);
       color: #f9fafb;
-      box-shadow: 0 0 18px rgba(56, 189, 248, 0.45);
+      box-shadow: 0 0 18px rgba(0, 255, 208, 0.45);
       transform: translateY(-1px);
     }
 
@@ -1145,12 +1108,12 @@
     .auth-toggle-btn.active {
       background: radial-gradient(
         circle at 0 0,
-        rgba(56, 189, 248, 0.26),
+        rgba(0, 255, 208, 0.26),
         rgba(15, 23, 42, 0.98)
       );
       color: #e5e7eb;
       box-shadow:
-        0 0 18px rgba(34, 211, 238, 0.55),
+        0 0 18px rgba(0, 255, 208, 0.55),
         0 0 0 1px rgba(15, 23, 42, 1);
       transform: translateY(-0.5px);
     }
@@ -1175,7 +1138,7 @@
 
     .auth-input {
       border-radius: 0.9rem;
-      border: 1px solid rgba(148, 163, 184, 0.7);
+      border: 1px solid rgba(30, 64, 175, 0.7);
       padding: 0.45rem 0.75rem;
       font-size: 0.86rem;
       background: radial-gradient(
@@ -1194,8 +1157,8 @@
     .auth-input:focus-visible {
       border-color: var(--accent);
       box-shadow:
-        0 0 0 1px rgba(34, 211, 238, 0.8),
-        0 0 22px rgba(34, 211, 238, 0.4);
+        0 0 0 1px rgba(0, 255, 208, 0.8),
+        0 0 22px rgba(0, 255, 208, 0.4);
     }
 
     .auth-btn {
@@ -1205,32 +1168,35 @@
       font-size: 0.78rem;
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      background: linear-gradient(135deg, #22d3ee, #06b6d4, #0ea5e9);
+      background: linear-gradient(135deg, var(--accent), #0ea5e9);
       color: #020617;
       cursor: pointer;
       box-shadow:
         0 12px 30px rgba(15, 23, 42, 1),
-        0 0 28px rgba(56, 189, 248, 0.8);
+        0 0 28px rgba(0, 255, 208, 0.75);
       margin-top: 0.4rem;
       justify-content: center;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .auth-btn:hover {
       transform: translateY(-1px);
       box-shadow:
         0 15px 32px rgba(15, 23, 42, 1),
-        0 0 32px rgba(56, 189, 248, 0.9);
+        0 0 32px rgba(0, 255, 208, 0.9);
     }
 
     .auth-btn:active {
       transform: translateY(0);
       box-shadow:
         0 10px 22px rgba(15, 23, 42, 0.95),
-        0 0 26px rgba(56, 189, 248, 0.8);
+        0 0 26px rgba(0, 255, 208, 0.7);
     }
 
     .auth-btn:focus-visible {
-      outline: 2px solid #22d3ee;
+      outline: 2px solid var(--accent);
       outline-offset: 3px;
     }
 
@@ -1282,22 +1248,14 @@
       </div>
 
       <div class="nav-actions">
-        <!-- Desktop Account button (opens modal) -->
         <button class="account-btn" id="accountButton" type="button">
           <span class="icon">👤</span>
           <span>Account</span>
         </button>
-        <!-- Desktop Sign Out button (only shown when signed in via auth.js) -->
-        <button
-          class="account-btn"
-          id="signOutButton"
-          type="button"
-          style="display:none;"
-        >
-          <span class="icon">🚪</span>
+        <button class="account-btn" id="signOutButton" type="button">
+          <span class="icon">⏏</span>
           <span>Sign Out</span>
         </button>
-        <!-- Hamburger for mobile -->
         <button
           class="hamburger"
           id="hamburger"
@@ -1313,36 +1271,17 @@
 
     <!-- MOBILE NAV -->
     <div class="mobile-nav" id="mobileNav" aria-hidden="true">
-      <div class="mobile-nav-top">
-        <div class="brand">
-          <img src="images/theforgelogo.png" alt="The Forge logo" class="brand-logo" />
-          <div>
-            <div class="brand-text-main">The Forge</div>
-            <div class="brand-text-sub">Prayer Requests</div>
-          </div>
-        </div>
-        <button
-          class="hamburger"
-          id="mobileNavClose"
-          type="button"
-          aria-label="Close navigation menu"
-        >
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-        </button>
-      </div>
-
-      <div class="mobile-nav-links">
+      <div class="mobile-nav-inner">
         <a href="theforge.html">Forge Home</a>
         <a href="#newRequest">New Request</a>
         <a href="#requests">All Requests</a>
-        <button type="button" id="mobileAccountButton">Account</button>
-      </div>
-
-      <div class="mobile-nav-footer">
-        <span>Tap “Account” to sign in or create an account.</span>
-        <span>Only members can view and post requests.</span>
+        <button
+          type="button"
+          id="mobileAccountButton"
+          class="mobile-account-btn"
+        >
+          Account
+        </button>
       </div>
     </div>
   </header>
@@ -1408,11 +1347,20 @@
           <div class="field-grid">
             <div class="field">
               <label for="title">Title</label>
-              <input id="title" type="text" required placeholder="Short summary (e.g., Job interview on Friday)" />
+              <input
+                id="title"
+                type="text"
+                required
+                placeholder="Short summary (e.g., Job interview on Friday)"
+              />
             </div>
             <div class="field">
               <label for="name">Name (optional)</label>
-              <input id="name" type="text" placeholder="Leave blank to post anonymously" />
+              <input
+                id="name"
+                type="text"
+                placeholder="Leave blank to post anonymously"
+              />
               <p class="helper-text">
                 If blank, the request will show as <strong>“Anonymous”</strong>.
               </p>
@@ -1553,26 +1501,15 @@
           </div>
         </form>
 
-        <!-- Sign Up form (first + last name required) -->
+        <!-- Sign Up form -->
         <form id="signupForm" class="auth-form" style="display:none;">
           <div class="auth-field">
-            <label class="auth-label" for="signupFirstName">First Name</label>
+            <label class="auth-label" for="signupName">Display Name (optional)</label>
             <input
-              id="signupFirstName"
+              id="signupName"
               type="text"
               class="auth-input"
-              placeholder="Your first name"
-              required
-            />
-          </div>
-          <div class="auth-field">
-            <label class="auth-label" for="signupLastName">Last Name</label>
-            <input
-              id="signupLastName"
-              type="text"
-              class="auth-input"
-              placeholder="Your last name"
-              required
+              placeholder="Name other men will see"
             />
           </div>
           <div class="auth-field">
@@ -1626,34 +1563,121 @@
   </div>
 
   <script>
-    // YEAR FOOTER
-    const yearEl = document.getElementById("year");
-    if (yearEl) {
-      yearEl.textContent = new Date().getFullYear();
-    }
+    // Basic UI wiring (year, mobile nav, auth modal tabs).
+    document.addEventListener("DOMContentLoaded", () => {
+      // Footer year
+      const yearEl = document.getElementById("year");
+      if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+      }
 
-    // MOBILE NAV OPEN/CLOSE
-    const hamburger = document.getElementById("hamburger");
-    const mobileNav = document.getElementById("mobileNav");
-    const mobileClose = document.getElementById("mobileNavClose");
+      // MOBILE NAV
+      const hamburger = document.getElementById("hamburger");
+      const mobileNav = document.getElementById("mobileNav");
 
-    function openMobileNav() {
-      if (!mobileNav) return;
-      mobileNav.classList.add("open");
-      mobileNav.setAttribute("aria-hidden", "false");
-    }
+      function openMobileNav() {
+        if (!mobileNav || !hamburger) return;
+        hamburger.classList.add("is-open");
+        mobileNav.classList.add("open");
+        mobileNav.setAttribute("aria-hidden", "false");
+      }
 
-    function closeMobileNav() {
-      if (!mobileNav) return;
-      mobileNav.classList.remove("open");
-      mobileNav.setAttribute("aria-hidden", "true");
-    }
+      function closeMobileNav() {
+        if (!mobileNav || !hamburger) return;
+        hamburger.classList.remove("is-open");
+        mobileNav.classList.remove("open");
+        mobileNav.setAttribute("aria-hidden", "true");
+      }
 
-    if (hamburger) hamburger.addEventListener("click", openMobileNav);
-    if (mobileClose) mobileClose.addEventListener("click", closeMobileNav);
+      if (hamburger) {
+        hamburger.addEventListener("click", () => {
+          const isOpen = hamburger.classList.contains("is-open");
+          if (isOpen) {
+            closeMobileNav();
+          } else {
+            openMobileNav();
+          }
+        });
+      }
 
-    // Expose so auth.js can close the nav when opening the Account modal
-    window.__forgeCloseMobileNav = closeMobileNav;
+      // Close mobile nav when clicking a link or the account button
+      const mobileNavInteractive = document.querySelectorAll(
+        ".mobile-nav-inner a, .mobile-nav-inner button.mobile-account-btn"
+      );
+      mobileNavInteractive.forEach((el) => {
+        el.addEventListener("click", () => {
+          closeMobileNav();
+        });
+      });
+
+      // AUTH MODAL UI (overlay open/close + tab switch)
+      const overlay = document.getElementById("authOverlay");
+      const openBtn = document.getElementById("accountButton");
+      const mobileOpenBtn = document.getElementById("mobileAccountButton");
+      const closeBtn = document.getElementById("authCloseBtn");
+      const toggleButtons = overlay
+        ? overlay.querySelectorAll(".auth-toggle-btn")
+        : [];
+      const signInForm = document.getElementById("loginForm");
+      const signUpForm = document.getElementById("signupForm");
+      const errorSignIn = document.getElementById("authErrorLogin");
+      const errorSignUp = document.getElementById("authErrorSignup");
+
+      function openOverlay() {
+        if (!overlay) return;
+        overlay.classList.add("open");
+        overlay.setAttribute("aria-hidden", "false");
+      }
+
+      function closeOverlay() {
+        if (!overlay) return;
+        overlay.classList.remove("open");
+        overlay.setAttribute("aria-hidden", "true");
+      }
+
+      if (openBtn) openBtn.addEventListener("click", openOverlay);
+      if (mobileOpenBtn)
+        mobileOpenBtn.addEventListener("click", () => {
+          closeMobileNav();
+          openOverlay();
+        });
+      if (closeBtn) closeBtn.addEventListener("click", closeOverlay);
+
+      if (overlay) {
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) closeOverlay();
+        });
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && overlay && overlay.classList.contains("open")) {
+          closeOverlay();
+        }
+      });
+
+      function setMode(mode) {
+        toggleButtons.forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.mode === mode);
+        });
+        if (mode === "signin") {
+          if (signInForm) signInForm.style.display = "grid";
+          if (signUpForm) signUpForm.style.display = "none";
+        } else {
+          if (signInForm) signInForm.style.display = "none";
+          if (signUpForm) signUpForm.style.display = "grid";
+        }
+        if (errorSignIn) errorSignIn.textContent = "";
+        if (errorSignUp) errorSignUp.textContent = "";
+      }
+
+      setMode("signin");
+
+      toggleButtons.forEach((btn) => {
+        btn.addEventListener("click", () => setMode(btn.dataset.mode));
+      });
+
+      // Forgot password click + all auth logic lives in auth.js (module)
+    });
   </script>
 
   <!-- Live Firebase logic for auth + prayerRequests -->

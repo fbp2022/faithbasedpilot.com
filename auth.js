@@ -32,11 +32,16 @@ import {
    1. FIREBASE INIT
    ============================== */
 
-// TODO: Replace with your actual config from Firebase console
+// Firebase Config
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
+  apiKey: "AIzaSyCMoC0EjB83EDALTMPiGJNSdyRajJO5mBs",
+  authDomain: "theforge-2e7bb.firebaseapp.com",
+  projectId: "theforge-2e7bb",
+  storageBucket: "theforge-2e7bb.firebasestorage.app",
+  messagingSenderId: "463141276936",
+  appId: "1:463141276936:web:978172363e020b9f09f0bd",
+  measurementId: "G-333M1YRYLR"
 };
 
 const app = initializeApp(firebaseConfig);

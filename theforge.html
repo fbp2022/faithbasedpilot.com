@@ -1144,11 +1144,7 @@
       </div>
 
       <div class="nav-actions">
-        <button class="theme-toggle" id="themeToggle" type="button">
-          <span class="icon">🌙</span>
-          <span>Theme</span>
-        </button>
-      <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
+       <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
@@ -1793,39 +1789,6 @@
   </div>
 
   <script>
-    // THEME TOGGLE
-    (function () {
-      const root = document.documentElement;
-      const toggle = document.getElementById('themeToggle');
-      const stored = localStorage.getItem('forge-theme');
-
-      if (stored === 'light' || stored === 'dark') {
-        root.setAttribute('data-theme', stored);
-      } else {
-        root.setAttribute('data-theme', 'dark');
-      }
-
-      function updateIcon() {
-        const theme = root.getAttribute('data-theme');
-        const iconSpan = toggle.querySelector('.icon');
-        if (theme === 'light') {
-          iconSpan.textContent = '🌙';
-        } else {
-          iconSpan.textContent = '☀️';
-        }
-      }
-
-      updateIcon();
-
-      toggle.addEventListener('click', () => {
-        const current = root.getAttribute('data-theme') || 'dark';
-        const next = current === 'dark' ? 'light' : 'dark';
-        root.setAttribute('data-theme', next);
-        localStorage.setItem('forge-theme', next);
-        updateIcon();
-      });
-    })();
-
     // MOBILE NAV TOGGLE
     (function () {
       const hamburger = document.getElementById('hamburger');

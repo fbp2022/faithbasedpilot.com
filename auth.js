@@ -602,12 +602,13 @@ if (prayerForm) {
 
       // Hard refresh so the new request appears exactly once & list is fresh
       window.location.reload();
-    } catch (error) {
-      console.error("Error adding prayer request:", error);
-      if (newPrayerError) {
-        newPrayerError.textContent = "Could not post request. Try again.";
-      }
-    }
+} catch (error) {
+  console.error("Error adding prayer request:", error);
+  if (newPrayerError) {
+    newPrayerError.textContent = "Could not post request. Try again.";
+  }
+}
+
   });
 }
 

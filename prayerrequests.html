@@ -7,7 +7,7 @@
     content="width=device-width, initial-scale=1.0"
   />
   <title>The Forge · Prayer Requests</title>
-  <meta name="color-scheme" content="dark light" />
+  <meta name="color-scheme" content="dark" />
   <meta
     content="A private prayer wall for The Forge men's community. Submit requests, pray for one another, and track how many men are praying."
     name="description"
@@ -54,29 +54,6 @@
       --transition-med: 220ms ease-out;
     }
 
-    [data-theme="light"] {
-      --bg-main: #f3f4f6;
-      --bg-elevated: rgba(255, 255, 255, 0.98);
-      --bg-card: rgba(255, 255, 255, 0.96);
-      --bg-card-soft: rgba(243, 244, 246, 0.96);
-      --bg-deep: #ffffff;
-
-      --bg-header-strong: rgba(15, 23, 42, 0.96);
-      --bg-header-soft: rgba(15, 23, 42, 0.9);
-
-      --border-subtle: rgba(15, 23, 42, 0.12);
-      --border-strong: rgba(15, 23, 42, 0.3);
-
-      --text-main: #111827;
-      --text-soft: #4b5563;
-      --text-muted: #6b7280;
-      --text-strong: #030712;
-      --text-accent: #0f766e;
-
-      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.16);
-      --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.45);
-    }
-
     * {
       box-sizing: border-box;
     }
@@ -87,9 +64,8 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
         "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 60%),
-        radial-gradient(circle at top right, rgba(236, 72, 153, 0.16), transparent 58%),
-        radial-gradient(circle at bottom, rgba(56, 189, 248, 0.12), transparent 60%),
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.18), transparent 60%),
         linear-gradient(to bottom, var(--bg-deep), #020617 45%, #020617 100%);
       color: var(--text-main);
       -webkit-font-smoothing: antialiased;
@@ -199,10 +175,8 @@
       background: linear-gradient(
         90deg,
         #22d3ee,
-        #a855f7,
-        #f97316,
-        #22c55e,
-        #22d3ee
+        #06b6d4,
+        #0ea5e9
       );
       transition: width 180ms ease-out;
     }
@@ -222,57 +196,6 @@
       display: flex;
       align-items: center;
       gap: 0.6rem;
-    }
-
-    .theme-toggle {
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      padding: 0.35rem 0.9rem;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      background: radial-gradient(
-        circle at 20% 20%,
-        rgba(248, 250, 252, 0.12),
-        rgba(15, 23, 42, 0.9)
-      );
-      color: #e5e7eb;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      transition:
-        background var(--transition-med),
-        border-color var(--transition-med),
-        transform var(--transition-fast),
-        box-shadow var(--transition-fast),
-        color var(--transition-med);
-    }
-
-    .theme-toggle .icon {
-      font-size: 0.95rem;
-    }
-
-    .theme-toggle:hover {
-      border-color: var(--accent-strong);
-      background: radial-gradient(
-        circle at 0% 0%,
-        rgba(56, 189, 248, 0.16),
-        rgba(15, 23, 42, 0.96)
-      );
-      color: #f9fafb;
-      box-shadow: 0 0 20px rgba(34, 211, 238, 0.45);
-      transform: translateY(-1px);
-    }
-
-    .theme-toggle:active {
-      transform: translateY(0);
-      box-shadow: 0 0 0 rgba(34, 211, 238, 0.4);
-    }
-
-    .theme-toggle:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 3px;
     }
 
     .account-btn {
@@ -333,7 +256,6 @@
         rgba(15, 23, 42, 0.96)
       );
       cursor: pointer;
-      display: none;
       align-items: center;
       gap: 0;
       transition:
@@ -360,13 +282,11 @@
       .nav-links {
         display: none;
       }
-      .theme-toggle {
-        display: none;
-      }
       .hamburger {
         display: inline-flex;
       }
-      .account-btn {
+      /* Hide desktop account + sign out buttons on mobile; use hamburger menu instead */
+      .nav-actions .account-btn {
         display: none;
       }
     }
@@ -594,20 +514,6 @@
       color: #e5e7eb;
     }
 
-    .hero-card-sparkline {
-      position: absolute;
-      inset: auto -40% -60% auto;
-      pointer-events: none;
-      opacity: 0.55;
-      filter: blur(0.2px);
-    }
-
-    .hero-card-sparkline svg {
-      width: 210px;
-      height: auto;
-      stroke-linecap: round;
-    }
-
     /* ================== MAIN LAYOUT ================== */
 
     .section {
@@ -821,30 +727,30 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #22d3ee, #a855f7, #f97316);
+      background: linear-gradient(135deg, #22d3ee, #06b6d4, #0ea5e9);
       color: #0b1120;
       border: 1px solid rgba(15, 23, 42, 0.9);
       box-shadow:
         0 12px 30px rgba(15, 23, 42, 1),
-        0 0 28px rgba(59, 130, 246, 0.75);
+        0 0 28px rgba(56, 189, 248, 0.65);
     }
 
     .btn-primary:hover {
       transform: translateY(-1px);
       box-shadow:
         0 16px 40px rgba(15, 23, 42, 1),
-        0 0 38px rgba(59, 130, 246, 0.85);
+        0 0 38px rgba(56, 189, 248, 0.8);
     }
 
     .btn-primary:active {
       transform: translateY(0);
       box-shadow:
         0 10px 22px rgba(15, 23, 42, 0.9),
-        0 0 26px rgba(59, 130, 246, 0.75);
+        0 0 26px rgba(56, 189, 248, 0.7);
     }
 
     .btn-primary:focus-visible {
-      outline: 2px solid #f97316;
+      outline: 2px solid #22d3ee;
       outline-offset: 3px;
     }
 
@@ -1299,12 +1205,12 @@
       font-size: 0.78rem;
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      background: linear-gradient(135deg, #22d3ee, #a855f7, #f97316);
+      background: linear-gradient(135deg, #22d3ee, #06b6d4, #0ea5e9);
       color: #020617;
       cursor: pointer;
       box-shadow:
         0 12px 30px rgba(15, 23, 42, 1),
-        0 0 28px rgba(59, 130, 246, 0.8);
+        0 0 28px rgba(56, 189, 248, 0.8);
       margin-top: 0.4rem;
       justify-content: center;
     }
@@ -1313,14 +1219,14 @@
       transform: translateY(-1px);
       box-shadow:
         0 15px 32px rgba(15, 23, 42, 1),
-        0 0 32px rgba(59, 130, 246, 0.9);
+        0 0 32px rgba(56, 189, 248, 0.9);
     }
 
     .auth-btn:active {
       transform: translateY(0);
       box-shadow:
         0 10px 22px rgba(15, 23, 42, 0.95),
-        0 0 26px rgba(59, 130, 246, 0.8);
+        0 0 26px rgba(56, 189, 248, 0.8);
     }
 
     .auth-btn:focus-visible {
@@ -1376,10 +1282,22 @@
       </div>
 
       <div class="nav-actions">
+        <!-- Desktop Account button (opens modal) -->
         <button class="account-btn" id="accountButton" type="button">
           <span class="icon">👤</span>
           <span>Account</span>
         </button>
+        <!-- Desktop Sign Out button (only shown when signed in via auth.js) -->
+        <button
+          class="account-btn"
+          id="signOutButton"
+          type="button"
+          style="display:none;"
+        >
+          <span class="icon">🚪</span>
+          <span>Sign Out</span>
+        </button>
+        <!-- Hamburger for mobile -->
         <button
           class="hamburger"
           id="hamburger"
@@ -1635,15 +1553,26 @@
           </div>
         </form>
 
-        <!-- Sign Up form -->
+        <!-- Sign Up form (first + last name required) -->
         <form id="signupForm" class="auth-form" style="display:none;">
           <div class="auth-field">
-            <label class="auth-label" for="signupName">Display Name (optional)</label>
+            <label class="auth-label" for="signupFirstName">First Name</label>
             <input
-              id="signupName"
+              id="signupFirstName"
               type="text"
               class="auth-input"
-              placeholder="Name other men will see"
+              placeholder="Your first name"
+              required
+            />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="signupLastName">Last Name</label>
+            <input
+              id="signupLastName"
+              type="text"
+              class="auth-input"
+              placeholder="Your last name"
+              required
             />
           </div>
           <div class="auth-field">
@@ -1697,99 +1626,34 @@
   </div>
 
   <script>
-    
     // YEAR FOOTER
-      const yearEl = document.getElementById("year");
-      if (yearEl) {
-        yearEl.textContent = new Date().getFullYear();
-      }
+    const yearEl = document.getElementById("year");
+    if (yearEl) {
+      yearEl.textContent = new Date().getFullYear();
+    }
 
-      // MOBILE NAV
-      const hamburger = document.getElementById("hamburger");
-      const mobileNav = document.getElementById("mobileNav");
-      const mobileClose = document.getElementById("mobileNavClose");
+    // MOBILE NAV OPEN/CLOSE
+    const hamburger = document.getElementById("hamburger");
+    const mobileNav = document.getElementById("mobileNav");
+    const mobileClose = document.getElementById("mobileNavClose");
 
-      function openMobileNav() {
-        mobileNav.classList.add("open");
-        mobileNav.setAttribute("aria-hidden", "false");
-      }
+    function openMobileNav() {
+      if (!mobileNav) return;
+      mobileNav.classList.add("open");
+      mobileNav.setAttribute("aria-hidden", "false");
+    }
 
-      function closeMobileNav() {
-        mobileNav.classList.remove("open");
-        mobileNav.setAttribute("aria-hidden", "true");
-      }
+    function closeMobileNav() {
+      if (!mobileNav) return;
+      mobileNav.classList.remove("open");
+      mobileNav.setAttribute("aria-hidden", "true");
+    }
 
-      if (hamburger) hamburger.addEventListener("click", openMobileNav);
-      if (mobileClose) mobileClose.addEventListener("click", closeMobileNav);
-      window.__forgeCloseMobileNav = closeMobileNav;
+    if (hamburger) hamburger.addEventListener("click", openMobileNav);
+    if (mobileClose) mobileClose.addEventListener("click", closeMobileNav);
 
-      // AUTH MODAL UI (overlay open/close + tab switch)
-      (function () {
-        const overlay = document.getElementById("authOverlay");
-        const openBtn = document.getElementById("accountButton");
-        const mobileOpenBtn = document.getElementById("mobileAccountButton");
-        const closeBtn = document.getElementById("authCloseBtn");
-        const toggleButtons = overlay.querySelectorAll(".auth-toggle-btn");
-        const signInForm = document.getElementById("loginForm");
-        const signUpForm = document.getElementById("signupForm");
-        const errorSignIn = document.getElementById("authErrorLogin");
-        const errorSignUp = document.getElementById("authErrorSignup");
-        const forgotBtn = document.getElementById("forgotPasswordLink");
-
-        function openOverlay() {
-          overlay.classList.add("open");
-          overlay.setAttribute("aria-hidden", "false");
-        }
-
-        function closeOverlay() {
-          overlay.classList.remove("open");
-          overlay.setAttribute("aria-hidden", "true");
-        }
-
-        if (openBtn) openBtn.addEventListener("click", openOverlay);
-        if (mobileOpenBtn)
-          mobileOpenBtn.addEventListener("click", () => {
-            if (typeof window.__forgeCloseMobileNav === "function") {
-              window.__forgeCloseMobileNav();
-            }
-            openOverlay();
-          });
-        if (closeBtn) closeBtn.addEventListener("click", closeOverlay);
-
-        overlay.addEventListener("click", (e) => {
-          if (e.target === overlay) closeOverlay();
-        });
-
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape" && overlay.classList.contains("open")) {
-            closeOverlay();
-          }
-        });
-
-        function setMode(mode) {
-          toggleButtons.forEach((btn) => {
-            btn.classList.toggle("active", btn.dataset.mode === mode);
-          });
-          if (mode === "signin") {
-            signInForm.style.display = "grid";
-            signUpForm.style.display = "none";
-          } else {
-            signInForm.style.display = "none";
-            signUpForm.style.display = "grid";
-          }
-          if (errorSignIn) errorSignIn.textContent = "";
-          if (errorSignUp) errorSignUp.textContent = "";
-        }
-
-        setMode("signin");
-
-        toggleButtons.forEach((btn) => {
-          btn.addEventListener("click", () => setMode(btn.dataset.mode));
-        });
-
-        // Actual submit + forgot password behavior is handled in auth.js
-      })();
-    })();
+    // Expose so auth.js can close the nav when opening the Account modal
+    window.__forgeCloseMobileNav = closeMobileNav;
   </script>
 
   <!-- Live Firebase logic for auth + prayerRequests -->

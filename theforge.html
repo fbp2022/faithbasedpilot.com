@@ -7,7 +7,6 @@
   <meta name="color-scheme" content="dark light" />
   <meta name="description" content="The Forge is a biblically grounded men's community focused on real spiritual growth, accountability, and brotherhood." />
 
-  
   <style>
     /* ================== BASE / THEME ================== */
     :root {
@@ -153,7 +152,7 @@
       white-space: nowrap;
     }
 
-     .brand-logo {
+    .brand-logo {
       width: 40px;
       height: 40px;
       border-radius: 999px;
@@ -392,29 +391,29 @@
       border-color: rgba(0, 255, 200, 0.5);
     }
 
-  @media (max-width: 840px) {
-  .nav-links {
-    display: none;
-  }
+    @media (max-width: 840px) {
+      .nav-links {
+        display: none;
+      }
 
-  .hamburger {
-    display: flex;
-  }
+      .hamburger {
+        display: flex;
+      }
 
-  /* HIDE DESKTOP ACCOUNT BUTTON ON MOBILE */
-  .account-btn {
-    display: none;
-  }
-}
+      /* HIDE DESKTOP ACCOUNT BUTTON ON MOBILE */
+      .account-btn {
+        display: none;
+      }
+    }
 
     /* ================== HERO ================== */
 
     main {
-      padding-top: 1.5rem;
+      padding-top: 2.4rem; /* increased for more breathing room below header */
     }
 
     .hero {
-      margin: 1.5rem 0 2.5rem;
+      margin: 2.4rem 0 2.5rem; /* slightly more space from nav */
       display: grid;
       grid-template-columns: minmax(0, 3.2fr) minmax(0, 2.8fr);
       gap: 2.25rem;
@@ -833,7 +832,7 @@
 
     .contact-form {
       display: grid;
-      gap: 0.75rem;
+      gap: 1.1rem; /* a bit more room between fields */
       font-size: 0.9rem;
     }
 
@@ -849,19 +848,27 @@
       color: var(--text-soft);
     }
 
-  .field input,
-.field textarea {
-  border-radius: 12px;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-elevated);
-  color: var(--text-main);
-  padding: 0.55rem 0.75rem;
-  font-size: 0.9rem;
-  outline: none;
-  resize: none;          /* 🔹 remove manual drag handle */
-  min-height: 2.4rem;
-  overflow-y: hidden;    /* 🔹 lets JS grow the box smoothly */
-}
+    .field input,
+    .field textarea {
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      padding: 0.55rem 0.75rem;
+      font-size: 0.9rem;
+      outline: none;
+      min-height: 2.4rem;
+      resize: none;       /* no manual drag handle */
+    }
+
+    .field textarea {
+      min-height: 6rem;   /* comfortable starting height */
+      overflow-y: hidden; /* hide scrollbar while auto-growing */
+    }
+
+    .field .cf-turnstile {
+      margin-top: 0.35rem;
+    }
 
     :root[data-theme="light"] .field input,
     :root[data-theme="light"] .field textarea {
@@ -1145,7 +1152,7 @@
       </div>
 
       <div class="nav-actions">
-       <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
@@ -1671,6 +1678,17 @@
                 placeholder="Share briefly where you’re at and what you’re looking for."
               ></textarea>
             </div>
+
+            <!-- Cloudflare Turnstile human check -->
+            <div class="field">
+              <label>Verification</label>
+              <div
+                class="cf-turnstile"
+                data-sitekey="0x4AAAAAACCHux8WMR1ry2Zq"
+                data-theme="auto"
+              ></div>
+            </div>
+
             <button type="submit" class="btn btn-outline">
               <span class="icon">📨</span>
               <span>Send Message</span>
@@ -1786,6 +1804,9 @@
     </div>
   </div>
 
+  <!-- Cloudflare Turnstile script -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
   <script>
     // MOBILE NAV TOGGLE
     (function () {
@@ -1863,21 +1884,6 @@
         }
       });
 
-      function setMode(mode) {
-        toggleButtons.forEach((btn) => {
-          btn.classList.toggle('active', btn.dataset.mode === mode);
-        });
-        if (mode === 'signin') {
-          signInForm.style.display = 'grid';
-          signUpForm.style.display = 'none';
-          errorSignIn.textContent = '';
-          errorSignUp.textContent = '';
-        } else {
-          signInForm.style.display = 'grid';
-          signInForm.style.display = 'none';
-        }
-      }
-
       function setModeCorrect(mode) {
         toggleButtons.forEach((btn) => {
           btn.classList.toggle('active', btn.dataset.mode === mode);
@@ -1893,7 +1899,7 @@
         errorSignUp.textContent = '';
       }
 
-      // fix typo from helper
+      // default mode
       setModeCorrect('signin');
 
       toggleButtons.forEach((btn) => {
@@ -1925,21 +1931,19 @@
       }
     })();
 
-    // CLOUDFLARE TURNSTILE – require the check before sending
-(function () {
-  const contactForm = document.querySelector('.contact-form');
-  if (!contactForm) return;
+    // Auto-grow contact textarea
+    (function () {
+      const messageEl = document.getElementById('message');
+      if (!messageEl) return;
 
-  contactForm.addEventListener('submit', (e) => {
-    // Cloudflare injects this hidden input when the widget is completed
-    const tokenInput = contactForm.querySelector('input[name="cf-turnstile-response"]');
+      const autoResize = () => {
+        messageEl.style.height = 'auto';
+        messageEl.style.height = messageEl.scrollHeight + 'px';
+      };
 
-    if (!tokenInput || !tokenInput.value) {
-      e.preventDefault();
-      alert('Please confirm you are human before sending your message.');
-    }
-  });
-})();
+      messageEl.addEventListener('input', autoResize);
+      autoResize(); // initial sizing
+    })();
   </script>
 </body>
 </html>

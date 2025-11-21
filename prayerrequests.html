@@ -385,21 +385,21 @@
       color: var(--text-muted);
       max-width: 640px;
       line-height: 1.7;
-      margin-bottom: 1.8rem;
+      margin-bottom: 1.9rem;
     }
 
     .top-grid {
       display: grid;
       grid-template-columns: minmax(0, 3.1fr) minmax(0, 2.3fr);
       gap: 1.75rem;
-      margin-bottom: 2.2rem;
+      margin-bottom: 2.3rem;
     }
 
     .card {
       border-radius: var(--radius-lg);
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
-      padding: 1.6rem 1.4rem;
+      padding: 1.7rem 1.5rem;
       box-shadow: var(--shadow-strong);
       position: relative;
       overflow: hidden;
@@ -434,7 +434,7 @@
       font-size: 1.15rem;
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      margin-bottom: 1rem;
+      margin-bottom: 1.05rem;
     }
 
     .card-text {
@@ -448,7 +448,7 @@
     .prayer-form {
       display: flex;
       flex-direction: column;
-      gap: 0.9rem;
+      gap: 1rem;
       margin-top: 0.2rem;
     }
 
@@ -477,8 +477,8 @@
 
     textarea.field-control {
       border-radius: 20px;
-      min-height: 120px;
-      resize: vertical;
+      min-height: 140px;
+      resize: none; /* don't allow manual resizing; JS will auto-grow */
       padding-top: 1.2rem;
     }
 
@@ -530,14 +530,14 @@
     .field-note {
       font-size: 0.78rem;
       color: var(--text-soft);
-      margin-top: 0.2rem;
+      margin-top: 0.15rem;
     }
 
     .form-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 0.6rem;
-      margin-top: 0.9rem;
+      margin-top: 0.8rem;
     }
 
     .btn {
@@ -556,7 +556,7 @@
       text-decoration: none;
       transition:
         transform var(--transition-fast),
-        box-shadow var(--transition-fast),
+       box-shadow var(--transition-fast),
         background var(--transition-fast),
         border-color var(--transition-fast),
         color var(--transition-fast);
@@ -604,7 +604,7 @@
     /* ================== PRAYER WALL ================== */
 
     .wall-card {
-      margin-top: 0.5rem;
+      margin-top: 0.6rem;
     }
 
     .wall-subtext {
@@ -1041,8 +1041,8 @@
       <div class="page-header-kicker">Pray for one another</div>
       <h1 id="page-title" class="page-title">Share a prayer need, stand in the gap.</h1>
       <p class="page-intro">
-        This is a private wall for men in The Forge to ask for prayer and commit to praying for one another.
-        Be honest, be specific, and remember that what you share here is treated with care.
+        This is a private wall for men in The Forge to ask for prayer and commit to praying for one
+        another. Be honest, be specific, and remember that what you share here is treated with care.
       </p>
 
       <div class="top-grid">
@@ -1053,6 +1053,20 @@
             <h2 class="card-title-main">Post a request</h2>
 
             <form id="prayerForm" class="prayer-form" autocomplete="off">
+              <!-- 1) Display name -->
+              <div class="field-group" data-field="name">
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  class="field-control"
+                  placeholder="Display name (optional)"
+                  maxlength="80"
+                />
+                <label for="name" class="field-label">Display name (optional)</label>
+              </div>
+
+              <!-- 2) Request title -->
               <div class="field-group" data-field="title">
                 <input
                   id="title"
@@ -1062,9 +1076,10 @@
                   placeholder="Title of your request"
                   maxlength="120"
                 />
-                <label for="title" class="field-label">Title of your request</label>
+                <label for="title" class="field-label">Prayer request title</label>
               </div>
 
+              <!-- 3) Request body -->
               <div class="field-group textarea" data-field="message">
                 <textarea
                   id="message"
@@ -1072,19 +1087,7 @@
                   class="field-control"
                   placeholder="Share what you're asking God to do"
                 ></textarea>
-                <label for="message" class="field-label">Share what you're asking God to do</label>
-              </div>
-
-              <div class="field-group" data-field="name">
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  class="field-control"
-                  placeholder="Name to display (optional)"
-                  maxlength="80"
-                />
-                <label for="name" class="field-label">Name to display (optional)</label>
+                <label for="message" class="field-label">Prayer request details</label>
               </div>
 
               <p class="field-note">
@@ -1355,28 +1358,42 @@
       window.__forgeCloseMobileNav = closeNav;
     })();
 
-    // FLOATING LABEL BEHAVIOR
+    // FLOATING LABEL BEHAVIOR + TEXTAREA AUTO-GROW
     (function () {
       const groups = document.querySelectorAll('.field-group');
+
+      function updateGroupState(group, control) {
+        if (!control) return;
+        if (control.value && control.value.trim() !== '') {
+          group.classList.add('has-value');
+        } else {
+          group.classList.remove('has-value');
+        }
+      }
+
       groups.forEach((group) => {
         const control = group.querySelector('.field-control');
         if (!control) return;
 
-        function update() {
-          if (control.value && control.value.trim() !== '') {
-            group.classList.add('has-value');
-          } else {
-            group.classList.remove('has-value');
-          }
-        }
-
         control.addEventListener('focus', () => group.classList.add('focused'));
         control.addEventListener('blur', () => group.classList.remove('focused'));
-        control.addEventListener('input', update);
+        control.addEventListener('input', () => updateGroupState(group, control));
 
         // initial state
-        update();
+        updateGroupState(group, control);
       });
+
+      // Auto-grow the prayer textarea so it's not manually resizable
+      const messageEl = document.getElementById('message');
+      if (messageEl) {
+        const autoResize = () => {
+          messageEl.style.height = 'auto';
+          messageEl.style.height = (messageEl.scrollHeight + 2) + 'px';
+        };
+        messageEl.addEventListener('input', autoResize);
+        // Initial size
+        autoResize();
+      }
     })();
   </script>
 

@@ -154,7 +154,7 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 1.35rem;
       font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 0.14em;
@@ -164,7 +164,7 @@
       text-decoration: none;
       color: var(--text-muted);
       position: relative;
-      padding-bottom: 0.15rem;
+      padding-bottom: 1.2rem;
       cursor: pointer;
       transition: color var(--transition-fast);
     }
@@ -362,7 +362,7 @@
 
     /* ================== PAGE LAYOUT ================== */
     main {
-      padding-top: 1.5rem;
+      padding-top: 2.6rem;
     }
 
     .page-header-kicker {
@@ -370,7 +370,7 @@
       text-transform: uppercase;
       letter-spacing: 0.22em;
       color: var(--text-soft);
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.9rem; /* was 0.4rem */
     }
 
     .page-title {
@@ -448,12 +448,13 @@
     .prayer-form {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      margin-top: 0.2rem;
+      gap: 1.35rem;
+      margin-top: 0.4rem;
     }
 
     .field-group {
       position: relative;
+      margin-bottom: 0.15rem;
     }
 
     .field-control {
@@ -556,7 +557,7 @@
       text-decoration: none;
       transition:
         transform var(--transition-fast),
-       box-shadow var(--transition-fast),
+        box-shadow var(--transition-fast),
         background var(--transition-fast),
         border-color var(--transition-fast),
         color var(--transition-fast);
@@ -992,7 +993,6 @@
         <img src="images/theforgelogo.png" alt="The Forge logo" class="brand-logo" />
         <div>
           <div class="brand-text-main">The Forge</div>
-          <div class="brand-text-sub">Faith-Based Pilot Men's Community</div>
         </div>
       </div>
 
@@ -1313,6 +1313,16 @@
             Accounts are invite-only. If you don’t have a code, ask the group owner.
           </div>
         </form>
+
+        <!-- Sign Out (only when logged in; wired by auth.js) -->
+        <button
+          type="button"
+          id="signOutButton"
+          class="auth-btn"
+          style="margin-top: 0.75rem; display: none;"
+        >
+          Sign Out
+        </button>
       </div>
     </div>
   </div>

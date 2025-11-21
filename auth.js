@@ -373,6 +373,7 @@ if (signupForm) {
           lastName,
           displayName,
           invitecode: inviteEntered,
+          canDeletePrayers: false,   // 🔒 default for EVERY new account
           createdAt: serverTimestamp(),
         },
         { merge: true }

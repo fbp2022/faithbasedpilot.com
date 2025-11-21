@@ -849,18 +849,19 @@
       color: var(--text-soft);
     }
 
-    .field input,
-    .field textarea {
-      border-radius: 12px;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-elevated);
-      color: var(--text-main);
-      padding: 0.55rem 0.75rem;
-      font-size: 0.9rem;
-      outline: none;
-      resize: vertical;
-      min-height: 2.4rem;
-    }
+  .field input,
+.field textarea {
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  color: var(--text-main);
+  padding: 0.55rem 0.75rem;
+  font-size: 0.9rem;
+  outline: none;
+  resize: none;          /* 🔹 remove manual drag handle */
+  min-height: 2.4rem;
+  overflow-y: hidden;    /* 🔹 lets JS grow the box smoothly */
+}
 
     :root[data-theme="light"] .field input,
     :root[data-theme="light"] .field textarea {
@@ -1923,6 +1924,22 @@
         }
       }
     })();
+
+    // CLOUDFLARE TURNSTILE – require the check before sending
+(function () {
+  const contactForm = document.querySelector('.contact-form');
+  if (!contactForm) return;
+
+  contactForm.addEventListener('submit', (e) => {
+    // Cloudflare injects this hidden input when the widget is completed
+    const tokenInput = contactForm.querySelector('input[name="cf-turnstile-response"]');
+
+    if (!tokenInput || !tokenInput.value) {
+      e.preventDefault();
+      alert('Please confirm you are human before sending your message.');
+    }
+  });
+})();
   </script>
 </body>
 </html>

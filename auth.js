@@ -1,6 +1,6 @@
 // auth.js
 // Handles Firebase auth, invite-code signup, profiles (with first/last name),
-// and the Prayer Requests wall (submit + "I'm praying" count + delete).
+// and the Prayer Requests wall (submit + "I'm praying" count + admin delete).
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
@@ -26,7 +26,7 @@ import {
   updateDoc,
   increment,
   arrayUnion,
-  deleteDoc, // <-- added
+  deleteDoc, // <--- ADDED for delete
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* ================== FIREBASE SETUP ================== */
@@ -80,8 +80,8 @@ const signupInviteInput = document.getElementById("signupInvite");
 // Sign-out button (if present in HTML)
 const signOutButton = document.getElementById("signOutButton");
 
-// NEW: nav/account labels (for theforge.html / prayerrequests.html nav bars)
-const navUserLabel = document.getElementById("navUserLabel");
+// nav/account labels
+const navUserLabel = document.getElementById("navUserLabel"); // might not exist on some pages
 const navAuthButtonLabel = document.getElementById("navAuthButtonLabel");
 const navMobileUserLabel = document.getElementById("navMobileUserLabel");
 const navMobileAuthButtonLabel = document.getElementById("navMobileAuthButtonLabel");
@@ -95,14 +95,15 @@ const requestCountLabel = document.getElementById("requestCountLabel");
 /* ================== STATE ================== */
 
 let currentUser = null;
-let currentUserProfile = null; // <-- profile data from Firestore
 let prayersUnsubscribe = null;
 let cachedInviteCode = null;
 let currentlyOpenPrayerId = null;
 
-// For re-rendering after profile loads
-let lastPrayerSnapshot = null;
-let isPrayerDeleteAdmin = false; // <-- whether this user can see delete buttons
+// Tristan’s UID (from your Firestore rules isTristan())
+const OWNER_UID = "1zs1eFu7K8cWKRZE7k7TwPCW3X32";
+
+// Global flag: who is allowed to see/use delete buttons
+let canDeletePrayers = false;
 
 /* ================== HELPERS ================== */
 
@@ -180,38 +181,6 @@ async function loadInviteCode() {
     console.error("Error loading invite code:", error);
     cachedInviteCode = null;
     return null;
-  }
-}
-
-/* ================== PROFILE LOAD (for delete permissions) ================== */
-
-async function loadCurrentUserProfile(uid) {
-  currentUserProfile = null;
-  isPrayerDeleteAdmin = false;
-
-  if (!uid) return;
-
-  try {
-    const ref = doc(db, "profiles", uid);
-    const snap = await getDoc(ref);
-    if (snap.exists()) {
-      currentUserProfile = snap.data();
-      // Look for a boolean flag in the profile:
-      // set this in Firestore manually on your profile: canDeletePrayers: true
-      isPrayerDeleteAdmin = !!currentUserProfile.canDeletePrayers;
-    } else {
-      currentUserProfile = null;
-      isPrayerDeleteAdmin = false;
-    }
-  } catch (err) {
-    console.error("Error loading user profile:", err);
-    currentUserProfile = null;
-    isPrayerDeleteAdmin = false;
-  }
-
-  // If we already have a snapshot, re-render so delete buttons appear/disappear
-  if (lastPrayerSnapshot && currentUser && prayerListEl) {
-    renderPrayerList(lastPrayerSnapshot, currentUser);
   }
 }
 
@@ -405,7 +374,6 @@ if (signupForm) {
           displayName,
           invitecode: inviteEntered,
           createdAt: serverTimestamp(),
-          // You will manually set canDeletePrayers: true on your profile in Firestore if needed
         },
         { merge: true }
       );
@@ -535,6 +503,11 @@ function renderPrayerList(snapshot, user) {
         ? "1 man has marked that he’s praying."
         : `${prayerCount} men have marked that they’re praying.`;
 
+    const buttonsWrap = document.createElement("div");
+    buttonsWrap.style.display = "flex";
+    buttonsWrap.style.gap = "0.4rem";
+    buttonsWrap.style.flexWrap = "wrap";
+
     const prayBtn = document.createElement("button");
     prayBtn.type = "button";
     prayBtn.className = "btn btn-soft";
@@ -568,38 +541,39 @@ function renderPrayerList(snapshot, user) {
       }
     });
 
-    footer.appendChild(prayBtn);
-    footer.appendChild(countSpan);
+    buttonsWrap.appendChild(prayBtn);
 
-    // DELETE BUTTON (only for delete admins)
-    if (user && isPrayerDeleteAdmin) {
+    // DELETE BUTTON: only for users allowed to delete (see canDeletePrayers + Firestore rules)
+    if (user && canDeletePrayers) {
       const deleteBtn = document.createElement("button");
       deleteBtn.type = "button";
-      deleteBtn.className = "btn btn-soft btn-danger";
-      deleteBtn.innerHTML = `<span class="icon">🗑</span><span>Delete</span>`;
-      deleteBtn.style.marginLeft = "auto";
+      deleteBtn.className = "btn btn-danger";
+      deleteBtn.innerHTML = `<span class="icon">🗑️</span><span>Delete</span>`;
+      deleteBtn.title = "Delete this prayer request permanently.";
 
       deleteBtn.addEventListener("click", async (evt) => {
-        evt.stopPropagation();
+        evt.stopPropagation(); // don’t toggle open/close when clicking button
+
         const confirmed = window.confirm(
-          "Delete this prayer request permanently? This cannot be undone."
+          "Are you sure you want to delete this prayer request? This cannot be undone."
         );
         if (!confirmed) return;
 
         try {
           const ref = doc(db, "prayerRequests", id);
           await deleteDoc(ref);
-          // No manual UI update needed; onSnapshot will fire with the new list.
+          // Firestore snapshot listener will auto-refresh the list
         } catch (error) {
           console.error("Error deleting prayer request:", error);
-          alert(
-            "Could not delete this request. Check your permissions or try again."
-          );
+          alert("Could not delete this request. Check permissions and try again.");
         }
       });
 
-      footer.appendChild(deleteBtn);
+      buttonsWrap.appendChild(deleteBtn);
     }
+
+    footer.appendChild(buttonsWrap);
+    footer.appendChild(countSpan);
 
     const hintLine = document.createElement("div");
     hintLine.className = "hint-line";
@@ -707,8 +681,32 @@ if (prayerForm) {
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
-  currentUserProfile = null;
-  isPrayerDeleteAdmin = false;
+
+  // Default: nobody can delete until we check
+  canDeletePrayers = false;
+
+  if (user) {
+    // Tristan always has delete rights
+    if (user.uid === OWNER_UID) {
+      canDeletePrayers = true;
+    }
+
+    // Also allow a Firestore profile flag to grant delete rights
+    (async () => {
+      try {
+        const profileRef = doc(db, "profiles", user.uid);
+        const profileSnap = await getDoc(profileRef);
+        if (profileSnap.exists()) {
+          const data = profileSnap.data();
+          if (data && data.canDeletePrayers === true) {
+            canDeletePrayers = true;
+          }
+        }
+      } catch (err) {
+        console.error("Error checking canDeletePrayers:", err);
+      }
+    })();
+  }
 
   // Nice label to show for the user
   const signedInLabel = user
@@ -724,7 +722,7 @@ onAuthStateChanged(auth, (user) => {
     }
   }
 
-  // NEW: Update nav/account labels if those elements exist
+  // Update nav/account labels if those elements exist
   if (navUserLabel) {
     navUserLabel.textContent = user ? signedInLabel : "Guest";
   }
@@ -748,16 +746,13 @@ onAuthStateChanged(auth, (user) => {
     prayerForm.style.display = user ? "block" : "none";
   }
 
-  // Stop any previous listener
+  // Start or stop prayerRequests listener
   if (prayersUnsubscribe) {
     prayersUnsubscribe();
     prayersUnsubscribe = null;
   }
 
   if (user && prayerListEl) {
-    // Load profile (for delete permissions)
-    loadCurrentUserProfile(user.uid);
-
     const q = query(
       collection(db, "prayerRequests"),
       orderBy("createdAt", "desc")
@@ -766,7 +761,6 @@ onAuthStateChanged(auth, (user) => {
     prayersUnsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        lastPrayerSnapshot = snapshot;
         renderPrayerList(snapshot, user);
       },
       (error) => {
@@ -788,7 +782,7 @@ if (signOutButton) {
     try {
       await signOut(auth);
       closeAuthOverlay();
-      // onAuthStateChanged will handle clearing UI
+      // No need to reload; onAuthStateChanged will clear the UI.
     } catch (error) {
       console.error("Sign out error:", error);
       alert("Could not sign out. Try again.");

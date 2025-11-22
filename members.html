@@ -414,4 +414,700 @@
     }
 
     .page-intro {
-      font-size: 0.
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 640px;
+      line-height: 1.7;
+      margin-bottom: 1.9rem;
+    }
+
+    .card {
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 1.5rem 1.35rem;
+      box-shadow: var(--shadow-strong);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.6rem;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(0,255,200,0.12), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(0,140,255,0.18), transparent 65%);
+      mix-blend-mode: screen;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-kicker {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-soft);
+      margin-bottom: 0.3rem;
+    }
+
+    .card-title-main {
+      font-size: 1.15rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 1.05rem;
+    }
+
+    .card-text {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ================== MEMBERS GRID ================== */
+
+    .members-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr);
+      gap: 1.75rem;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 840px) {
+      .members-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .member-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.8rem;
+      margin-top: 0.4rem;
+    }
+
+    .member-card {
+      border-radius: 14px;
+      background: rgba(7, 11, 23, 0.92);
+      border: 1px solid rgba(15, 23, 42, 0.9);
+      padding: 0.7rem 0.85rem;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast),
+        background var(--transition-fast);
+    }
+
+    .member-card::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      flex-shrink: 0;
+    }
+
+    .member-card.leader {
+      border-color: var(--accent-soft);
+      background: radial-gradient(circle at 0 0, rgba(0,255,200,0.12), rgba(7,11,23,0.98));
+    }
+
+    .member-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 18px rgba(0, 255, 200, 0.4);
+      border-color: var(--accent-soft);
+    }
+
+    .member-name {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .member-role-pill {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 0.1rem 0.45rem;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    .members-status-text {
+      font-size: 0.82rem;
+      color: var(--text-soft);
+      margin-bottom: 0.75rem;
+    }
+
+    /* ================== FOOTER ================== */
+
+    footer {
+      margin-top: 2.2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .auth-status-text {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+    }
+
+    @media (max-width: 600px) {
+      .shell {
+        padding: 0 1.1rem 3rem;
+      }
+
+      .nav {
+        padding: 0 1.1rem;
+      }
+
+      footer {
+        flex-direction: column;
+      }
+    }
+
+    /* ================== AUTH MODAL (WIRED TO auth.js) ================== */
+
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 0 0, rgba(0,0,0,0.65), rgba(0,0,0,0.92));
+      backdrop-filter: blur(18px);
+      z-index: 999;
+    }
+
+    .auth-overlay.open {
+      display: flex;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 0 30px rgba(0,0,0,0.9);
+      padding: 1.4rem 1.4rem 1.2rem;
+      color: var(--text-main);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 10% 0, rgba(0,255,200,0.2), transparent 65%),
+        radial-gradient(circle at 100% 100%, rgba(0,140,255,0.25), transparent 70%);
+      mix-blend-mode: screen;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .auth-card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-card-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .auth-card-title {
+      font-size: 1rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .auth-card-sub {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      max-width: 230px;
+      text-align: right;
+    }
+
+    .auth-close-btn {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.7rem;
+      border: none;
+      background: transparent;
+      color: var(--text-soft);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.2rem;
+    }
+
+    .auth-toggle-row {
+      display: flex;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      margin-bottom: 0.8rem;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .auth-toggle-btn {
+      flex: 1;
+      padding: 0.45rem 0.3rem;
+      text-align: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--text-soft);
+    }
+
+    .auth-toggle-btn.active {
+      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+      color: #020409;
+      font-weight: 600;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 0.55rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .auth-field {
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .auth-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--text-soft);
+    }
+
+    .auth-input {
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      padding: 0.5rem 0.7rem;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .auth-input:focus {
+      border-color: var(--accent-soft);
+      box-shadow: 0 0 12px rgba(0,255,200,0.45);
+    }
+
+    .auth-btn {
+      margin-top: 0.5rem;
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      padding: 0.55rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+      color: #020409;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(0,255,200,0.5);
+    }
+
+    .auth-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 24px rgba(0,255,200,0.7);
+    }
+
+    .auth-error {
+      font-size: 0.78rem;
+      color: var(--danger);
+      min-height: 1em;
+      margin-top: 0.2rem;
+    }
+
+    .auth-footnote {
+      margin-top: 0.4rem;
+      font-size: 0.74rem;
+      color: var(--text-soft);
+    }
+
+    .forgot-password-link {
+      font-size: 0.75rem;
+      color: var(--accent);
+      cursor: pointer;
+      text-decoration: underline;
+      margin-top: 0.15rem;
+      align-self: flex-end;
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-orbit"></div>
+
+  <header>
+    <nav class="nav">
+      <div class="brand">
+        <img src="images/theforgelogo.png" alt="The Forge logo" class="brand-logo" />
+        <div>
+          <div class="brand-text-main">The Forge</div>
+        </div>
+      </div>
+
+      <div class="nav-links">
+        <a href="theforge.html#overview">Overview</a>
+        <a href="theforge.html#why">Why</a>
+        <a href="theforge.html#beliefs">Beliefs</a>
+        <a href="theforge.html#rules">Rules</a>
+        <a href="theforge.html#join">Join</a>
+        <a href="theforge.html#contact">Contact</a>
+        <a href="members.html" class="active">Members</a>
+        <a href="prayerrequests.html">Prayer Requests</a>
+      </div>
+
+      <div class="nav-actions">
+        <span class="user-label" id="navUserLabel">Guest</span>
+        <button id="accountButton" class="account-btn" type="button">
+          <span class="icon">👤</span>
+          <span id="navAuthButtonLabel">Sign In</span>
+        </button>
+
+        <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile nav overlay -->
+    <div class="mobile-nav" id="mobileNav">
+      <div class="mobile-nav-inner">
+        <a href="theforge.html#overview">Overview</a>
+        <a href="theforge.html#why">Why</a>
+        <a href="theforge.html#beliefs">Beliefs</a>
+        <a href="theforge.html#rules">Rules</a>
+        <a href="theforge.html#join">Join</a>
+        <a href="theforge.html#contact">Contact</a>
+        <a href="members.html">Members</a>
+        <a href="prayerrequests.html">Prayer Requests</a>
+
+        <div class="mobile-account-meta">
+          <span id="navMobileUserLabel">Guest</span>
+        </div>
+        <button
+          class="mobile-account-btn"
+          id="mobileAccountButton"
+          type="button"
+        >
+          <span id="navMobileAuthButtonLabel">Sign In / Create</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section aria-labelledby="page-title">
+      <div class="page-header-kicker">Brotherhood</div>
+      <h1 id="page-title" class="page-title">Members of The Forge</h1>
+      <p class="page-intro">
+        This page lists the men who are part of The Forge community. Only names are shown — no email
+        addresses or contact information. This page is private and only visible to signed-in members.
+      </p>
+
+      <!-- Sign-in required notice (auth.js will hide this when signed in) -->
+      <article class="card" id="membersSignInPrompt">
+        <div class="card-inner">
+          <div class="card-kicker">Private Area</div>
+          <h2 class="card-title-main">Sign in to view the brothers</h2>
+          <p class="card-text">
+            To protect privacy and keep this space gated, only men with an active Forge account can view the
+            member list. Use the <strong>Account</strong> button in the header to sign in or create an account
+            with your invite code.
+          </p>
+        </div>
+      </article>
+
+      <!-- Auth-gated members layout -->
+      <section id="membersWrapper" style="display: none;">
+        <p id="membersStatus" class="members-status-text">
+          Loading members…
+        </p>
+
+        <div class="members-layout">
+          <!-- LEADERS -->
+          <article class="card">
+            <div class="card-inner">
+              <div class="card-kicker">Leaders</div>
+              <h2 class="card-title-main">Forge Leaders</h2>
+              <p class="card-text">
+                These are the men who help lead, steward, and guard the culture of The Forge — owners,
+                admins, and core leaders. They’re still brothers among brothers, but they carry added responsibility.
+              </p>
+              <div id="leadersGrid" class="member-grid">
+                <!-- Populated by auth.js from Firestore profiles where role = owner/admin -->
+              </div>
+            </div>
+          </article>
+
+          <!-- MEMBERS -->
+          <article class="card">
+            <div class="card-inner">
+              <div class="card-kicker">Members</div>
+              <h2 class="card-title-main">Brothers in The Forge</h2>
+              <p class="card-text">
+                Every name here represents a real man walking through real battles. Pray for one another, encourage one
+                another, and remember that you’re not alone in the fight.
+              </p>
+              <div id="membersGrid" class="member-grid">
+                <!-- Populated by auth.js with all other profiles -->
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </section>
+
+    <footer>
+      <div>© <span id="year"></span> The Forge · Members</div>
+      <div class="auth-status-text" id="authStatus">
+        Not signed in
+      </div>
+    </footer>
+  </main>
+
+  <!-- AUTH MODAL (WIRED TO auth.js) -->
+  <div
+    class="auth-overlay"
+    id="authOverlay"
+    aria-modal="true"
+    role="dialog"
+    aria-hidden="true"
+  >
+    <div class="auth-card">
+      <button
+        type="button"
+        class="auth-close-btn"
+        id="authCloseBtn"
+        aria-label="Close account window"
+      >
+        ✕
+      </button>
+      <div class="auth-card-inner">
+        <div class="auth-card-header">
+          <div class="auth-card-title">Forge Account</div>
+          <div class="auth-card-sub">
+            Invite-only access. Use the code you were given by the group owner.
+          </div>
+        </div>
+
+        <div class="auth-toggle-row">
+          <button
+            type="button"
+            class="auth-toggle-btn active"
+            data-mode="signin"
+          >
+            Sign In
+          </button>
+          <button
+            type="button"
+            class="auth-toggle-btn"
+            data-mode="signup"
+          >
+            Create Account
+          </button>
+        </div>
+
+        <!-- Sign In (IDs match auth.js) -->
+        <form id="loginForm" class="auth-form" autocomplete="on">
+          <div class="auth-field">
+            <label class="auth-label" for="loginEmail">Email</label>
+            <input
+              id="loginEmail"
+              type="email"
+              class="auth-input"
+              autocomplete="email"
+              required
+            />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="loginPassword">Password</label>
+            <input
+              id="loginPassword"
+              type="password"
+              class="auth-input"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+          <div
+            id="forgotPasswordLink"
+            class="forgot-password-link"
+          >
+            Forgot password?
+          </div>
+          <button type="submit" class="auth-btn">Sign In</button>
+          <div class="auth-error" id="authErrorLogin"></div>
+          <div class="auth-footnote">
+            Already joined? Use the email and password you created.
+          </div>
+        </form>
+
+        <!-- Sign Up (IDs match auth.js) -->
+        <form id="signupForm" class="auth-form" style="display:none;" autocomplete="on">
+          <div class="auth-field">
+            <label class="auth-label" for="signupFirstName">First Name</label>
+            <input
+              id="signupFirstName"
+              type="text"
+              class="auth-input"
+              autocomplete="given-name"
+              required
+            />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="signupLastName">Last Name</label>
+            <input
+              id="signupLastName"
+              type="text"
+              class="auth-input"
+              autocomplete="family-name"
+              required
+            />
+          </div>
+
+          <!-- Optional legacy display name field (used by auth.js fallback) -->
+          <input id="signupName" type="hidden" />
+
+          <div class="auth-field">
+            <label class="auth-label" for="signupEmail">Email</label>
+            <input
+              id="signupEmail"
+              type="email"
+              class="auth-input"
+              autocomplete="email"
+              required
+            />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="signupPassword">Password</label>
+            <input
+              id="signupPassword"
+              type="password"
+              class="auth-input"
+              autocomplete="new-password"
+              required
+            />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="signupPassword2">Confirm Password</label>
+            <input
+              id="signupPassword2"
+              type="password"
+              class="auth-input"
+              autocomplete="new-password"
+              required
+            />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="signupInvite">Invite Code</label>
+            <input
+              id="signupInvite"
+              type="text"
+              class="auth-input"
+              placeholder="Enter your invite code"
+              required
+            />
+          </div>
+          <button type="submit" class="auth-btn">Create Account</button>
+          <div class="auth-error" id="authErrorSignup"></div>
+          <div class="auth-footnote">
+            Accounts are invite-only. If you don’t have a code, ask the group owner.
+          </div>
+        </form>
+
+        <!-- Sign Out (only when logged in; wired by auth.js) -->
+        <button
+          type="button"
+          id="signOutButton"
+          class="auth-btn"
+          style="margin-top: 0.75rem; display: none;"
+        >
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // FOOTER YEAR
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // MOBILE NAV TOGGLE (needed by auth.js when opening mobile account)
+    (function () {
+      const hamburger = document.getElementById('hamburger');
+      const mobileNav = document.getElementById('mobileNav');
+
+      if (!hamburger || !mobileNav) return;
+
+      function closeNav() {
+        mobileNav.classList.remove('open');
+        hamburger.classList.remove('is-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+      }
+
+      function openNav() {
+        mobileNav.classList.add('open');
+        hamburger.classList.add('is-open');
+        hamburger.setAttribute('aria-expanded', 'true');
+      }
+
+      hamburger.addEventListener('click', () => {
+        if (mobileNav.classList.contains('open')) {
+          closeNav();
+        } else {
+          openNav();
+        }
+      });
+
+      mobileNav.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => {
+          closeNav();
+        });
+      });
+
+      // Expose to auth.js so it can close nav when opening account modal
+      window.__forgeCloseMobileNav = closeNav;
+    })();
+  </script>
+
+  <!-- Firebase wiring & logic -->
+  <script type="module" src="auth.js"></script>
+</body>
+</html>

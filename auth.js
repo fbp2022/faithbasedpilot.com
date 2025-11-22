@@ -49,7 +49,7 @@ const db = getFirestore(app);
 
 /* ================== DOM REFERENCES ================== */
 
-// Common footer status on prayerrequests.html
+// Common footer status
 const authStatusEl = document.getElementById("authStatus");
 
 // Auth modal + controls
@@ -83,7 +83,7 @@ const signupInviteInput = document.getElementById("signupInvite");
 const signOutButton = document.getElementById("signOutButton");
 
 // nav/account labels
-const navUserLabel = document.getElementById("navUserLabel"); // might not exist on some pages
+const navUserLabel = document.getElementById("navUserLabel");
 const navAuthButtonLabel = document.getElementById("navAuthButtonLabel");
 const navMobileUserLabel = document.getElementById("navMobileUserLabel");
 const navMobileAuthButtonLabel = document.getElementById("navMobileAuthButtonLabel");
@@ -94,11 +94,12 @@ const newPrayerError = document.getElementById("newPrayerError");
 const prayerListEl = document.getElementById("prayerList");
 const requestCountLabel = document.getElementById("requestCountLabel");
 
-// Members page elements (only exist on members.html)
-const membersLockedSection = document.getElementById("membersLocked");
-const membersPageSection = document.getElementById("membersPage");
-const membersLeadersGrid = document.getElementById("membersLeadersGrid");
-const membersAllGrid = document.getElementById("membersAllGrid");
+// Members page elements (members.html)
+const membersSignInPrompt = document.getElementById("membersSignInPrompt");
+const membersWrapper = document.getElementById("membersWrapper");
+const membersStatus = document.getElementById("membersStatus");
+const leadersGrid = document.getElementById("leadersGrid");
+const membersGrid = document.getElementById("membersGrid");
 
 /* ================== STATE ================== */
 
@@ -107,7 +108,7 @@ let prayersUnsubscribe = null;
 let cachedInviteCode = null;
 let currentlyOpenPrayerId = null;
 
-// Tristan’s UID (from your Firestore rules isTristan())
+// Tristan’s UID (from Firestore rules isTristan())
 const OWNER_UID = "1zs1eFu7K8cWKRZE7k7TwPCW3X32";
 
 // Global flag: who is allowed to see/use delete buttons
@@ -205,7 +206,6 @@ if (authOverlay) {
   // Open from mobile "Account" button
   if (mobileAccountButton) {
     mobileAccountButton.addEventListener("click", () => {
-      // Close mobile nav if defined in inline script
       if (typeof window.__forgeCloseMobileNav === "function") {
         window.__forgeCloseMobileNav();
       }
@@ -261,7 +261,6 @@ if (loginForm) {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setLoginError("");
-      // Full reload so the page + prayer wall refresh hard
       window.location.reload();
     } catch (error) {
       console.error("Login error:", error);
@@ -308,11 +307,10 @@ if (signupForm) {
     e.preventDefault();
     clearAuthErrors();
 
-    // New preferred fields
     let firstName = signupFirstNameInput ? signupFirstNameInput.value.trim() : "";
     let lastName = signupLastNameInput ? signupLastNameInput.value.trim() : "";
 
-    // Fallback: legacy single "signupName" field (if present & used)
+    // Fallback to legacy single-name field
     if (!firstName && !lastName && signupNameInput) {
       const full = signupNameInput.value.trim();
       if (full) {
@@ -344,7 +342,6 @@ if (signupForm) {
       return;
     }
 
-    // Invite code check against Firestore config/auth
     const expectedInvite = await loadInviteCode();
     if (!expectedInvite) {
       setSignupError("Invite code configuration is missing. Contact the group owner.");
@@ -356,24 +353,17 @@ if (signupForm) {
     }
 
     try {
-      // Create Firebase Auth user
       const cred = await createUserWithEmailAndPassword(auth, email, pass1);
       const user = cred.user;
 
       const displayName = `${firstName} ${lastName}`.trim();
 
-      // Set displayName on auth user
       try {
         await updateProfile(user, { displayName });
       } catch (e2) {
         console.warn("updateProfile failed (displayName)", e2);
       }
 
-      // Create profile document.
-      // IMPORTANT: include fields required by Firestore rules:
-      // - invitecode
-      // - canDeletePrayers: false
-      // - role: "member"
       const profileRef = doc(db, "profiles", user.uid);
       await setDoc(
         profileRef,
@@ -384,14 +374,13 @@ if (signupForm) {
           displayName,
           invitecode: inviteEntered,
           canDeletePrayers: false,
-          role: "member", // default role
+          role: "member", // default
           createdAt: serverTimestamp(),
         },
         { merge: true }
       );
 
       setSignupError("");
-      // Hard refresh the page so UI + prayer list reload in a clean state
       window.location.reload();
     } catch (error) {
       console.error("Signup error:", error);
@@ -454,12 +443,10 @@ function renderPrayerList(snapshot, user) {
     const hasPrayed = !!(user && prayedBy.includes(user.uid));
     const message = data.message || "";
 
-    // Card container
     const card = document.createElement("article");
     card.className = "prayer-card";
     card.dataset.id = id;
 
-    // Header
     const header = document.createElement("div");
     header.className = "prayer-header";
 
@@ -494,7 +481,6 @@ function renderPrayerList(snapshot, user) {
     header.appendChild(main);
     header.appendChild(chevron);
 
-    // Body
     const body = document.createElement("div");
     body.className = "prayer-body";
 
@@ -504,7 +490,6 @@ function renderPrayerList(snapshot, user) {
 
     body.appendChild(bodyInner);
 
-    // Footer
     const footer = document.createElement("div");
     footer.className = "prayer-footer";
 
@@ -533,9 +518,8 @@ function renderPrayerList(snapshot, user) {
       prayBtn.title = "You’ve already marked that you’re praying.";
     }
 
-    // "I'm praying" click
     prayBtn.addEventListener("click", async (evt) => {
-      evt.stopPropagation(); // don’t toggle open/close when clicking button
+      evt.stopPropagation();
       if (!user || hasPrayed) return;
 
       try {
@@ -544,8 +528,6 @@ function renderPrayerList(snapshot, user) {
           prayerCount: increment(1),
           prayedBy: arrayUnion(user.uid),
         });
-
-        // Hard refresh so count visibly bumps even if anything is out of sync
         window.location.reload();
       } catch (error) {
         console.error("Error updating prayer count:", error);
@@ -555,7 +537,6 @@ function renderPrayerList(snapshot, user) {
 
     buttonsWrap.appendChild(prayBtn);
 
-    // DELETE BUTTON: only for users allowed to delete (see canDeletePrayers + Firestore rules)
     if (user && canDeletePrayers) {
       const deleteBtn = document.createElement("button");
       deleteBtn.type = "button";
@@ -564,7 +545,7 @@ function renderPrayerList(snapshot, user) {
       deleteBtn.title = "Delete this prayer request permanently.";
 
       deleteBtn.addEventListener("click", async (evt) => {
-        evt.stopPropagation(); // don’t toggle open/close when clicking button
+        evt.stopPropagation();
 
         const confirmed = window.confirm(
           "Are you sure you want to delete this prayer request? This cannot be undone."
@@ -574,7 +555,6 @@ function renderPrayerList(snapshot, user) {
         try {
           const ref = doc(db, "prayerRequests", id);
           await deleteDoc(ref);
-          // Firestore snapshot listener will auto-refresh the list
         } catch (error) {
           console.error("Error deleting prayer request:", error);
           alert("Could not delete this request. Check permissions and try again.");
@@ -592,12 +572,10 @@ function renderPrayerList(snapshot, user) {
     hintLine.textContent = "Tap to open a request. Only one stays open at a time.";
     footer.appendChild(hintLine);
 
-    // Assemble card
     card.appendChild(header);
     card.appendChild(body);
     card.appendChild(footer);
 
-    // Open/close behavior: only one open at a time
     function updateBodyMaxHeight() {
       if (card.classList.contains("open")) {
         body.style.maxHeight = body.scrollHeight + "px";
@@ -610,7 +588,6 @@ function renderPrayerList(snapshot, user) {
       const alreadyOpen =
         currentlyOpenPrayerId === id && card.classList.contains("open");
 
-      // close all cards
       const openCards = prayerListEl.querySelectorAll(".prayer-card.open");
       openCards.forEach((c) => {
         c.classList.remove("open");
@@ -677,8 +654,6 @@ if (prayerForm) {
 
       if (prayerForm) prayerForm.reset();
       if (newPrayerError) newPrayerError.textContent = "";
-
-      // Hard refresh so the new request appears exactly once & list is fresh
       window.location.reload();
     } catch (error) {
       console.error("Error adding prayer request:", error);
@@ -692,28 +667,32 @@ if (prayerForm) {
 /* ================== MEMBERS PAGE: RENDERING ================== */
 
 function clearMembersUI() {
-  if (membersLeadersGrid) membersLeadersGrid.innerHTML = "";
-  if (membersAllGrid) membersAllGrid.innerHTML = "";
+  if (leadersGrid) leadersGrid.innerHTML = "";
+  if (membersGrid) membersGrid.innerHTML = "";
 }
 
 function createMemberCard(entry) {
   const card = document.createElement("article");
   card.className = "member-card";
 
+  // Mark leaders for CSS .member-card.leader styles
+  if (entry.role === "owner" || entry.role === "admin") {
+    card.classList.add("leader");
+  }
+
   const nameEl = document.createElement("div");
   nameEl.className = "member-name";
   nameEl.textContent = entry.name || "Unknown";
   card.appendChild(nameEl);
 
-  // Leader vs Member pill
   const pill = document.createElement("div");
   pill.className = "member-role-pill";
 
-  if (entry.role === "owner" || entry.role === "admin") {
-    pill.classList.add("member-role-leader");
-    pill.textContent = "Leader";
+  if (entry.role === "owner") {
+    pill.textContent = "Owner";
+  } else if (entry.role === "admin") {
+    pill.textContent = "Admin";
   } else {
-    pill.classList.add("member-role-member");
     pill.textContent = "Member";
   }
 
@@ -722,10 +701,10 @@ function createMemberCard(entry) {
 }
 
 async function loadMembersRoster() {
-  // Only runs on members.html (gracefully no-op elsewhere)
-  if (!membersLeadersGrid && !membersAllGrid) return;
+  if (!leadersGrid && !membersGrid) return;
 
   clearMembersUI();
+  if (membersStatus) membersStatus.textContent = "Loading members…";
 
   try {
     const profilesRef = collection(db, "profiles");
@@ -738,7 +717,7 @@ async function loadMembersRoster() {
     snap.forEach((docSnap) => {
       const data = docSnap.data() || {};
       const fullName =
-        (data.firstName && data.lastName)
+        data.firstName && data.lastName
           ? `${data.firstName} ${data.lastName}`.trim()
           : data.displayName || "Unknown";
 
@@ -760,33 +739,43 @@ async function loadMembersRoster() {
       }
     });
 
-    // Render leaders
-    if (membersLeadersGrid) {
+    if (leadersGrid) {
       if (!leaders.length) {
-        membersLeadersGrid.innerHTML =
+        leadersGrid.innerHTML =
           '<p class="status-text">No leaders are configured yet.</p>';
       } else {
         leaders.forEach((entry) => {
-          membersLeadersGrid.appendChild(createMemberCard(entry));
+          leadersGrid.appendChild(createMemberCard(entry));
         });
       }
     }
 
-    // Render members (non-leaders)
-    if (membersAllGrid) {
+    if (membersGrid) {
       if (!members.length) {
-        membersAllGrid.innerHTML =
+        membersGrid.innerHTML =
           '<p class="status-text">No members are listed yet.</p>';
       } else {
         members.forEach((entry) => {
-          membersAllGrid.appendChild(createMemberCard(entry));
+          membersGrid.appendChild(createMemberCard(entry));
         });
       }
     }
+
+    if (membersStatus) {
+      const total = leaders.length + members.length;
+      membersStatus.textContent =
+        total === 1
+          ? "1 man is currently listed in The Forge."
+          : `${total} men are currently listed in The Forge.`;
+    }
   } catch (error) {
     console.error("Error loading members roster:", error);
-    if (membersAllGrid) {
-      membersAllGrid.innerHTML =
+    if (membersStatus) {
+      membersStatus.textContent =
+        "Could not load members. Please try again later.";
+    }
+    if (membersGrid) {
+      membersGrid.innerHTML =
         '<p class="status-text">Could not load members. Please try again later.</p>';
     }
   }
@@ -794,19 +783,20 @@ async function loadMembersRoster() {
 
 function handleMembersPageAuth(user) {
   // If this page doesn't have members sections, do nothing
-  if (!membersLockedSection && !membersPageSection) return;
+  if (!membersSignInPrompt && !membersWrapper) return;
 
   if (!user) {
-    // Not signed in: show locked message, hide roster
-    if (membersPageSection) membersPageSection.style.display = "none";
-    if (membersLockedSection) membersLockedSection.style.display = "block";
+    if (membersWrapper) membersWrapper.style.display = "none";
+    if (membersSignInPrompt) membersSignInPrompt.style.display = "block";
+    if (membersStatus)
+      membersStatus.textContent = "Sign in to see the members of The Forge.";
     clearMembersUI();
     return;
   }
 
-  // Signed in: hide locked message, show roster and load members
-  if (membersLockedSection) membersLockedSection.style.display = "none";
-  if (membersPageSection) membersPageSection.style.display = "block";
+  if (membersSignInPrompt) membersSignInPrompt.style.display = "none";
+  if (membersWrapper) membersWrapper.style.display = "block";
+  if (membersStatus) membersStatus.textContent = "Loading members…";
 
   loadMembersRoster();
 }
@@ -816,16 +806,13 @@ function handleMembersPageAuth(user) {
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
 
-  // Default: nobody can delete until we check
   canDeletePrayers = false;
 
   if (user) {
-    // Tristan always has delete rights
     if (user.uid === OWNER_UID) {
       canDeletePrayers = true;
     }
 
-    // Also allow a Firestore profile flag to grant delete rights
     (async () => {
       try {
         const profileRef = doc(db, "profiles", user.uid);
@@ -842,21 +829,16 @@ onAuthStateChanged(auth, (user) => {
     })();
   }
 
-  // Nice label to show for the user
   const signedInLabel = user
     ? user.displayName || user.email || "Signed in"
     : "Guest";
 
-  // Update footer status
   if (authStatusEl) {
-    if (user) {
-      authStatusEl.textContent = `Signed in as ${signedInLabel}`;
-    } else {
-      authStatusEl.textContent = "Not signed in";
-    }
+    authStatusEl.textContent = user
+      ? `Signed in as ${signedInLabel}`
+      : "Not signed in";
   }
 
-  // Update nav/account labels if those elements exist
   if (navUserLabel) {
     navUserLabel.textContent = user ? signedInLabel : "Guest";
   }
@@ -867,20 +849,19 @@ onAuthStateChanged(auth, (user) => {
     navAuthButtonLabel.textContent = user ? "My Account" : "Sign In";
   }
   if (navMobileAuthButtonLabel) {
-    navMobileAuthButtonLabel.textContent = user ? "My Account" : "Sign In / Create";
+    navMobileAuthButtonLabel.textContent = user
+      ? "My Account"
+      : "Sign In / Create";
   }
 
-  // Toggle sign out button visibility if present
   if (signOutButton) {
     signOutButton.style.display = user ? "inline-flex" : "none";
   }
 
-  // Hide "New Request" form if not signed in
   if (prayerForm) {
     prayerForm.style.display = user ? "block" : "none";
   }
 
-  // Start or stop prayerRequests listener
   if (prayersUnsubscribe) {
     prayersUnsubscribe();
     prayersUnsubscribe = null;
@@ -906,20 +887,17 @@ onAuthStateChanged(auth, (user) => {
     clearPrayerListUI();
   }
 
-  // 🔒 Members page auth handling (locks page + loads roster)
+  // Members page handling
   handleMembersPageAuth(user);
 });
 
 /* ================== SIGN OUT ================== */
 
-// If you add a button with id="signOutButton" in your HTML,
-// this will sign the user out when clicked.
 if (signOutButton) {
   signOutButton.addEventListener("click", async () => {
     try {
       await signOut(auth);
       closeAuthOverlay();
-      // No need to reload; onAuthStateChanged will clear the UI.
     } catch (error) {
       console.error("Sign out error:", error);
       alert("Could not sign out. Try again.");
@@ -927,5 +905,5 @@ if (signOutButton) {
   });
 }
 
-// Expose closeAuthOverlay if you ever need it from inline scripts
+// Expose closeAuthOverlay if needed from inline scripts
 window.__forgeCloseAuthOverlay = closeAuthOverlay;

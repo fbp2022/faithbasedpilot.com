@@ -1,6 +1,7 @@
 // auth.js
 // Handles Firebase auth, invite-code signup, profiles (with first/last name),
-// and the Prayer Requests wall (submit + "I'm praying" count + admin delete).
+// the Prayer Requests wall (submit + "I'm praying" count + admin delete),
+// and the Members roster (locked page, split by Leaders vs Members).
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
@@ -26,7 +27,8 @@ import {
   updateDoc,
   increment,
   arrayUnion,
-  deleteDoc, // <--- ADDED for delete
+  deleteDoc, // for deleting prayer requests
+  getDocs,   // for Members page roster
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* ================== FIREBASE SETUP ================== */
@@ -91,6 +93,12 @@ const prayerForm = document.getElementById("prayerForm");
 const newPrayerError = document.getElementById("newPrayerError");
 const prayerListEl = document.getElementById("prayerList");
 const requestCountLabel = document.getElementById("requestCountLabel");
+
+// Members page elements (only exist on members.html)
+const membersLockedSection = document.getElementById("membersLocked");
+const membersPageSection = document.getElementById("membersPage");
+const membersLeadersGrid = document.getElementById("membersLeadersGrid");
+const membersAllGrid = document.getElementById("membersAllGrid");
 
 /* ================== STATE ================== */
 
@@ -362,8 +370,10 @@ if (signupForm) {
       }
 
       // Create profile document.
-      // IMPORTANT: include "invitecode" so your Firestore rules' inviteCodeValid()
-      // passes when the profile doc is created.
+      // IMPORTANT: include fields required by Firestore rules:
+      // - invitecode
+      // - canDeletePrayers: false
+      // - role: "member"
       const profileRef = doc(db, "profiles", user.uid);
       await setDoc(
         profileRef,
@@ -373,7 +383,8 @@ if (signupForm) {
           lastName,
           displayName,
           invitecode: inviteEntered,
-          canDeletePrayers: false,   // 🔒 default for EVERY new account
+          canDeletePrayers: false,
+          role: "member", // default role
           createdAt: serverTimestamp(),
         },
         { merge: true }
@@ -678,6 +689,128 @@ if (prayerForm) {
   });
 }
 
+/* ================== MEMBERS PAGE: RENDERING ================== */
+
+function clearMembersUI() {
+  if (membersLeadersGrid) membersLeadersGrid.innerHTML = "";
+  if (membersAllGrid) membersAllGrid.innerHTML = "";
+}
+
+function createMemberCard(entry) {
+  const card = document.createElement("article");
+  card.className = "member-card";
+
+  const nameEl = document.createElement("div");
+  nameEl.className = "member-name";
+  nameEl.textContent = entry.name || "Unknown";
+  card.appendChild(nameEl);
+
+  // Leader vs Member pill
+  const pill = document.createElement("div");
+  pill.className = "member-role-pill";
+
+  if (entry.role === "owner" || entry.role === "admin") {
+    pill.classList.add("member-role-leader");
+    pill.textContent = "Leader";
+  } else {
+    pill.classList.add("member-role-member");
+    pill.textContent = "Member";
+  }
+
+  card.appendChild(pill);
+  return card;
+}
+
+async function loadMembersRoster() {
+  // Only runs on members.html (gracefully no-op elsewhere)
+  if (!membersLeadersGrid && !membersAllGrid) return;
+
+  clearMembersUI();
+
+  try {
+    const profilesRef = collection(db, "profiles");
+    const q = query(profilesRef, orderBy("displayName"));
+    const snap = await getDocs(q);
+
+    const leaders = [];
+    const members = [];
+
+    snap.forEach((docSnap) => {
+      const data = docSnap.data() || {};
+      const fullName =
+        (data.firstName && data.lastName)
+          ? `${data.firstName} ${data.lastName}`.trim()
+          : data.displayName || "Unknown";
+
+      let role = (data.role || "member").toString().toLowerCase();
+      if (role !== "owner" && role !== "admin" && role !== "member") {
+        role = "member";
+      }
+
+      const entry = {
+        id: docSnap.id,
+        name: fullName,
+        role,
+      };
+
+      if (role === "owner" || role === "admin") {
+        leaders.push(entry);
+      } else {
+        members.push(entry);
+      }
+    });
+
+    // Render leaders
+    if (membersLeadersGrid) {
+      if (!leaders.length) {
+        membersLeadersGrid.innerHTML =
+          '<p class="status-text">No leaders are configured yet.</p>';
+      } else {
+        leaders.forEach((entry) => {
+          membersLeadersGrid.appendChild(createMemberCard(entry));
+        });
+      }
+    }
+
+    // Render members (non-leaders)
+    if (membersAllGrid) {
+      if (!members.length) {
+        membersAllGrid.innerHTML =
+          '<p class="status-text">No members are listed yet.</p>';
+      } else {
+        members.forEach((entry) => {
+          membersAllGrid.appendChild(createMemberCard(entry));
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error loading members roster:", error);
+    if (membersAllGrid) {
+      membersAllGrid.innerHTML =
+        '<p class="status-text">Could not load members. Please try again later.</p>';
+    }
+  }
+}
+
+function handleMembersPageAuth(user) {
+  // If this page doesn't have members sections, do nothing
+  if (!membersLockedSection && !membersPageSection) return;
+
+  if (!user) {
+    // Not signed in: show locked message, hide roster
+    if (membersPageSection) membersPageSection.style.display = "none";
+    if (membersLockedSection) membersLockedSection.style.display = "block";
+    clearMembersUI();
+    return;
+  }
+
+  // Signed in: hide locked message, show roster and load members
+  if (membersLockedSection) membersLockedSection.style.display = "none";
+  if (membersPageSection) membersPageSection.style.display = "block";
+
+  loadMembersRoster();
+}
+
 /* ================== AUTH STATE LISTENER ================== */
 
 onAuthStateChanged(auth, (user) => {
@@ -772,6 +905,9 @@ onAuthStateChanged(auth, (user) => {
   } else {
     clearPrayerListUI();
   }
+
+  // 🔒 Members page auth handling (locks page + loads roster)
+  handleMembersPageAuth(user);
 });
 
 /* ================== SIGN OUT ================== */

@@ -652,8 +652,31 @@ if (prayerForm) {
         prayedBy: [],
       });
 
+      // 🔔 Fire-and-forget call to Cloudflare Worker to send emails
+      (async () => {
+        try {
+          await fetch("https://forge-prayer-email.aviationministries.workers.dev", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              displayName: displayName,
+              title,
+              message,
+              link: "https://faithbasedpilot.com/prayerrequests.html",
+            }),
+          });
+        } catch (err) {
+          console.error("Error calling prayer email worker:", err);
+          // We intentionally don't block the user on email failures
+        }
+      })();
+
       if (prayerForm) prayerForm.reset();
       if (newPrayerError) newPrayerError.textContent = "";
+
+      // Hard refresh so the new request appears exactly once & list is fresh
       window.location.reload();
     } catch (error) {
       console.error("Error adding prayer request:", error);

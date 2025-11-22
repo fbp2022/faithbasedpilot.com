@@ -440,51 +440,87 @@ function renderPrayerList(snapshot, user) {
     const prayerCount =
       typeof data.prayerCount === "number" ? data.prayerCount : 0;
     const prayedBy = Array.isArray(data.prayedBy) ? data.prayedBy : [];
-     const prayedBy = Array.isArray(data.prayedBy) ? data.prayedBy : [];
     const hasPrayed = !!(user && prayedBy.includes(user.uid));
-
-    // 🔍 Debug: see exactly what the app thinks about this user vs this request
-    console.log("Prayer card debug", {
-      prayerId: id,
-      currentUserUid: user ? user.uid : null,
-      currentUserName: user ? (user.displayName || user.email) : null,
-      prayedBy,
-      hasPrayed,
-    });
+    const message = data.message || "";
 
     const card = document.createElement("article");
     card.className = "prayer-card";
     card.dataset.id = id;
 
-    // ... header / body code stays the same ...
+    const header = document.createElement("div");
+    header.className = "prayer-header";
+
+    const main = document.createElement("div");
+    main.className = "prayer-main";
+
+    const titleEl = document.createElement("div");
+    titleEl.className = "prayer-title";
+    titleEl.textContent = title;
+
+    const meta = document.createElement("div");
+    meta.className = "prayer-meta";
+
+    const whoPill = document.createElement("span");
+    whoPill.className = "meta-pill";
+    whoPill.innerHTML = `<span>👤</span><span>${postedBy}</span>`;
+
+    const whenPill = document.createElement("span");
+    whenPill.className = "meta-pill";
+    whenPill.innerHTML = `<span>🕒</span><span>${createdAt || "Just now"}</span>`;
+
+    meta.appendChild(whoPill);
+    meta.appendChild(whenPill);
+
+    main.appendChild(titleEl);
+    main.appendChild(meta);
+
+    const chevron = document.createElement("div");
+    chevron.className = "chevron";
+    chevron.textContent = "›";
+
+    header.appendChild(main);
+    header.appendChild(chevron);
+
+    const body = document.createElement("div");
+    body.className = "prayer-body";
+
+    const bodyInner = document.createElement("div");
+    bodyInner.className = "prayer-body-inner";
+    bodyInner.textContent = message;
+
+    body.appendChild(bodyInner);
+
+    const footer = document.createElement("div");
+    footer.className = "prayer-footer";
+
+    const countSpan = document.createElement("span");
+    countSpan.className = "prayer-count";
+    countSpan.textContent =
+      prayerCount === 1
+        ? "1 man has marked that he’s praying."
+        : `${prayerCount} men have marked that they’re praying.`;
+
+    const buttonsWrap = document.createElement("div");
+    buttonsWrap.style.display = "flex";
+    buttonsWrap.style.gap = "0.4rem";
+    buttonsWrap.style.flexWrap = "wrap";
 
     const prayBtn = document.createElement("button");
     prayBtn.type = "button";
     prayBtn.className = "btn btn-soft";
     prayBtn.innerHTML = `<span class="icon">🙏</span><span>I’m praying</span>`;
 
-    // 👇 Only hard-disable if NOT signed in.
     if (!user) {
       prayBtn.disabled = true;
       prayBtn.title = "Sign in to record that you’re praying.";
     } else if (hasPrayed) {
-      // Allow click, but just warn instead of blocking via disabled.
+      prayBtn.disabled = true;
       prayBtn.title = "You’ve already marked that you’re praying.";
     }
 
     prayBtn.addEventListener("click", async (evt) => {
       evt.stopPropagation();
-
-      if (!user) {
-        alert("Sign in to record that you’re praying.");
-        return;
-      }
-
-      if (hasPrayed) {
-        // Extra guard so they can't double-count, but they still see a message.
-        alert("You’ve already marked that you’re praying for this request.");
-        return;
-      }
+      if (!user || hasPrayed) return;
 
       try {
         const ref = doc(db, "prayerRequests", id);

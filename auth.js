@@ -655,7 +655,7 @@ if (prayerForm) {
       // 🔔 Fire-and-forget call to Cloudflare Worker to send emails
       (async () => {
         try {
-          await fetch("https://forge-prayer-email.aviationministries.workers.dev", {
+          await fetch("https://forge-prayers.aviationministries.workers.dev/", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

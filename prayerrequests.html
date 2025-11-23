@@ -102,20 +102,28 @@
       padding: 0 1.5rem 3.5rem;
     }
 
-    /* ================== HEADER / NAV (MATCH THEFORGE.HTML) ================== */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      backdrop-filter: blur(16px);
-      background: linear-gradient(
-        to bottom,
-        var(--bg-header-strong),
-        var(--bg-header-soft),
-        transparent
-      );
-      border-bottom: 1px solid var(--border-subtle);
-    }
+   /* ===== FIXED HEADER ON ALL DEVICES ===== */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  backdrop-filter: blur(16px);
+  background: linear-gradient(
+    to bottom,
+    var(--bg-header-strong),
+    var(--bg-header-soft),
+    transparent
+  );
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Push page content below the fixed header */
+body {
+  padding-top: var(--nav-height);
+}
+
 
     .nav {
       display: flex;

@@ -673,6 +673,26 @@ if (prayerForm) {
         }
       })();
 
+      // 🔔 Fire-and-forget call to Cloudflare Worker that posts to Discord (#prayer-requests)
+      (async () => {
+        try {
+          await fetch("https://forge-prayers.aviationministries.workers.dev", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              displayName: displayName,
+              title,
+              text: message,
+            }),
+          });
+        } catch (err) {
+          console.error("Error calling Discord prayer worker:", err);
+          // We intentionally don't block the user on Discord failures
+        }
+      })();
+
       if (prayerForm) prayerForm.reset();
       if (newPrayerError) newPrayerError.textContent = "";
 

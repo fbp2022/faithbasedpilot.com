@@ -638,7 +638,8 @@ if (prayerForm) {
     }
 
     const displayName = name || "Anonymous";
-    const ownerDisplayName = currentUser.displayName || currentUser.email || null;
+    const ownerDisplayName =
+      currentUser.displayName || currentUser.email || null;
 
     try {
       // 1) Save to Firestore
@@ -665,27 +666,26 @@ if (prayerForm) {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              displayName: displayName,
+              displayName,
               title,
-              text: message, // key name matches what the Worker expects
+              message, // matches Worker key
+              link: "https://faithbasedpilot.com/prayerrequests.html",
             }),
           }
         );
 
         console.log("Worker response status:", resp.status);
         if (!resp.ok) {
-          console.error("Worker returned error:", await resp.text());
+          console.error("Worker returned error body:", await resp.text());
         }
       } catch (err) {
         console.error("Worker fetch FAILED:", err);
-        // don't block the user on Discord failure
+        // Don't block the user if Discord fails
       }
 
-      // 3) Clean up the form; onSnapshot will update the wall automatically
+      // 3) Reset form; the onSnapshot listener will show the new request
       if (prayerForm) prayerForm.reset();
       if (newPrayerError) newPrayerError.textContent = "";
-
-      // ❌ NO window.location.reload() here anymore
     } catch (error) {
       console.error("Error adding prayer request:", error);
       if (newPrayerError) {

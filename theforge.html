@@ -118,21 +118,35 @@
       padding: 0 1.5rem 3.5rem;
     }
 
-    /* ================== HEADER / NAV ================== */
+/* ===== FIXED HEADER ON DESKTOP ===== */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(16px);
+  background: linear-gradient(
+    to bottom,
+    var(--bg-header-strong),
+    var(--bg-header-soft),
+    transparent
+  );
+  border-bottom: 1px solid var(--border-subtle);
+}
 
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      backdrop-filter: blur(16px);
-      background: linear-gradient(
-        to bottom,
-        var(--bg-header-strong),
-        var(--bg-header-soft),
-        transparent
-      );
-      border-bottom: 1px solid var(--border-subtle);
-    }
+/* Permanently fixed header on desktop */
+@media (min-width: 840px) {
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+  }
+
+  body {
+    padding-top: var(--nav-height);
+  }
+}
 
     .nav {
       display: flex;

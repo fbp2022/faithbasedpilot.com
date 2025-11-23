@@ -100,9 +100,15 @@
     }
 
     @keyframes orbit {
-      0% { transform: translate3d(0, 0, 0) scale(1); }
-      50% { transform: translate3d(-3%, 4%, 0) scale(1.05); }
-      100% { transform: translate3d(3%, -4%, 0) scale(1.02); }
+      0% {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+      50% {
+        transform: translate3d(-3%, 4%, 0) scale(1.05);
+      }
+      100% {
+        transform: translate3d(3%, -4%, 0) scale(1.02);
+      }
     }
 
     .shell {
@@ -112,21 +118,19 @@
     }
 
     /* ================== HEADER / NAV (MATCH THEFORGE) ================== */
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  backdrop-filter: blur(16px);
-  background: linear-gradient(
-    to bottom,
-    var(--bg-header-strong),
-    var(--bg-header-soft),
-    transparent
-  );
-  border-bottom: 1px solid var(--border-subtle);
-}
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(16px);
+      background: linear-gradient(
+        to bottom,
+        var(--bg-header-strong),
+        var(--bg-header-soft),
+        transparent
+      );
+      border-bottom: 1px solid var(--border-subtle);
+    }
 
     .nav {
       display: flex;
@@ -789,12 +793,18 @@ header {
       </div>
 
       <div class="nav-actions">
-       <button id="accountButton" class="account-btn" type="button">
+        <button id="accountButton" class="account-btn" type="button">
           <span class="icon">👤</span>
           <span id="navAuthButtonLabel">Sign In</span>
         </button>
 
-        <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <button
+          class="hamburger"
+          id="hamburger"
+          type="button"
+          aria-label="Toggle navigation"
+          aria-expanded="false"
+        >
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
@@ -970,7 +980,12 @@ header {
         </form>
 
         <!-- Sign Up (IDs match auth.js) -->
-        <form id="signupForm" class="auth-form" style="display:none;" autocomplete="on">
+        <form
+          id="signupForm"
+          class="auth-form"
+          style="display:none;"
+          autocomplete="on"
+        >
           <div class="auth-field">
             <label class="auth-label" for="signupFirstName">First Name</label>
             <input

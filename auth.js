@@ -652,24 +652,33 @@ if (prayerForm) {
         prayedBy: [],
       });
 
-      // 🔔 Fire-and-forget call to Cloudflare Worker to send emails
+      // 🔔 Fire-and-forget call to Cloudflare Worker that posts to Discord (#prayer-requests)
       (async () => {
         try {
-          await fetch("https://forge-prayers.aviationministries.workers.dev/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              displayName: displayName,
-              title,
-              message,
-              link: "https://faithbasedpilot.com/prayerrequests.html",
-            }),
-          });
+          console.log("Calling forge-prayers worker…");
+
+          const resp = await fetch(
+            "https://forge-prayers.aviationministries.workers.dev/",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                displayName: displayName, // the name shown in Discord
+                title,                    // prayer request title
+                text: message,            // IMPORTANT: key must be 'text' to match Worker
+              }),
+            }
+          );
+
+          console.log("Worker response status:", resp.status);
+          if (!resp.ok) {
+            console.error("Worker returned error:", await resp.text());
+          }
         } catch (err) {
-          console.error("Error calling prayer email worker:", err);
-          // We intentionally don't block the user on email failures
+          console.error("Worker fetch FAILED:", err);
+          // We intentionally don't block the user on Discord failures
         }
       })();
 

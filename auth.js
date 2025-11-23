@@ -641,6 +641,7 @@ if (prayerForm) {
     const ownerDisplayName = currentUser.displayName || currentUser.email || null;
 
     try {
+      // 1) Save to Firestore
       await addDoc(collection(db, "prayerRequests"), {
         title,
         name: displayName,
@@ -652,40 +653,13 @@ if (prayerForm) {
         prayedBy: [],
       });
 
-      // 🔔 Fire-and-forget call to Cloudflare Worker that posts to Discord (#prayer-requests)
-      (async () => {
-        try {
-          console.log("Calling forge-prayers worker…");
+      // 2) Call Cloudflare Worker to post into Discord
+      try {
+        console.log("Calling forge-prayers worker…");
 
-          const resp = await fetch(
-            "https://forge-prayers.aviationministries.workers.dev/",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                displayName: displayName, // the name shown in Discord
-                title,                    // prayer request title
-                text: message,            // IMPORTANT: key must be 'text' to match Worker
-              }),
-            }
-          );
-
-          console.log("Worker response status:", resp.status);
-          if (!resp.ok) {
-            console.error("Worker returned error:", await resp.text());
-          }
-        } catch (err) {
-          console.error("Worker fetch FAILED:", err);
-          // We intentionally don't block the user on Discord failures
-        }
-      })();
-
-      // 🔔 Fire-and-forget call to Cloudflare Worker that posts to Discord (#prayer-requests)
-      (async () => {
-        try {
-          await fetch("https://forge-prayers.aviationministries.workers.dev", {
+        const resp = await fetch(
+          "https://forge-prayers.aviationministries.workers.dev/",
+          {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -693,20 +667,25 @@ if (prayerForm) {
             body: JSON.stringify({
               displayName: displayName,
               title,
-              text: message,
+              text: message, // key name matches what the Worker expects
             }),
-          });
-        } catch (err) {
-          console.error("Error calling Discord prayer worker:", err);
-          // We intentionally don't block the user on Discord failures
-        }
-      })();
+          }
+        );
 
+        console.log("Worker response status:", resp.status);
+        if (!resp.ok) {
+          console.error("Worker returned error:", await resp.text());
+        }
+      } catch (err) {
+        console.error("Worker fetch FAILED:", err);
+        // don't block the user on Discord failure
+      }
+
+      // 3) Clean up the form; onSnapshot will update the wall automatically
       if (prayerForm) prayerForm.reset();
       if (newPrayerError) newPrayerError.textContent = "";
 
-      // Hard refresh so the new request appears exactly once & list is fresh
-      window.location.reload();
+      // ❌ NO window.location.reload() here anymore
     } catch (error) {
       console.error("Error adding prayer request:", error);
       if (newPrayerError) {

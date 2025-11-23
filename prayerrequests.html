@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Forge · Prayer Requests</title>
   <meta name="color-scheme" content="dark light" />
-  <meta name="description" content="Private prayer wall for men in The Forge to share prayer needs and stand in the gap for one another." />
+  <meta
+    name="description"
+    content="Private prayer wall for men in The Forge to share prayer needs and stand in the gap for one another."
+  />
 
   <style>
     /* ================== BASE / THEME ================== */
@@ -38,6 +41,7 @@
       --radius-md: 12px;
       --radius-input: 999px;
       --radius-full: 999px;
+
       --transition-fast: 0.18s ease;
       --transition-med: 0.25s ease;
     }
@@ -49,35 +53,36 @@
     }
 
     .btn-danger {
-  background: rgba(255, 75, 75, 0.15);
-  border: 1px solid rgba(255, 75, 75, 0.4);
-  color: #ff4b4b !important;
-}
+      background: rgba(255, 75, 75, 0.15);
+      border: 1px solid rgba(255, 75, 75, 0.4);
+      color: #ff4b4b !important;
+    }
 
-.btn-danger:hover {
-  background: rgba(255, 75, 75, 0.25);
-  box-shadow: 0 0 12px rgba(255, 75, 75, 0.4);
-}
-    
+    .btn-danger:hover {
+      background: rgba(255, 75, 75, 0.25);
+      box-shadow: 0 0 12px rgba(255, 75, 75, 0.4);
+    }
+
     html,
     body {
       height: 100%;
       scroll-behavior: smooth;
     }
 
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: radial-gradient(
-    circle at 0% 0%,
-    var(--bg-card-soft) 0,
-    var(--bg-main) 40%,
-    var(--bg-deep) 100%
-  );
-  color: var(--text-main);
-  -webkit-font-smoothing: antialiased;
-  padding-top: var(--nav-height);
-}
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(
+        circle at 0% 0%,
+        var(--bg-card-soft) 0,
+        var(--bg-main) 40%,
+        var(--bg-deep) 100%
+      );
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
 
+      /* Push page content below the fixed header */
+      padding-top: var(--nav-height);
+    }
 
     .ambient-orbit {
       position: fixed;
@@ -93,9 +98,15 @@ body {
     }
 
     @keyframes orbit {
-      0% { transform: translate3d(0, 0, 0) scale(1); }
-      50% { transform: translate3d(-3%, 4%, 0) scale(1.05); }
-      100% { transform: translate3d(3%, -4%, 0) scale(1.02); }
+      0% {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+      50% {
+        transform: translate3d(-3%, 4%, 0) scale(1.05);
+      }
+      100% {
+        transform: translate3d(3%, -4%, 0) scale(1.02);
+      }
     }
 
     .shell {
@@ -104,8 +115,8 @@ body {
       padding: 0 1.5rem 3.5rem;
     }
 
-   /* ===== FIXED HEADER ON ALL DEVICES ===== */
- /* ================== HEADER / NAV (MATCH THEFORGE.HTML) ================== */
+    /* ===== FIXED HEADER ON ALL DEVICES ===== */
+    /* ================== HEADER / NAV (MATCH THEFORGE.HTML) ================== */
     header {
       position: sticky;
       top: 0;
@@ -458,7 +469,6 @@ body {
     }
 
     /* ================== PRAYER FORM – FLOATING LABELS ================== */
-
     .prayer-form {
       display: flex;
       flex-direction: column;
@@ -475,7 +485,11 @@ body {
       width: 100%;
       border-radius: var(--radius-input);
       border: 1px solid rgba(148, 163, 184, 0.3);
-      background: radial-gradient(circle at 0 0, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95));
+      background: radial-gradient(
+        circle at 0 0,
+        rgba(15, 23, 42, 0.85),
+        rgba(15, 23, 42, 0.95)
+      );
       color: var(--text-main);
       padding: 0.95rem 1.1rem 0.75rem;
       font-size: 0.9rem;
@@ -528,7 +542,11 @@ body {
       box-shadow:
         0 0 0 1px rgba(0, 255, 200, 0.5),
         0 0 22px rgba(0, 255, 200, 0.42);
-      background: radial-gradient(circle at 0 0, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 1));
+      background: radial-gradient(
+        circle at 0 0,
+        rgba(15, 23, 42, 0.9),
+        rgba(15, 23, 42, 1)
+      );
     }
 
     .field-group.focused .field-label,
@@ -617,7 +635,6 @@ body {
     }
 
     /* ================== PRAYER WALL ================== */
-
     .wall-card {
       margin-top: 0.6rem;
     }
@@ -664,7 +681,11 @@ body {
         0 0 0 1px rgba(15, 23, 42, 1),
         0 0 26px rgba(0, 255, 200, 0.4);
       transform: translateY(-1px);
-      background: radial-gradient(circle at 0 0, rgba(0, 255, 200, 0.09), rgba(7, 11, 23, 0.98));
+      background: radial-gradient(
+        circle at 0 0,
+        rgba(0, 255, 200, 0.09),
+        rgba(7, 11, 23, 0.98)
+      );
     }
 
     .prayer-header {
@@ -770,7 +791,6 @@ body {
     }
 
     /* ================== FOOTER ================== */
-
     footer {
       margin-top: 2.2rem;
       padding-top: 1.5rem;
@@ -789,7 +809,6 @@ body {
     }
 
     /* ================== AUTH MODAL (MATCH AUTH.JS) ================== */
-
     .auth-overlay {
       position: fixed;
       inset: 0;
@@ -971,7 +990,6 @@ body {
     }
 
     /* ================== RESPONSIVE ================== */
-
     @media (max-width: 880px) {
       .top-grid {
         grid-template-columns: minmax(0, 1fr);
@@ -1017,12 +1035,18 @@ body {
       </div>
 
       <div class="nav-actions">
-    <button id="accountButton" class="account-btn" type="button">
+        <button id="accountButton" class="account-btn" type="button">
           <span class="icon">👤</span>
           <span id="navAuthButtonLabel">Sign In</span>
         </button>
 
-        <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <button
+          class="hamburger"
+          id="hamburger"
+          type="button"
+          aria-label="Toggle navigation"
+          aria-expanded="false"
+        >
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
@@ -1056,8 +1080,9 @@ body {
       <div class="page-header-kicker">Pray for one another</div>
       <h1 id="page-title" class="page-title">Share a prayer need, stand in the gap.</h1>
       <p class="page-intro">
-        This is a private wall for men in The Forge to ask for prayer and commit to praying for one
-        another. Be honest, be specific, and remember that what you share here is treated with care.
+        This is a private wall for men in The Forge to ask for prayer and commit to praying
+        for one another. Be honest, be specific, and remember that what you share here is
+        treated with care.
       </p>
 
       <div class="top-grid">
@@ -1106,7 +1131,8 @@ body {
               </div>
 
               <p class="field-note">
-                Requests are timestamped and an email will be sent out notifying all members of your prayer request. 
+                Requests are timestamped and an email will be sent out notifying all members
+                of your prayer request.
               </p>
 
               <div class="form-actions">
@@ -1133,15 +1159,26 @@ body {
               <p>
                 Every request on this wall represents a real man walking through real battles.
                 When you open a request and tap <strong>“I’m praying”</strong>, the counter
-                will reflect that you’ve committed to pray for your brother in Christ. 
+                will reflect that you’ve committed to pray for your brother in Christ.
               </p>
               <ul style="margin: 0.8rem 0 0.6rem 1.1rem; padding-left: 0;">
-                <li>Each brother can mark “I’m praying” <strong>one time per request.</strong></li>
-                <li>When you open another request, the previous one will collapse to keep the wall clean.</li>
-                <li>You may use specific details if you'd like, but avoid sharing anything that would betray another person’s trust.</li>
+                <li>
+                  Each brother can mark “I’m praying” <strong>one time per request.</strong>
+                </li>
+                <li>
+                  When you open another request, the previous one will collapse to keep the
+                  wall clean.
+                </li>
+                <li>
+                  You may use specific details if you'd like, but avoid sharing anything that
+                  would betray another person’s trust.
+                </li>
               </ul>
               <p style="margin-top: 0.7rem;">
-                <em>“Confess your sins to one another and pray for one another, that you may be healed.” — James 5:16</em>
+                <em>
+                  “Confess your sins to one another and pray for one another, that you may be
+                  healed.” — James 5:16
+                </em>
               </p>
             </div>
           </div>
@@ -1156,8 +1193,9 @@ body {
           <div class="card-kicker">Prayer Wall</div>
           <h2 id="wall-title" class="card-title-main">Pray for one another</h2>
           <p class="wall-subtext">
-            Below are active requests from men in The Forge. Click a request to expand the details,
-            then tap “I’m praying” to let your brother in Christ know you're praying for them.
+            Below are active requests from men in The Forge. Click a request to expand the
+            details, then tap “I’m praying” to let your brother in Christ know you're
+            praying for them.
           </p>
 
           <div class="request-count" id="requestCountLabel">
@@ -1257,7 +1295,12 @@ body {
         </form>
 
         <!-- Sign Up (IDs match auth.js) -->
-        <form id="signupForm" class="auth-form" style="display:none;" autocomplete="on">
+        <form
+          id="signupForm"
+          class="auth-form"
+          style="display:none;"
+          autocomplete="on"
+        >
           <div class="auth-field">
             <label class="auth-label" for="signupFirstName">First Name</label>
             <input

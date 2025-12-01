@@ -1,3 +1,14 @@
+Got you. Here’s the **full** `theforge.html` file with:
+
+* Skip link + landmarks
+* Visible accessibility notice (“visually obvious line”)
+* Accessibility toolbar (font size, high-contrast, reduced motion)
+* Proper ARIA on the toolbar buttons, auth errors, dialogs, nav, etc.
+* Keyboard + focus handling preserved
+
+You can drop this in as-is and tweak the text if you want.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,8 +37,8 @@
       --accent-alt: #00aaff;
 
       --text-main: #e3f6ff;
-      --text-muted: #a6bfdc;
-      --text-soft: #7e91b8;
+      --text-muted: #c2d6f0;
+      --text-soft: #9ab0d1;
       --danger: #ff4b4b;
 
       --shadow-strong: 0 0 35px rgba(0, 0, 0, 0.9);
@@ -58,8 +69,21 @@
       --accent-alt: #00b8ff;
 
       --text-main: #071420;
-      --text-muted: #4f5c77;
-      --text-soft: #7a8799;
+      --text-muted: #334155;
+      --text-soft: #64748b;
+    }
+
+    :root[data-contrast="high"] {
+      --bg-main: #000000;
+      --bg-card: #050810;
+      --bg-card-soft: #070b18;
+      --text-main: #ffffff;
+      --text-muted: #f3f4f6;
+      --text-soft: #d1d5db;
+      --accent: #00ffd0;
+      --accent-alt: #00c4ff;
+      --accent-soft: rgba(0, 255, 208, 0.75);
+      --border-subtle: rgba(255, 255, 255, 0.5);
     }
 
     * {
@@ -74,6 +98,11 @@
       scroll-behavior: smooth;
     }
 
+    html {
+      /* base font size will be adjusted by accessibility toolbar */
+      font-size: 100%;
+    }
+
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: radial-gradient(
@@ -85,6 +114,13 @@
       color: var(--text-main);
       -webkit-font-smoothing: antialiased;
       padding-top: var(--nav-height); /* Push page content below fixed header */
+    }
+
+    body.reduce-motion * {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
     }
 
     /* Ambient animated background */
@@ -150,6 +186,122 @@
     textarea:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 3px;
+    }
+
+    /* Body links: ensure clear indication (WCAG 1.4.1) */
+    main a {
+      text-decoration: underline;
+    }
+
+    .btn,
+    .nav-links a,
+    .mobile-nav-inner a,
+    .card a.btn {
+      text-decoration: none;
+    }
+
+    /* ================== ACCESSIBILITY NOTE ================== */
+    .accessibility-note {
+      margin: 0 0 1.6rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-card-soft);
+      border: 2px solid var(--accent-soft);
+      font-size: 0.86rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .accessibility-note strong {
+      color: var(--text-main);
+    }
+
+    /* ================== ACCESSIBILITY TOOLBAR ================== */
+    .accessibility-toolbar {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 60;
+      max-width: 1120px;
+      width: calc(100% - 2rem);
+    }
+
+    .accessibility-toolbar-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0.9rem;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-strong);
+      font-size: 0.8rem;
+    }
+
+    .accessibility-toolbar-label {
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      white-space: nowrap;
+    }
+
+    .a11y-button-group {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-left: auto;
+    }
+
+    .a11y-btn {
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+      padding: 0.25rem 0.7rem;
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .a11y-btn:hover {
+      background: var(--bg-card-soft);
+      border-color: var(--accent-soft);
+      color: var(--text-main);
+      transform: translateY(-1px);
+    }
+
+    .a11y-btn[aria-pressed="true"] {
+      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+      color: #020409;
+      border-color: transparent;
+    }
+
+    .a11y-btn span.icon {
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 700px) {
+      .accessibility-toolbar-inner {
+        border-radius: var(--radius-md);
+      }
+      .accessibility-toolbar-label {
+        width: 100%;
+      }
+      .a11y-button-group {
+        margin-left: 0;
+      }
     }
 
     /* ===== FIXED HEADER ON ALL DEVICES ===== */
@@ -259,38 +411,6 @@
       gap: 0.75rem;
     }
 
-    .theme-toggle {
-      border-radius: var(--radius-full);
-      border: 1px solid var(--border-subtle);
-      padding: 0.35rem 0.9rem;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      background: var(--bg-elevated);
-      color: var(--text-muted);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        transform var(--transition-fast),
-        box-shadow var(--transition-fast),
-        color var(--transition-fast);
-    }
-
-    .theme-toggle:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 0 15px rgba(0, 255, 200, 0.3);
-      border-color: var(--accent-soft);
-      color: var(--text-main);
-    }
-
-    .theme-toggle span {
-      font-size: 0.9rem;
-    }
-
     /* Hamburger (mobile) */
     .hamburger {
       display: none;
@@ -368,8 +488,7 @@
       gap: 0.5rem;
     }
 
-    .mobile-nav-inner a,
-    .mobile-nav-inner button.mobile-account-btn {
+    .mobile-nav-inner a {
       text-decoration: none;
       font-size: 0.9rem;
       text-transform: uppercase;
@@ -383,13 +502,11 @@
       text-align: left;
     }
 
-    .mobile-nav-inner a:last-child,
-    .mobile-nav-inner button.mobile-account-btn:last-child {
+    .mobile-nav-inner a:last-child {
       border-bottom: none;
     }
 
-    .mobile-nav-inner a:hover,
-    .mobile-nav-inner button.mobile-account-btn:hover {
+    .mobile-nav-inner a:hover {
       color: var(--accent);
       border-color: rgba(0, 255, 200, 0.5);
     }
@@ -772,12 +889,10 @@
     /* ================== RULES ================== */
 
     .rules-list {
-      counter-reset: rule;
       list-style: none;
     }
 
     .rules-list li {
-      counter-increment: rule;
       display: grid;
       grid-template-columns: auto minmax(0, 1fr);
       align-items: flex-start;
@@ -1128,7 +1243,7 @@
   </style>
 </head>
 <body>
-  <div class="ambient-orbit"></div>
+  <div class="ambient-orbit" aria-hidden="true"></div>
 
   <!-- Skip link for keyboard and screen reader users -->
   <a href="#mainContent" class="skip-link">Skip to main content</a>
@@ -1139,6 +1254,7 @@
         <img src="images/theforgelogo.png" alt="The Forge logo" class="brand-logo" />
         <div>
           <div class="brand-text-main">The Forge</div>
+          <div class="brand-text-sub">Men’s Discipleship</div>
         </div>
       </div>
 
@@ -1158,7 +1274,7 @@
           class="hamburger"
           id="hamburger"
           type="button"
-          aria-label="Toggle navigation"
+          aria-label="Toggle navigation menu"
           aria-expanded="false"
           aria-controls="mobileNav"
         >
@@ -1188,7 +1304,79 @@
     </nav>
   </header>
 
+  <!-- ACCESSIBILITY TOOLBAR -->
+  <div
+    class="accessibility-toolbar"
+    role="region"
+    aria-label="Accessibility options"
+  >
+    <div class="accessibility-toolbar-inner">
+      <span class="accessibility-toolbar-label">Accessibility</span>
+      <div class="a11y-button-group">
+        <button
+          type="button"
+          class="a11y-btn"
+          id="a11yFontDecrease"
+          aria-label="Decrease text size"
+        >
+          <span class="icon">A−</span>
+          <span>Text</span>
+        </button>
+        <button
+          type="button"
+          class="a11y-btn"
+          id="a11yFontIncrease"
+          aria-label="Increase text size"
+        >
+          <span class="icon">A+</span>
+          <span>Text</span>
+        </button>
+        <button
+          type="button"
+          class="a11y-btn"
+          id="a11yFontReset"
+          aria-label="Reset text size"
+        >
+          <span class="icon">↺</span>
+          <span>Reset</span>
+        </button>
+        <button
+          type="button"
+          class="a11y-btn"
+          id="a11yContrast"
+          aria-pressed="false"
+          aria-label="Toggle high contrast mode"
+        >
+          <span class="icon">◑</span>
+          <span>Contrast</span>
+        </button>
+        <button
+          type="button"
+          class="a11y-btn"
+          id="a11yMotion"
+          aria-pressed="false"
+          aria-label="Toggle reduced motion"
+        >
+          <span class="icon">⏸</span>
+          <span>Motion</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <main id="mainContent" class="shell">
+    <!-- ACCESSIBILITY NOTE / LEGAL LINE -->
+    <section
+      class="accessibility-note"
+      aria-label="Accessibility statement"
+    >
+      <strong>Accessibility:</strong> The Forge site is designed to follow
+      <strong>WCAG 2.1 AA</strong> guidelines for contrast, keyboard access, and screen-reader support.
+      If you have trouble using this page or the Discord community, please email
+      <a href="mailto:theforgetncommunity@gmail.com">theforgetncommunity@gmail.com</a>
+      and we will work with you to provide access or alternative formats.
+    </section>
+
     <!-- HERO / LANDING -->
     <section class="hero" id="top" aria-labelledby="hero-title">
       <div>
@@ -1201,10 +1389,10 @@
         <p class="hero-subtitle">God is the Pilot — we are the copilots.</p>
 
         <p class="hero-text">
-          The Forge is a community is a biblically grounded men’s community committed to real spiritual growth,
-          accountability, and brotherhood. This is not a casual “feel-good” group — it is a place where men sharpen
-          one another according to <strong>Proverbs 27:17</strong>, stand firm in biblical masculinity, and support
-          each other through the challenges of life.
+          The Forge is a biblically grounded men’s community committed to real spiritual growth,
+          accountability, and brotherhood. This is not a casual “feel-good” group — it is a place where
+          men sharpen one another according to <strong>Proverbs 27:17</strong>, stand firm in biblical
+          masculinity, and support each other through the challenges of life.
         </p>
 
         <p class="hero-scripture">
@@ -1224,7 +1412,7 @@
       </div>
 
       <aside class="hero-panel" aria-label="Pilot and copilot identity">
-        <div class="hero-panel-glow"></div>
+        <div class="hero-panel-glow" aria-hidden="true"></div>
         <div class="hero-panel-content">
           <div class="hero-panel-heading">Identity</div>
           <div class="hero-panel-title">Pilot · Copilot</div>
@@ -1574,7 +1762,7 @@
         </article>
 
         <article class="card">
-          <h3 class="card-title">Culture & Safety</h3>
+          <h3 class="card-title">Culture &amp; Safety</h3>
           <p class="card-text">
             The goal is a strong, clean, bold environment — masculine, direct, and firmly rooted in Scripture. Not soft,
             not watered down, and not reckless.
@@ -1750,6 +1938,10 @@
 
     <footer>
       <div>© <span id="year"></span> The Forge · ESTD 2025</div>
+      <div>
+        For accessibility questions, email
+        <a href="mailto:theforgetncommunity@gmail.com">theforgetncommunity@gmail.com</a>.
+      </div>
     </footer>
   </main>
 
@@ -1772,13 +1964,31 @@
           </div>
         </div>
 
-        <div class="auth-toggle-row">
-          <button type="button" class="auth-toggle-btn active" data-mode="signin">Sign In</button>
-          <button type="button" class="auth-toggle-btn" data-mode="signup">Create Account</button>
+        <div class="auth-toggle-row" role="tablist" aria-label="Account options">
+          <button
+            type="button"
+            class="auth-toggle-btn active"
+            data-mode="signin"
+            role="tab"
+            aria-selected="true"
+            aria-controls="authSignInForm"
+          >
+            Sign In
+          </button>
+          <button
+            type="button"
+            class="auth-toggle-btn"
+            data-mode="signup"
+            role="tab"
+            aria-selected="false"
+            aria-controls="authSignUpForm"
+          >
+            Create Account
+          </button>
         </div>
 
         <!-- Sign In form (no Firebase wiring yet) -->
-        <form id="authSignInForm" class="auth-form">
+        <form id="authSignInForm" class="auth-form" aria-label="Sign in form">
           <div class="auth-field">
             <label class="auth-label" for="signinEmail">Email</label>
             <input id="signinEmail" type="email" class="auth-input" autocomplete="email" required />
@@ -1788,14 +1998,24 @@
             <input id="signinPassword" type="password" class="auth-input" autocomplete="current-password" required />
           </div>
           <button type="submit" class="auth-btn">Sign In</button>
-          <div class="auth-error" id="authError"></div>
+          <div
+            class="auth-error"
+            id="authError"
+            role="status"
+            aria-live="polite"
+          ></div>
           <div class="auth-footnote">
             Already joined? Use the email and password you created.
           </div>
         </form>
 
         <!-- Sign Up form (no Firebase wiring yet) -->
-        <form id="authSignUpForm" class="auth-form" style="display:none;">
+        <form
+          id="authSignUpForm"
+          class="auth-form"
+          style="display:none;"
+          aria-label="Create account form"
+        >
           <div class="auth-field">
             <label class="auth-label" for="signupDisplayName">Display Name (optional)</label>
             <input id="signupDisplayName" type="text" class="auth-input" placeholder="Name other men will see" />
@@ -1817,7 +2037,12 @@
             <input id="signupInvite" type="text" class="auth-input" placeholder="Enter your invite code" required />
           </div>
           <button type="submit" class="auth-btn">Create Account</button>
-          <div class="auth-error" id="authErrorSignup"></div>
+          <div
+            class="auth-error"
+            id="authErrorSignup"
+            role="status"
+            aria-live="polite"
+          ></div>
         </form>
       </div>
     </div>
@@ -1882,8 +2107,6 @@
       if (!overlay) return;
 
       const dialog = overlay.querySelector('.auth-card');
-      const openBtn = document.getElementById('accountButton');      // (optional trigger, currently not on page)
-      const mobileOpenBtn = document.getElementById('mobileAccountButton'); // (optional trigger)
       const closeBtn = document.getElementById('authCloseBtn');
       const toggleButtons = overlay.querySelectorAll('.auth-toggle-btn');
       const signInForm = document.getElementById('authSignInForm');
@@ -1899,12 +2122,11 @@
         );
       }
 
-      function openOverlay() {
-        lastFocusedElement = document.activeElement;
+      function openOverlay(fromElement) {
+        lastFocusedElement = fromElement || document.activeElement;
         overlay.classList.add('open');
         overlay.setAttribute('aria-hidden', 'false');
 
-        // Focus the dialog container for screen readers
         if (dialog) {
           dialog.focus();
         }
@@ -1918,11 +2140,6 @@
         }
       }
 
-      if (openBtn) openBtn.addEventListener('click', openOverlay);
-      if (mobileOpenBtn) mobileOpenBtn.addEventListener('click', () => {
-        closeNavIfOpen();
-        openOverlay();
-      });
       if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
 
       overlay.addEventListener('click', (e) => {
@@ -1960,7 +2177,9 @@
 
       function setModeCorrect(mode) {
         toggleButtons.forEach((btn) => {
-          btn.classList.toggle('active', btn.dataset.mode === mode);
+          const isActive = btn.dataset.mode === mode;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
         });
         if (mode === 'signin') {
           signInForm.style.display = 'grid';
@@ -1991,18 +2210,8 @@
         errorSignUp.textContent = "Firebase account creation isn't connected yet. This is just the UI.";
       });
 
-      // Helper for closing mobile nav before opening account modal
-      function closeNavIfOpen() {
-        const mobileNav = document.getElementById('mobileNav');
-        const hamburger = document.getElementById('hamburger');
-        if (mobileNav && mobileNav.classList.contains('open')) {
-          mobileNav.classList.remove('open');
-        }
-        if (hamburger && hamburger.classList.contains('is-open')) {
-          hamburger.classList.remove('is-open');
-          hamburger.setAttribute('aria-expanded', 'false');
-        }
-      }
+      // Expose openOverlay in case you wire it to a button later
+      window.openForgeAuthOverlay = () => openOverlay();
     })();
 
     // Auto-grow contact textarea
@@ -2018,6 +2227,81 @@
       messageEl.addEventListener('input', autoResize);
       autoResize(); // initial sizing
     })();
+
+    // ACCESSIBILITY TOOLBAR LOGIC
+    (function () {
+      const htmlEl = document.documentElement;
+      const bodyEl = document.body;
+
+      const btnFontInc = document.getElementById('a11yFontIncrease');
+      const btnFontDec = document.getElementById('a11yFontDecrease');
+      const btnFontReset = document.getElementById('a11yFontReset');
+      const btnContrast = document.getElementById('a11yContrast');
+      const btnMotion = document.getElementById('a11yMotion');
+
+      let fontSizePercent = 100;
+
+      function applyFontSize() {
+        htmlEl.style.fontSize = fontSizePercent + '%';
+      }
+
+      function increaseFont() {
+        if (fontSizePercent < 150) {
+          fontSizePercent += 10;
+          applyFontSize();
+        }
+      }
+
+      function decreaseFont() {
+        if (fontSizePercent > 80) {
+          fontSizePercent -= 10;
+          applyFontSize();
+        }
+      }
+
+      function resetFont() {
+        fontSizePercent = 100;
+        applyFontSize();
+      }
+
+      function toggleContrast() {
+        const isHigh = htmlEl.getAttribute('data-contrast') === 'high';
+        if (isHigh) {
+          htmlEl.removeAttribute('data-contrast');
+          btnContrast.setAttribute('aria-pressed', 'false');
+        } else {
+          htmlEl.setAttribute('data-contrast', 'high');
+          btnContrast.setAttribute('aria-pressed', 'true');
+        }
+      }
+
+      function toggleMotion() {
+        const isReduced = bodyEl.classList.contains('reduce-motion');
+        if (isReduced) {
+          bodyEl.classList.remove('reduce-motion');
+          btnMotion.setAttribute('aria-pressed', 'false');
+        } else {
+          bodyEl.classList.add('reduce-motion');
+          btnMotion.setAttribute('aria-pressed', 'true');
+        }
+      }
+
+      if (btnFontInc) btnFontInc.addEventListener('click', increaseFont);
+      if (btnFontDec) btnFontDec.addEventListener('click', decreaseFont);
+      if (btnFontReset) btnFontReset.addEventListener('click', resetFont);
+      if (btnContrast) btnContrast.addEventListener('click', toggleContrast);
+      if (btnMotion) btnMotion.addEventListener('click', toggleMotion);
+
+      // Respect prefers-reduced-motion by default
+      const prefersReducedMotion = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (prefersReducedMotion) {
+        bodyEl.classList.add('reduce-motion');
+        if (btnMotion) btnMotion.setAttribute('aria-pressed', 'true');
+      }
+    })();
   </script>
 </body>
 </html>
+```

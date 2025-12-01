@@ -84,6 +84,7 @@
       );
       color: var(--text-main);
       -webkit-font-smoothing: antialiased;
+      padding-top: var(--nav-height); /* Push page content below fixed header */
     }
 
     /* Ambient animated background */
@@ -118,28 +119,56 @@
       padding: 0 1.5rem 3.5rem;
     }
 
-/* ===== FIXED HEADER ON ALL DEVICES ===== */
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  backdrop-filter: blur(16px);
-  background: linear-gradient(
-    to bottom,
-    var(--bg-header-strong),
-    var(--bg-header-soft),
-    transparent
-  );
-  border-bottom: 1px solid var(--border-subtle);
-}
+    /* ===== SKIP LINK FOR KEYBOARD/SCREEN READERS ===== */
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: 0.5rem;
+      z-index: 100;
+      padding: 0.5rem 0.9rem;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--accent-soft);
+      text-decoration: none;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
 
-/* Push page content below the fixed header */
-body {
-  padding-top: var(--nav-height);
- }
-    
+    .skip-link:focus {
+      left: 50%;
+      transform: translateX(-50%);
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    /* ===== GLOBAL FOCUS STYLES ===== */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    /* ===== FIXED HEADER ON ALL DEVICES ===== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: linear-gradient(
+        to bottom,
+        var(--bg-header-strong),
+        var(--bg-header-soft),
+        transparent
+      );
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
     .nav {
       display: flex;
       align-items: center;
@@ -219,7 +248,8 @@ body {
       color: var(--text-main);
     }
 
-    .nav-links a:hover::after {
+    .nav-links a:hover::after,
+    .nav-links a:focus-visible::after {
       width: 100%;
     }
 
@@ -259,39 +289,6 @@ body {
 
     .theme-toggle span {
       font-size: 0.9rem;
-    }
-
-    /* Account button (opens auth modal) */
-    .account-btn {
-      border-radius: var(--radius-full);
-      border: 1px solid var(--border-subtle);
-      padding: 0.35rem 0.9rem;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      background: transparent;
-      color: var(--accent);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        transform var(--transition-fast),
-        box-shadow var(--transition-fast),
-        color var(--transition-fast);
-    }
-
-    .account-btn:hover {
-      background: var(--bg-card-soft);
-      transform: translateY(-1px);
-      box-shadow: 0 0 16px rgba(0, 255, 200, 0.35);
-      color: var(--text-main);
-    }
-
-    .account-btn span.icon {
-      font-size: 0.95rem;
     }
 
     /* Hamburger (mobile) */
@@ -405,21 +402,16 @@ body {
       .hamburger {
         display: flex;
       }
-
-      /* HIDE DESKTOP ACCOUNT BUTTON ON MOBILE */
-      .account-btn {
-        display: none;
-      }
     }
 
     /* ================== HERO ================== */
 
     main {
-      padding-top: 2.4rem; /* increased for more breathing room below header */
+      padding-top: 2.4rem; /* breathing room below header */
     }
 
     .hero {
-      margin: 2.4rem 0 2.5rem; /* slightly more space from nav */
+      margin: 2.4rem 0 2.5rem;
       display: grid;
       grid-template-columns: minmax(0, 3.2fr) minmax(0, 2.8fr);
       gap: 2.25rem;
@@ -838,7 +830,7 @@ body {
 
     .contact-form {
       display: grid;
-      gap: 1.1rem; /* a bit more room between fields */
+      gap: 1.1rem;
       font-size: 0.9rem;
     }
 
@@ -864,12 +856,12 @@ body {
       font-size: 0.9rem;
       outline: none;
       min-height: 2.4rem;
-      resize: none;       /* no manual drag handle */
+      resize: none;
     }
 
     .field textarea {
-      min-height: 6rem;   /* comfortable starting height */
-      overflow-y: hidden; /* hide scrollbar while auto-growing */
+      min-height: 6rem;
+      overflow-y: hidden;
     }
 
     .field .cf-turnstile {
@@ -1138,8 +1130,11 @@ body {
 <body>
   <div class="ambient-orbit"></div>
 
+  <!-- Skip link for keyboard and screen reader users -->
+  <a href="#mainContent" class="skip-link">Skip to main content</a>
+
   <header>
-    <nav class="nav">
+    <nav class="nav" aria-label="Main navigation">
       <div class="brand">
         <img src="images/theforgelogo.png" alt="The Forge logo" class="brand-logo" />
         <div>
@@ -1159,7 +1154,14 @@ body {
       </div>
 
       <div class="nav-actions">
-        <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <button
+          class="hamburger"
+          id="hamburger"
+          type="button"
+          aria-label="Toggle navigation"
+          aria-expanded="false"
+          aria-controls="mobileNav"
+        >
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
@@ -1168,7 +1170,11 @@ body {
     </nav>
 
     <!-- Mobile nav overlay -->
-    <div class="mobile-nav" id="mobileNav">
+    <nav
+      class="mobile-nav"
+      id="mobileNav"
+      aria-label="Mobile navigation"
+    >
       <div class="mobile-nav-inner">
         <a href="#overview">Overview</a>
         <a href="#why">Why</a>
@@ -1179,19 +1185,19 @@ body {
         <a href="members.html">Members</a>
         <a href="prayerrequests.html">Prayer Requests</a>
       </div>
-    </div>
+    </nav>
   </header>
 
-  <main class="shell">
+  <main id="mainContent" class="shell">
     <!-- HERO / LANDING -->
-    <section class="hero" id="top">
+    <section class="hero" id="top" aria-labelledby="hero-title">
       <div>
         <div class="hero-badge">
           <span class="hero-badge-label">Men’s Brotherhood</span>
           <span class="hero-badge-text">Biblically grounded · 18+ only</span>
         </div>
 
-        <h1 class="hero-title">The Forge</h1>
+        <h1 id="hero-title" class="hero-title">The Forge</h1>
         <p class="hero-subtitle">God is the Pilot — we are the copilots.</p>
 
         <p class="hero-text">
@@ -1217,7 +1223,7 @@ body {
         </div>
       </div>
 
-      <aside class="hero-panel" aria-label="Pilot / Copilot Identity">
+      <aside class="hero-panel" aria-label="Pilot and copilot identity">
         <div class="hero-panel-glow"></div>
         <div class="hero-panel-content">
           <div class="hero-panel-heading">Identity</div>
@@ -1246,11 +1252,11 @@ body {
     </section>
 
     <!-- OVERVIEW -->
-    <section id="overview" class="section">
+    <section id="overview" class="section" aria-labelledby="overview-title">
       <div class="section-header">
         <div>
           <div class="section-kicker">Overview</div>
-          <h2 class="section-title">What The Forge Is</h2>
+          <h2 id="overview-title" class="section-title">What The Forge Is</h2>
         </div>
         <p class="section-subtitle">
           A serious, Scripture-based men’s community — not a feel-good hangout. Real growth. Real accountability.
@@ -1309,11 +1315,11 @@ body {
     </section>
 
     <!-- WHY THE FORGE EXISTS -->
-    <section id="why" class="section">
+    <section id="why" class="section" aria-labelledby="why-title">
       <div class="section-header">
         <div>
           <div class="section-kicker">Why The Forge Exists</div>
-          <h2 class="section-title">The Gap It Fills</h2>
+          <h2 id="why-title" class="section-title">The Gap It Fills</h2>
         </div>
         <p class="section-subtitle">
           Real Christian brotherhood is hard to find. Men need a place to be sharpened, challenged, and supported.
@@ -1381,11 +1387,11 @@ body {
     </section>
 
     <!-- BELIEFS -->
-    <section id="beliefs" class="section">
+    <section id="beliefs" class="section" aria-labelledby="beliefs-title">
       <div class="section-header">
         <div>
           <div class="section-kicker">Beliefs</div>
-          <h2 class="section-title">Statement of Beliefs</h2>
+          <h2 id="beliefs-title" class="section-title">Statement of Beliefs</h2>
         </div>
         <p class="section-subtitle">
           The Forge is built on the authority of Scripture. These beliefs shape everything we do.
@@ -1398,7 +1404,7 @@ body {
       </p>
 
       <div class="beliefs-grid">
-        <div class="beliefs-list">
+        <div class="beliefs-list" aria-label="Statement of beliefs, items 1 through 5">
           <div class="belief-item">
             <h3>1. The Bible</h3>
             <p>
@@ -1440,7 +1446,7 @@ body {
           </div>
         </div>
 
-        <div class="beliefs-list">
+        <div class="beliefs-list" aria-label="Statement of beliefs, items 6 through 10">
           <div class="belief-item">
             <h3>6. The Church</h3>
             <p>
@@ -1485,11 +1491,11 @@ body {
     </section>
 
     <!-- RULES -->
-    <section id="rules" class="section">
+    <section id="rules" class="section" aria-labelledby="rules-title">
       <div class="section-header">
         <div>
           <div class="section-kicker">Community Rules</div>
-          <h2 class="section-title">How We Guard The Forge</h2>
+          <h2 id="rules-title" class="section-title">How We Guard The Forge</h2>
         </div>
         <p class="section-subtitle">
           These rules protect safety, clarity, and a serious, Scripture-first culture.
@@ -1585,11 +1591,11 @@ body {
     </section>
 
     <!-- JOIN -->
-    <section id="join" class="section">
+    <section id="join" class="section" aria-labelledby="join-title">
       <div class="section-header">
         <div>
           <div class="section-kicker">Join</div>
-          <h2 class="section-title">Step Into The Forge</h2>
+          <h2 id="join-title" class="section-title">Step Into The Forge</h2>
         </div>
         <p class="section-subtitle">
           Joining is simple — but not casual. Read, consider, and then step in with intention.
@@ -1648,11 +1654,11 @@ body {
     </section>
 
     <!-- CONTACT -->
-    <section id="contact" class="section">
+    <section id="contact" class="section" aria-labelledby="contact-title">
       <div class="section-header">
         <div>
           <div class="section-kicker">Contact</div>
-          <h2 class="section-title">Talk Before You Join</h2>
+          <h2 id="contact-title" class="section-title">Talk Before You Join</h2>
         </div>
         <p class="section-subtitle">
           Some men need a real conversation before stepping into a group. That’s not weakness — it’s wisdom.
@@ -1660,7 +1666,7 @@ body {
       </div>
 
       <div class="contact-grid">
-        <article class="card">
+        <article class="card" aria-label="Contact form">
           <h3 class="card-title">Reach Out</h3>
           <form
             class="contact-form"
@@ -1674,7 +1680,7 @@ body {
             </div>
             <div class="field">
               <label for="email">Email</label>
-              <input id="email" name="email" type="email" autocomplete="name" required />
+              <input id="email" name="email" type="email" autocomplete="email" required />
             </div>
             <div class="field">
               <label for="message">Message</label>
@@ -1689,8 +1695,9 @@ body {
 
             <!-- Cloudflare Turnstile human check -->
             <div class="field">
-              <label>Verification</label>
+              <label for="cf-turnstile-1">Verification</label>
               <div
+                id="cf-turnstile-1"
                 class="cf-turnstile"
                 data-sitekey="0x4AAAAAACCHux8WMR1ry2Zq"
                 data-theme="auto"
@@ -1743,16 +1750,23 @@ body {
 
     <footer>
       <div>© <span id="year"></span> The Forge · ESTD 2025</div>
-  </footer>
+    </footer>
   </main>
 
   <!-- AUTH MODAL (UI ONLY) -->
-  <div class="auth-overlay" id="authOverlay" aria-modal="true" role="dialog" aria-hidden="true">
-    <div class="auth-card">
+  <div
+    class="auth-overlay"
+    id="authOverlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="authDialogTitle"
+    aria-hidden="true"
+  >
+    <div class="auth-card" tabindex="-1">
       <button type="button" class="auth-close-btn" id="authCloseBtn" aria-label="Close account window">✕</button>
       <div class="auth-card-inner">
         <div class="auth-card-header">
-          <div class="auth-card-title">Forge Account</div>
+          <div id="authDialogTitle" class="auth-card-title">Forge Account</div>
           <div class="auth-card-sub">
             Invite-only access. Use the code you were given by the group owner.
           </div>
@@ -1840,6 +1854,18 @@ body {
         }
       });
 
+      // Allow keyboard activation with Enter/Space on hamburger
+      hamburger.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          if (mobileNav.classList.contains('open')) {
+            closeNav();
+          } else {
+            openNav();
+          }
+        }
+      });
+
       mobileNav.querySelectorAll('a').forEach((link) => {
         link.addEventListener('click', () => {
           closeNav();
@@ -1850,11 +1876,14 @@ body {
     // YEAR IN FOOTER
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // AUTH MODAL UI (no Firebase wiring yet)
+    // AUTH MODAL UI (no Firebase wiring yet) + focus management
     (function () {
       const overlay = document.getElementById('authOverlay');
-      const openBtn = document.getElementById('accountButton');
-      const mobileOpenBtn = document.getElementById('mobileAccountButton');
+      if (!overlay) return;
+
+      const dialog = overlay.querySelector('.auth-card');
+      const openBtn = document.getElementById('accountButton');      // (optional trigger, currently not on page)
+      const mobileOpenBtn = document.getElementById('mobileAccountButton'); // (optional trigger)
       const closeBtn = document.getElementById('authCloseBtn');
       const toggleButtons = overlay.querySelectorAll('.auth-toggle-btn');
       const signInForm = document.getElementById('authSignInForm');
@@ -1862,14 +1891,31 @@ body {
       const errorSignIn = document.getElementById('authError');
       const errorSignUp = document.getElementById('authErrorSignup');
 
+      let lastFocusedElement = null;
+
+      function getFocusableElements() {
+        return overlay.querySelectorAll(
+          'button, [href], input, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+      }
+
       function openOverlay() {
+        lastFocusedElement = document.activeElement;
         overlay.classList.add('open');
         overlay.setAttribute('aria-hidden', 'false');
+
+        // Focus the dialog container for screen readers
+        if (dialog) {
+          dialog.focus();
+        }
       }
 
       function closeOverlay() {
         overlay.classList.remove('open');
         overlay.setAttribute('aria-hidden', 'true');
+        if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+          lastFocusedElement.focus();
+        }
       }
 
       if (openBtn) openBtn.addEventListener('click', openOverlay);
@@ -1886,6 +1932,29 @@ body {
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && overlay.classList.contains('open')) {
           closeOverlay();
+        }
+      });
+
+      // Trap focus inside dialog when open
+      overlay.addEventListener('keydown', (e) => {
+        if (e.key !== 'Tab' || !overlay.classList.contains('open')) return;
+
+        const focusable = Array.from(getFocusableElements());
+        if (focusable.length === 0) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
         }
       });
 

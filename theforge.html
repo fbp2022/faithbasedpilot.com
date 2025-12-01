@@ -1293,13 +1293,29 @@
     </nav>
   </header>
 
-  <!-- ACCESSIBILITY TOOLBAR -->
+  <!-- ACCESSIBILITY WIDGET -->
   <div
     class="accessibility-toolbar"
     role="region"
     aria-label="Accessibility options"
   >
-    <div class="accessibility-toolbar-inner">
+    <!-- Launcher button (always visible) -->
+    <button
+      type="button"
+      class="a11y-launcher"
+      id="a11yLauncher"
+      aria-label="Open accessibility tools"
+      aria-expanded="false"
+    >
+      ♿
+    </button>
+
+    <!-- Popover panel (opens above the button) -->
+    <div
+      class="accessibility-toolbar-inner"
+      role="group"
+      aria-label="Accessibility options"
+    >
       <span class="accessibility-toolbar-label">Accessibility</span>
       <div class="a11y-button-group">
         <button

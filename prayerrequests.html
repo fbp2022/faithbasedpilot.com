@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Forge · Members</title>
+  <title>The Forge · Prayer Requests</title>
   <meta name="color-scheme" content="dark light" />
   <meta
     name="description"
-    content="Private members list for The Forge men’s community."
+    content="Private prayer wall for men in The Forge to share prayer needs and stand in the gap for one another."
   />
 
   <style>
-    /* ================== BASE / THEME (MATCH PRAYERREQUESTS) ================== */
+    /* ================== BASE / THEME ================== */
     :root {
       --bg-main: #05070f;
       --bg-elevated: rgba(10, 14, 30, 0.95);
@@ -52,6 +52,17 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+
+    .btn-danger {
+      background: rgba(255, 75, 75, 0.15);
+      border: 1px solid rgba(255, 75, 75, 0.4);
+      color: #ff4b4b !important;
+    }
+
+    .btn-danger:hover {
+      background: rgba(255, 75, 75, 0.25);
+      box-shadow: 0 0 12px rgba(255, 75, 75, 0.4);
     }
 
     html,
@@ -104,7 +115,7 @@
       padding: 0 1.5rem 3.5rem;
     }
 
-    /* ================== HEADER / NAV (MATCH PRAYERREQUESTS) ================== */
+    /* ================== HEADER / NAV (MATCH THEFORGE.HTML) ================== */
     header {
       position: sticky;
       top: 0;
@@ -406,6 +417,13 @@
       margin-bottom: 1.9rem;
     }
 
+    .top-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 3.1fr) minmax(0, 2.3fr);
+      gap: 1.75rem;
+      margin-bottom: 2.3rem;
+    }
+
     .card {
       border-radius: var(--radius-lg);
       background: var(--bg-card);
@@ -414,7 +432,6 @@
       box-shadow: var(--shadow-strong);
       position: relative;
       overflow: hidden;
-      margin-bottom: 1.6rem;
     }
 
     .card::before {
@@ -455,38 +472,206 @@
       line-height: 1.7;
     }
 
-    /* ================== MEMBERS LAYOUT ================== */
-    .members-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr);
-      gap: 1.75rem;
-      align-items: flex-start;
-      margin-top: 0.5rem;
-    }
-
-    @media (max-width: 880px) {
-      .members-layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .member-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 0.8rem;
+    /* ================== PRAYER FORM – FLOATING LABELS ================== */
+    .prayer-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.35rem;
       margin-top: 0.4rem;
     }
 
-    .member-card {
+    .field-group {
+      position: relative;
+      margin-bottom: 0.15rem;
+    }
+
+    .field-control {
+      width: 100%;
+      border-radius: var(--radius-input);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      background: radial-gradient(
+        circle at 0 0,
+        rgba(15, 23, 42, 0.85),
+        rgba(15, 23, 42, 0.95)
+      );
+      color: var(--text-main);
+      padding: 0.95rem 1.1rem 0.75rem;
+      font-size: 0.9rem;
+      outline: none;
+      box-shadow:
+        inset 0 0 0 1px rgba(15, 23, 42, 0.9),
+        0 0 0 rgba(0, 255, 200, 0);
+      transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background var(--transition-fast),
+        color var(--transition-fast);
+    }
+
+    textarea.field-control {
+      border-radius: 20px;
+      min-height: 140px;
+      resize: none;
+      padding-top: 1.2rem;
+    }
+
+    .field-label {
+      position: absolute;
+      left: 1.1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      pointer-events: none;
+      transition:
+        transform var(--transition-fast),
+        font-size var(--transition-fast),
+        top var(--transition-fast),
+        color var(--transition-fast),
+        opacity var(--transition-fast);
+      opacity: 0.85;
+    }
+
+    .field-group.textarea .field-label {
+      top: 1.15rem;
+      transform: translateY(0);
+    }
+
+    .field-control::placeholder {
+      color: transparent;
+    }
+
+    .field-control:focus {
+      border-color: var(--accent-soft);
+      box-shadow:
+        0 0 0 1px rgba(0, 255, 200, 0.5),
+        0 0 22px rgba(0, 255, 200, 0.42);
+      background: radial-gradient(
+        circle at 0 0,
+        rgba(15, 23, 42, 0.9),
+        rgba(15, 23, 42, 1)
+      );
+    }
+
+    .field-group.focused .field-label,
+    .field-group.has-value .field-label {
+      top: 0.45rem;
+      transform: translateY(0);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-soft);
+      opacity: 1;
+    }
+
+    .field-note {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      margin-top: 0.15rem;
+    }
+
+    .form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.8rem;
+    }
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.7rem 1.6rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      text-decoration: none;
+      transition:
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast);
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+      color: #020409;
+      box-shadow: var(--shadow-accent);
+      border-color: transparent;
+    }
+
+    .btn-soft {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-soft);
+      border-color: rgba(148, 163, 184, 0.4);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 22px rgba(0, 255, 200, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
+    }
+
+    .btn span.icon {
+      font-size: 1rem;
+    }
+
+    .form-error {
+      font-size: 0.8rem;
+      color: var(--danger);
+      margin-top: 0.5rem;
+      min-height: 1em;
+    }
+
+    /* ================== PRAYER WALL ================== */
+    .wall-card {
+      margin-top: 0.6rem;
+    }
+
+    .wall-subtext {
+      font-size: 0.83rem;
+      color: var(--text-soft);
+      margin-bottom: 0.4rem;
+    }
+
+    .request-count {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      margin-bottom: 0.6rem;
+    }
+
+    .status-text {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+    }
+
+    .prayer-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .prayer-card {
       border-radius: 14px;
       background: rgba(7, 11, 23, 0.92);
       border: 1px solid rgba(15, 23, 42, 0.9);
-      padding: 0.7rem 0.85rem;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65);
+      overflow: hidden;
       transition:
         border-color var(--transition-fast),
         box-shadow var(--transition-fast),
@@ -494,47 +679,119 @@
         background var(--transition-fast);
     }
 
-    .member-card::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      flex-shrink: 0;
-    }
-
-    .member-card.leader {
+    .prayer-card.open {
       border-color: var(--accent-soft);
-      background: radial-gradient(circle at 0 0, rgba(0,255,200,0.12), rgba(7,11,23,0.98));
+      box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 1),
+        0 0 26px rgba(0, 255, 200, 0.4);
+      transform: translateY(-1px);
+      background: radial-gradient(
+        circle at 0 0,
+        rgba(0, 255, 200, 0.09),
+        rgba(7, 11, 23, 0.98)
+      );
     }
 
-    .member-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 18px rgba(0, 255, 200, 0.4);
-      border-color: var(--accent-soft);
+    .prayer-header {
+      padding: 0.8rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      gap: 0.6rem;
     }
 
-    .member-name {
-      color: var(--text-main);
-      font-weight: 500;
+    .prayer-main {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 0;
     }
 
-    .member-role-pill {
-      font-size: 0.7rem;
+    .prayer-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-soft);
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      padding: 0.1rem 0.45rem;
-      margin-left: auto;
-      white-space: nowrap;
+      color: var(--text-main);
     }
 
-    .members-status-text {
-      font-size: 0.82rem;
+    .prayer-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
       color: var(--text-soft);
-      margin-bottom: 0.75rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .chevron {
+      font-size: 1.2rem;
+      color: var(--text-soft);
+      flex-shrink: 0;
+      transition: transform var(--transition-fast), color var(--transition-fast);
+    }
+
+    .prayer-card.open .chevron {
+      transform: rotate(90deg);
+      color: var(--accent);
+    }
+
+    .prayer-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+      border-top: 1px solid rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.85);
+    }
+
+    .prayer-body-inner {
+      padding: 0.75rem 1rem 0.9rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .prayer-footer {
+      padding: 0.55rem 1rem 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    .prayer-count {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    .hint-line {
+      font-size: 0.75rem;
+      color: rgba(148, 163, 184, 0.7);
+    }
+
+    .prayer-footer .btn {
+      padding-inline: 1.1rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+    }
+
+    .prayer-footer .btn[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
     }
 
     /* ================== FOOTER ================== */
@@ -577,7 +834,7 @@
       color: var(--accent-alt);
     }
 
-    /* ================== AUTH MODAL (MATCH PRAYERREQUESTS) ================== */
+    /* ================== AUTH MODAL (MATCH AUTH.JS) ================== */
     .auth-overlay {
       position: fixed;
       inset: 0;
@@ -759,6 +1016,12 @@
     }
 
     /* ================== RESPONSIVE ================== */
+    @media (max-width: 880px) {
+      .top-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
     @media (max-width: 600px) {
       .shell {
         padding: 0 1.1rem 3rem;
@@ -771,10 +1034,127 @@
       footer {
         flex-direction: column;
       }
+
+      .prayer-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
 
-   </style>
-  
+    /* ================== ACCESSIBILITY WIDGET ================== */
+    .accessibility-widget {
+      position: fixed;
+      right: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 60;
+      font-size: 0.8rem;
+    }
+
+    .accessibility-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text-soft);
+      padding: 0.45rem 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .accessibility-toggle-btn:hover {
+      background: var(--bg-card-soft);
+      color: var(--text-main);
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.45);
+    }
+
+    .icon-accessibility {
+      font-size: 1rem;
+    }
+
+    .accessibility-panel {
+      position: absolute;
+      right: 0;
+      bottom: 3.1rem;
+      width: 270px;
+      max-width: 80vw;
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.95);
+      padding: 0.9rem 0.95rem;
+      display: none;
+    }
+
+    .accessibility-widget.open .accessibility-panel {
+      display: block;
+    }
+
+    .accessibility-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.55rem;
+    }
+
+    .accessibility-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .accessibility-row-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+    }
+
+    .accessibility-row-actions {
+      display: flex;
+      gap: 0.35rem;
+    }
+
+    .accessibility-chip {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-main);
+      font-size: 0.72rem;
+      padding: 0.25rem 0.6rem;
+      cursor: pointer;
+    }
+
+    .accessibility-chip:hover {
+      border-color: var(--accent-soft);
+      box-shadow: 0 0 12px rgba(0, 255, 200, 0.4);
+    }
+
+    /* High contrast + reduced motion states */
+    body.high-contrast {
+      background: #000000 !important;
+      color: #ffffff !important;
+    }
+
+    body.high-contrast .card {
+      background: #000000 !important;
+      border-color: #ffffff !important;
+    }
+
+    body.high-contrast .page-intro,
+    body.high-contrast .card-text,
+    body.high-contrast .wall-subtext,
+    body.high-contrast .request-count {
+      color: #f9fafb !important;
+    }
+
+    body.reduced-motion * {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
   </style>
 </head>
 <body>
@@ -791,8 +1171,8 @@
 
       <div class="nav-links">
         <a href="theforge.html">Overview</a>
-        <a href="members.html" class="active">Members</a>
-        <a href="prayerrequests.html">Prayer Requests</a>
+        <a href="members.html">Members</a>
+        <a href="prayerrequests.html" class="active">Prayer Requests</a>
       </div>
 
       <div class="nav-actions">
@@ -838,63 +1218,136 @@
 
   <main class="shell">
     <section aria-labelledby="page-title">
-      <div class="page-header-kicker">Brotherhood</div>
-      <h1 id="page-title" class="page-title">Members of The Forge</h1>
+      <div class="page-header-kicker">Pray for one another</div>
+      <h1 id="page-title" class="page-title">Share a prayer need, stand in the gap.</h1>
       <p class="page-intro">
-        This page lists the men who are part of The Forge community. This page is private and only visible to signed-in members.
+        This is a private wall for men in The Forge to ask for prayer and commit to praying
+        for one another. Be honest, be specific, and remember that what you share here is
+        treated with care.
       </p>
 
-      <!-- Sign-in required notice (auth.js will hide this when signed in) -->
-      <article class="card" id="membersSignInPrompt">
+      <div class="top-grid">
+        <!-- LEFT: POST A REQUEST -->
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Share a prayer need</div>
+            <h2 class="card-title-main">Post a request</h2>
+
+            <form id="prayerForm" class="prayer-form" autocomplete="off">
+              <!-- 1) Display name -->
+              <div class="field-group" data-field="name">
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  class="field-control"
+                  placeholder="Display name (optional)"
+                  maxlength="80"
+                />
+                <label for="name" class="field-label">Display name (optional)</label>
+              </div>
+
+              <!-- 2) Request title -->
+              <div class="field-group" data-field="title">
+                <input
+                  id="title"
+                  name="title"
+                  type="text"
+                  class="field-control"
+                  placeholder="Title of your request"
+                  maxlength="120"
+                />
+                <label for="title" class="field-label">Prayer request title</label>
+              </div>
+
+              <!-- 3) Request body -->
+              <div class="field-group textarea" data-field="message">
+                <textarea
+                  id="message"
+                  name="message"
+                  class="field-control"
+                  placeholder="Share what you're asking God to do"
+                ></textarea>
+                <label for="message" class="field-label">Prayer request details</label>
+              </div>
+
+              <p class="field-note">
+                Requests are timestamped and an email will be sent out notifying all members
+                of your prayer request.
+              </p>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                  <span class="icon">📨</span>
+                  <span>Submit Request</span>
+                </button>
+                <button type="reset" class="btn btn-outline">
+                  <span>Clear</span>
+                </button>
+              </div>
+
+              <div id="newPrayerError" class="form-error"></div>
+            </form>
+          </div>
+        </article>
+
+        <!-- RIGHT: HOW THIS WORKS -->
+        <article class="card">
+          <div class="card-inner">
+            <div class="card-kicker">Heart of The Forge</div>
+            <h2 class="card-title-main">How this works</h2>
+            <div class="card-text">
+              <p>
+                Every request on this wall represents a real man walking through real battles.
+                When you open a request and tap <strong>“I’m praying”</strong>, the counter
+                will reflect that you’ve committed to pray for your brother in Christ.
+              </p>
+              <ul style="margin: 0.8rem 0 0.6rem 1.1rem; padding-left: 0;">
+                <li>
+                  Each brother can mark “I’m praying” <strong>one time per request.</strong>
+                </li>
+                <li>
+                  When you open another request, the previous one will collapse to keep the
+                  wall clean.
+                </li>
+                <li>
+                  You may use specific details if you'd like, but avoid sharing anything that
+                  would betray another person’s trust.
+                </li>
+              </ul>
+              <p style="margin-top: 0.7rem;">
+                <em>
+                  “Confess your sins to one another and pray for one another, that you may be
+                  healed.” — James 5:16
+                </em>
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- PRAYER WALL -->
+    <section aria-labelledby="wall-title">
+      <article class="card wall-card">
         <div class="card-inner">
-          <div class="card-kicker">Private Area</div>
-          <h2 class="card-title-main">Sign in to see the members of The Forge.</h2>
-          <p class="card-text">
-            To protect privacy and keep this space gated, only men with an active Forge account can view the
-            member list. Use the <strong>Account</strong> button in the header to sign in or create an account
-            with your invite code.
+          <div class="card-kicker">Prayer Wall</div>
+          <h2 id="wall-title" class="card-title-main">Pray for one another</h2>
+          <p class="wall-subtext">
+            Below are active requests from men in The Forge. Click a request to expand the
+            details, then tap “I’m praying” to let your brother in Christ know you're
+            praying for them.
           </p>
+
+          <div class="request-count" id="requestCountLabel">
+            Sign in to view prayer requests.
+          </div>
+
+          <div id="prayerList" class="prayer-list">
+            <!-- Populated by auth.js / Firestore -->
+          </div>
         </div>
       </article>
-
-      <!-- Auth-gated members layout -->
-      <section id="membersWrapper" style="display: none;">
-        <p id="membersStatus" class="members-status-text">
-          Loading members…
-        </p>
-
-        <div class="members-layout">
-          <!-- LEADERS -->
-          <article class="card">
-            <div class="card-inner">
-              <div class="card-kicker">Leaders</div>
-              <h2 class="card-title-main">Forge Leaders</h2>
-              <p class="card-text">
-                These are the men who help lead, steward, and guard the culture of The Forge — owners,
-                admins, and core leaders. They’re still brothers among brothers, but they carry added responsibility.
-              </p>
-              <div id="leadersGrid" class="member-grid">
-                <!-- Populated by auth.js from Firestore profiles where role = owner/admin -->
-              </div>
-            </div>
-          </article>
-
-          <!-- MEMBERS -->
-          <article class="card">
-            <div class="card-inner">
-              <div class="card-kicker">Members</div>
-              <h2 class="card-title-main">Brothers in The Forge</h2>
-              <p class="card-text">
-                Every name here represents a real man walking through real battles. Pray for one another, encourage one
-                another, and remember that you’re not alone in the fight.
-              </p>
-              <div id="membersGrid" class="member-grid">
-                <!-- Populated by auth.js with all other profiles -->
-              </div>
-            </div>
-          </article>
-        </div>
-      </section>
     </section>
 
     <!-- ACCESSIBILITY WIDGET -->
@@ -940,87 +1393,6 @@
       </div>
     </div>
 
-  <script>
-    // ACCESSIBILITY WIDGET LOGIC
-    (function () {
-      const widget = document.getElementById('accessibilityWidget');
-      const toggleBtn = document.getElementById('accessibilityToggle');
-      const panel = document.getElementById('accessibilityPanel');
-      if (!widget || !toggleBtn || !panel) return;
-
-      const root = document.documentElement;
-      const body = document.body;
-
-      const TEXT_KEY = 'forgeTextScale';
-      const CONTRAST_KEY = 'forgeHighContrast';
-      const MOTION_KEY = 'forgeReducedMotion';
-
-      function applyScale(s) {
-        const clamped = Math.min(1.3, Math.max(0.85, s));
-        root.style.setProperty('--forge-text-scale', String(clamped));
-        localStorage.setItem(TEXT_KEY, String(clamped));
-        return clamped;
-      }
-
-      let scale = parseFloat(localStorage.getItem(TEXT_KEY) || '1');
-      if (isNaN(scale)) scale = 1;
-      scale = applyScale(scale);
-
-      if (localStorage.getItem(CONTRAST_KEY) === '1') {
-        body.classList.add('high-contrast');
-      }
-      if (localStorage.getItem(MOTION_KEY) === '1') {
-        body.classList.add('reduced-motion');
-      }
-
-      toggleBtn.addEventListener('click', () => {
-        const open = !widget.classList.contains('open');
-        widget.classList.toggle('open', open);
-        toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-
-      panel.addEventListener('click', (evt) => {
-        const btn = evt.target.closest('button[data-action]');
-        if (!btn) return;
-        const action = btn.getAttribute('data-action');
-
-        switch (action) {
-          case 'text-smaller':
-            scale = applyScale(scale - 0.1);
-            break;
-          case 'text-larger':
-            scale = applyScale(scale + 0.1);
-            break;
-          case 'text-reset':
-            scale = applyScale(1);
-            break;
-          case 'toggle-contrast':
-            body.classList.toggle('high-contrast');
-            localStorage.setItem(
-              CONTRAST_KEY,
-              body.classList.contains('high-contrast') ? '1' : '0'
-            );
-            break;
-          case 'toggle-motion':
-            body.classList.toggle('reduced-motion');
-            localStorage.setItem(
-              MOTION_KEY,
-              body.classList.contains('reduced-motion') ? '1' : '0'
-            );
-            break;
-        }
-      });
-
-      // Close the panel when clicking outside
-      document.addEventListener('click', (evt) => {
-        if (!widget.classList.contains('open')) return;
-        if (widget.contains(evt.target)) return;
-        widget.classList.remove('open');
-        toggleBtn.setAttribute('aria-expanded', 'false');
-      });
-    })();
-  </script>
-
     <!-- ACCESSIBILITY NOTE (Footer Position) -->
     <section class="accessibility-note-footer" aria-label="Accessibility information">
       <p>
@@ -1036,7 +1408,7 @@
     </section>
 
     <footer>
-      <div>© <span id="year"></span> The Forge · Members</div>
+      <div>© <span id="year"></span> The Forge · Prayer Requests</div>
       <div class="auth-status-text" id="authStatus">
         Not signed in
       </div>
@@ -1251,10 +1623,48 @@
       // Expose to auth.js so it can close nav when opening account modal
       window.__forgeCloseMobileNav = closeNav;
     })();
+
+    // FLOATING LABEL BEHAVIOR + TEXTAREA AUTO-GROW
+    (function () {
+      const groups = document.querySelectorAll('.field-group');
+
+      function updateGroupState(group, control) {
+        if (!control) return;
+        if (control.value && control.value.trim() !== '') {
+          group.classList.add('has-value');
+        } else {
+          group.classList.remove('has-value');
+        }
+      }
+
+      groups.forEach((group) => {
+        const control = group.querySelector('.field-control');
+        if (!control) return;
+
+        control.addEventListener('focus', () => group.classList.add('focused'));
+        control.addEventListener('blur', () => group.classList.remove('focused'));
+        control.addEventListener('input', () => updateGroupState(group, control));
+
+        // initial state
+        updateGroupState(group, control);
+      });
+
+      // Auto-grow the prayer textarea so it's not manually resizable
+      const messageEl = document.getElementById('message');
+      if (messageEl) {
+        const autoResize = () => {
+          messageEl.style.height = 'auto';
+          messageEl.style.height = (messageEl.scrollHeight + 2) + 'px';
+        };
+        messageEl.addEventListener('input', autoResize);
+        // Initial size
+        autoResize();
+      }
+    })();
   </script>
 
   <script>
-    // ACCESSIBILITY WIDGET LOGIC (same as prayerrequests.html)
+    // ACCESSIBILITY WIDGET LOGIC
     (function () {
       const widget = document.getElementById('accessibilityWidget');
       const toggleBtn = document.getElementById('accessibilityToggle');

@@ -1041,56 +1041,78 @@
       }
     }
 
-    /* ================== ACCESSIBILITY WIDGET ================== */
+    /* ================== ACCESSIBILITY WIDGET (MATCH THEFORGE LOOK) ================== */
     .accessibility-widget {
       position: fixed;
-      right: 1.25rem;
-      bottom: 1.25rem;
+      right: 1.5rem;
+      bottom: 1.5rem;
       z-index: 60;
       font-size: 0.8rem;
     }
 
+    /* Round icon button */
     .accessibility-toggle-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
+      width: 42px;
+      height: 42px;
       border-radius: 999px;
       border: 1px solid var(--border-subtle);
-      background: rgba(15, 23, 42, 0.96);
-      color: var(--text-soft);
-      padding: 0.45rem 0.9rem;
+      background:
+        radial-gradient(circle at 30% 30%, #1d4ed8, #0f172a);
+      color: #e5edff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
+      transition:
+        background var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast),
+        border-color var(--transition-fast);
+    }
+
+    /* hide text label so button is icon-only */
+    .accessibility-label {
+      display: none;
     }
 
     .accessibility-toggle-btn:hover {
-      background: var(--bg-card-soft);
-      color: var(--text-main);
-      box-shadow: 0 0 20px rgba(0, 255, 200, 0.45);
+      transform: translateY(-1px);
+      border-color: var(--accent-soft);
+      box-shadow: 0 0 26px rgba(59, 130, 246, 0.8);
     }
 
     .icon-accessibility {
-      font-size: 1rem;
+      font-size: 1.1rem;
     }
 
+    /* Panel */
     .accessibility-panel {
       position: absolute;
       right: 0;
-      bottom: 3.1rem;
-      width: 270px;
+      bottom: 3.2rem;
+      width: 280px;
       max-width: 80vw;
-      border-radius: 16px;
-      background: rgba(15, 23, 42, 0.98);
-      border: 1px solid rgba(148, 163, 184, 0.55);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.95);
-      padding: 0.9rem 0.95rem;
+      border-radius: 18px;
+      background: rgba(10, 16, 35, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(15, 23, 42, 0.95);
+      padding: 0.85rem 0.95rem 0.95rem;
       display: none;
     }
 
     .accessibility-widget.open .accessibility-panel {
       display: block;
+    }
+
+    .accessibility-panel-header {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-soft);
+      margin-bottom: 0.6rem;
     }
 
     .accessibility-row {
@@ -1114,22 +1136,28 @@
 
     .accessibility-row-actions {
       display: flex;
+      flex-wrap: wrap;
       gap: 0.35rem;
     }
 
     .accessibility-chip {
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: radial-gradient(circle at 0 0, rgba(15,23,42,0.95), rgba(15,23,42,0.98));
       color: var(--text-main);
       font-size: 0.72rem;
-      padding: 0.25rem 0.6rem;
+      padding: 0.25rem 0.7rem;
       cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
     }
 
     .accessibility-chip:hover {
       border-color: var(--accent-soft);
-      box-shadow: 0 0 12px rgba(0, 255, 200, 0.4);
+      box-shadow: 0 0 14px rgba(0, 255, 200, 0.45);
     }
 
     /* High contrast + reduced motion states */
@@ -1364,12 +1392,14 @@
       </button>
 
       <div class="accessibility-panel" id="accessibilityPanel">
+        <div class="accessibility-panel-header">Accessibility</div>
+
         <div class="accessibility-row">
           <span class="accessibility-row-label">Text size</span>
           <div class="accessibility-row-actions">
-            <button type="button" class="accessibility-chip" data-action="text-smaller">A−</button>
-            <button type="button" class="accessibility-chip" data-action="text-larger">A+</button>
-            <button type="button" class="accessibility-chip" data-action="text-reset">Reset</button>
+            <button type="button" class="accessibility-chip" data-action="text-smaller">A− Text</button>
+            <button type="button" class="accessibility-chip" data-action="text-larger">A+ Text</button>
+            <button type="button" class="accessibility-chip" data-action="text-reset">⟲ Reset</button>
           </div>
         </div>
 
@@ -1377,7 +1407,7 @@
           <span class="accessibility-row-label">Contrast</span>
           <div class="accessibility-row-actions">
             <button type="button" class="accessibility-chip" data-action="toggle-contrast">
-              Toggle
+              ● Contrast
             </button>
           </div>
         </div>
@@ -1386,7 +1416,7 @@
           <span class="accessibility-row-label">Motion</span>
           <div class="accessibility-row-actions">
             <button type="button" class="accessibility-chip" data-action="toggle-motion">
-              Reduce
+              ‖ Motion
             </button>
           </div>
         </div>

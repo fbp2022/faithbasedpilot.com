@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -86,6 +86,16 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    body.reduce-motion {
+      scroll-behavior: auto;
+    }
+
+    body.reduce-motion * {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition: none !important;
+    }
+
     .ambient-orbit {
       position: fixed;
       inset: -40%;
@@ -97,6 +107,10 @@
       opacity: 0.75;
       animation: orbit 30s linear infinite alternate;
       mix-blend-mode: screen;
+    }
+
+    body.reduce-motion .ambient-orbit {
+      animation: none;
     }
 
     @keyframes orbit {
@@ -798,10 +812,125 @@
       outline: 2px solid var(--accent);
       outline-offset: 3px;
     }
+
+    /* ================== FLOATING ACCESSIBILITY BUTTONS ================== */
+    .accessibility-toolbar {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.35rem 0.45rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.75);
+      z-index: 50;
+    }
+
+    .accessibility-toolbar span {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+      margin-right: 0.15rem;
+    }
+
+    .accessibility-btn {
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      padding: 0.25rem 0.45rem;
+      cursor: pointer;
+      min-width: 2rem;
+      text-align: center;
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+    }
+
+    .accessibility-btn:hover,
+    .accessibility-btn:focus-visible {
+      background: var(--bg-card-soft);
+      color: var(--accent);
+      border-color: var(--accent-soft);
+      box-shadow: 0 0 12px rgba(0,255,200,0.4);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .accessibility-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .accessibility-btn[aria-pressed="true"] {
+      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+      color: #020409;
+      border-color: transparent;
+      box-shadow: 0 0 14px rgba(0,255,200,0.6);
+    }
+
+    @media (max-width: 640px) {
+      .accessibility-toolbar {
+        right: 0.75rem;
+        bottom: 0.75rem;
+        padding: 0.3rem 0.4rem;
+      }
+
+      .accessibility-toolbar span {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="ambient-orbit"></div>
+
+  <!-- Floating accessibility controls -->
+  <div class="accessibility-toolbar" aria-label="Accessibility controls">
+    <span>Accessibility</span>
+    <button
+      type="button"
+      class="accessibility-btn"
+      id="themeToggleBtn"
+      title="Toggle light / dark theme"
+      aria-pressed="false"
+    >
+      ☾
+    </button>
+    <button
+      type="button"
+      class="accessibility-btn"
+      id="fontMinusBtn"
+      title="Decrease text size"
+    >
+      A-
+    </button>
+    <button
+      type="button"
+      class="accessibility-btn"
+      id="fontPlusBtn"
+      title="Increase text size"
+    >
+      A+
+    </button>
+    <button
+      type="button"
+      class="accessibility-btn"
+      id="motionToggleBtn"
+      title="Toggle reduced motion"
+      aria-pressed="false"
+    >
+      ⏸
+    </button>
+  </div>
 
   <header>
     <nav class="nav">
@@ -1149,6 +1278,68 @@
 
       // Expose to auth.js so it can close nav when opening account modal
       window.__forgeCloseMobileNav = closeNav;
+    })();
+
+    // ========== ACCESSIBILITY CONTROLS ==========
+    (function () {
+      const root = document.documentElement;
+      const body = document.body;
+
+      const themeToggleBtn = document.getElementById('themeToggleBtn');
+      const fontMinusBtn = document.getElementById('fontMinusBtn');
+      const fontPlusBtn = document.getElementById('fontPlusBtn');
+      const motionToggleBtn = document.getElementById('motionToggleBtn');
+
+      if (!themeToggleBtn || !fontMinusBtn || !fontPlusBtn || !motionToggleBtn) return;
+
+      // THEME
+      const savedTheme = localStorage.getItem('forge-theme');
+      if (savedTheme === 'light' || savedTheme === 'dark') {
+        root.setAttribute('data-theme', savedTheme);
+        themeToggleBtn.setAttribute('aria-pressed', savedTheme === 'light' ? 'true' : 'false');
+      }
+
+      themeToggleBtn.addEventListener('click', () => {
+        const current = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+        const next = current === 'light' ? 'dark' : 'light';
+        root.setAttribute('data-theme', next);
+        localStorage.setItem('forge-theme', next);
+        themeToggleBtn.setAttribute('aria-pressed', next === 'light' ? 'true' : 'false');
+      });
+
+      // FONT SIZE (scale html font-size)
+      let fontScale = parseFloat(localStorage.getItem('forge-font-scale') || '1');
+      applyFontScale();
+
+      function applyFontScale() {
+        const clamped = Math.min(1.4, Math.max(0.85, fontScale));
+        fontScale = clamped;
+        root.style.fontSize = (clamped * 100) + '%';
+        localStorage.setItem('forge-font-scale', String(clamped));
+      }
+
+      fontPlusBtn.addEventListener('click', () => {
+        fontScale += 0.1;
+        applyFontScale();
+      });
+
+      fontMinusBtn.addEventListener('click', () => {
+        fontScale -= 0.1;
+        applyFontScale();
+      });
+
+      // REDUCED MOTION
+      const savedMotion = localStorage.getItem('forge-reduce-motion');
+      if (savedMotion === 'true') {
+        body.classList.add('reduce-motion');
+        motionToggleBtn.setAttribute('aria-pressed', 'true');
+      }
+
+      motionToggleBtn.addEventListener('click', () => {
+        const isOn = body.classList.toggle('reduce-motion');
+        localStorage.setItem('forge-reduce-motion', isOn ? 'true' : 'false');
+        motionToggleBtn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+      });
     })();
   </script>
 

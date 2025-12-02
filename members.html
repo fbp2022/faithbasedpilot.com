@@ -1,14 +1,17 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Forge · Members</title>
   <meta name="color-scheme" content="dark light" />
-  <meta name="description" content="Private members list for The Forge men’s community." />
+  <meta
+    name="description"
+    content="Private members list for The Forge men’s community."
+  />
 
   <style>
-    /* ================== BASE / THEME ================== */
+    /* ================== BASE / THEME (MATCH PRAYERREQUESTS) ================== */
     :root {
       --bg-main: #05070f;
       --bg-elevated: rgba(10, 14, 30, 0.95);
@@ -22,7 +25,7 @@
 
       --border-subtle: rgba(0, 255, 200, 0.25);
       --accent: #00ffd0;
-      --accent-soft: rgba(0, 255, 200, 0.5);
+      --accent-soft: rgba(0, 255, 200, 0.55);
       --accent-alt: #00aaff;
 
       --text-main: #e3f6ff;
@@ -36,30 +39,13 @@
       --nav-height: 64px;
       --radius-lg: 18px;
       --radius-md: 12px;
+      --radius-input: 999px;
       --radius-full: 999px;
+
       --transition-fast: 0.18s ease;
       --transition-med: 0.25s ease;
-    }
 
-    :root[data-theme="light"] {
-      --bg-main: #f5f7fb;
-      --bg-elevated: rgba(255, 255, 255, 0.98);
-      --bg-card: rgba(255, 255, 255, 0.98);
-      --bg-card-soft: rgba(245, 247, 252, 0.98);
-      --bg-deep: #c7d2fe;
-
-      --bg-header-strong: rgba(255, 255, 255, 0.98);
-      --bg-header-soft: rgba(248, 250, 252, 0.9);
-      --bg-mobile-overlay: rgba(245, 247, 252, 0.98);
-
-      --border-subtle: rgba(0, 140, 255, 0.25);
-      --accent: #0074ff;
-      --accent-soft: rgba(0, 116, 255, 0.5);
-      --accent-alt: #00b8ff;
-
-      --text-main: #071420;
-      --text-muted: #4f5c77;
-      --text-soft: #7a8799;
+      --forge-text-scale: 1;
     }
 
     * {
@@ -84,17 +70,7 @@
       );
       color: var(--text-main);
       -webkit-font-smoothing: antialiased;
-    }
-
-    /* Reduced motion helper */
-    body.reduce-motion {
-      scroll-behavior: auto;
-    }
-
-    body.reduce-motion * {
-      animation-duration: 0.001ms !important;
-      animation-iteration-count: 1 !important;
-      transition: none !important;
+      font-size: calc(16px * var(--forge-text-scale, 1));
     }
 
     .ambient-orbit {
@@ -122,17 +98,13 @@
       }
     }
 
-    body.reduce-motion .ambient-orbit {
-      animation: none;
-    }
-
     .shell {
       max-width: 1120px;
       margin: 0 auto;
       padding: 0 1.5rem 3.5rem;
     }
 
-    /* ================== HEADER / NAV ================== */
+    /* ================== HEADER / NAV (MATCH PRAYERREQUESTS) ================== */
     header {
       position: sticky;
       top: 0;
@@ -195,7 +167,7 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 1.35rem;
       font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 0.14em;
@@ -205,7 +177,7 @@
       text-decoration: none;
       color: var(--text-muted);
       position: relative;
-      padding-bottom: 0.15rem;
+      padding-bottom: 1.2rem;
       cursor: pointer;
       transition: color var(--transition-fast);
     }
@@ -244,6 +216,13 @@
       gap: 0.75rem;
     }
 
+    .user-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+    }
+
     .account-btn {
       border-radius: var(--radius-full);
       border: 1px solid var(--border-subtle);
@@ -274,13 +253,6 @@
 
     .account-btn span.icon {
       font-size: 0.95rem;
-    }
-
-    .user-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-soft);
     }
 
     .hamburger {
@@ -333,7 +305,6 @@
       background: var(--accent);
     }
 
-    /* Mobile nav overlay */
     .mobile-nav {
       display: none;
       position: fixed;
@@ -390,13 +361,7 @@
       text-transform: uppercase;
       letter-spacing: 0.16em;
       color: var(--text-soft);
-      margin-top: 0.4rem;
-    }
-
-    .mobile-account-btn {
-      border: none;
-      background: transparent;
-      padding-left: 0;
+      margin-bottom: 0.25rem;
     }
 
     @media (max-width: 840px) {
@@ -415,7 +380,7 @@
 
     /* ================== PAGE LAYOUT ================== */
     main {
-      padding-top: 2.4rem;
+      padding-top: 2.6rem;
     }
 
     .page-header-kicker {
@@ -445,7 +410,7 @@
       border-radius: var(--radius-lg);
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
-      padding: 1.5rem 1.35rem;
+      padding: 1.7rem 1.5rem;
       box-shadow: var(--shadow-strong);
       position: relative;
       overflow: hidden;
@@ -490,15 +455,16 @@
       line-height: 1.7;
     }
 
-    /* ================== MEMBERS GRID ================== */
+    /* ================== MEMBERS LAYOUT ================== */
     .members-layout {
       display: grid;
       grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr);
       gap: 1.75rem;
       align-items: flex-start;
+      margin-top: 0.5rem;
     }
 
-    @media (max-width: 840px) {
+    @media (max-width: 880px) {
       .members-layout {
         grid-template-columns: minmax(0, 1fr);
       }
@@ -589,21 +555,29 @@
       color: var(--text-soft);
     }
 
-    @media (max-width: 600px) {
-      .shell {
-        padding: 0 1.1rem 3rem;
-      }
-
-      .nav {
-        padding: 0 1.1rem;
-      }
-
-      footer {
-        flex-direction: column;
-      }
+    /* ================== ACCESSIBILITY NOTE (FOOTER STYLE) ================== */
+    .accessibility-note-footer {
+      margin-top: 2.5rem;
+      padding: 1rem 1.2rem;
+      border-radius: var(--radius-md);
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      font-size: 0.78rem;
+      line-height: 1.7;
+      color: var(--text-soft);
     }
 
-    /* ================== AUTH MODAL ================== */
+    .accessibility-note-footer a {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .accessibility-note-footer a:hover {
+      text-decoration: none;
+      color: var(--accent-alt);
+    }
+
+    /* ================== AUTH MODAL (MATCH PRAYERREQUESTS) ================== */
     .auth-overlay {
       position: fixed;
       inset: 0;
@@ -784,140 +758,138 @@
       align-self: flex-end;
     }
 
-    /* ================== ACCESSIBILITY NOTE (FOOTER STYLE) ================== */
-    .accessibility-note-footer {
-      margin-top: 1.5rem;
-      padding: 0.9rem 1.1rem;
-      border-radius: 12px;
-      border: 1px solid rgba(148, 163, 184, 0.45);
-      background: radial-gradient(
-        circle at 0 0,
-        rgba(15, 23, 42, 0.96),
-        rgba(15, 23, 42, 0.98)
-      );
-      color: var(--text-soft);
-      font-size: 0.8rem;
-      line-height: 1.6;
+    /* ================== RESPONSIVE ================== */
+    @media (max-width: 600px) {
+      .shell {
+        padding: 0 1.1rem 3rem;
+      }
+
+      .nav {
+        padding: 0 1.1rem;
+      }
+
+      footer {
+        flex-direction: column;
+      }
     }
 
-    .accessibility-note-footer a {
-      color: var(--accent);
-      text-decoration: underline;
-    }
-
-    .accessibility-note-footer a:hover {
-      text-decoration: none;
-    }
-
-    .accessibility-note-footer a:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 3px;
-    }
-
-    /* ================== FLOATING ACCESSIBILITY BUTTONS ================== */
-    .accessibility-toolbar {
+    /* ================== ACCESSIBILITY WIDGET ================== */
+    .accessibility-widget {
       position: fixed;
-      right: 1rem;
-      bottom: 1rem;
+      right: 1.25rem;
+      bottom: 1.25rem;
+      z-index: 60;
+      font-size: 0.8rem;
+    }
+
+    .accessibility-toggle-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
-      padding: 0.35rem 0.4rem;
+      gap: 0.4rem;
       border-radius: 999px;
-      background: rgba(15, 23, 42, 0.95);
       border: 1px solid var(--border-subtle);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.75);
-      z-index: 50;
-    }
-
-    .accessibility-btn {
-      border: 1px solid rgba(148, 163, 184, 0.55);
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.98);
-      color: var(--text-muted);
-      font-size: 0.7rem;
-      padding: 0.2rem 0.45rem;
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text-soft);
+      padding: 0.45rem 0.9rem;
       cursor: pointer;
-      min-width: 2rem;
-      text-align: center;
-      transition:
-        background var(--transition-fast),
-        color var(--transition-fast),
-        border-color var(--transition-fast),
-        transform var(--transition-fast),
-        box-shadow var(--transition-fast);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
     }
 
-    .accessibility-btn:hover,
-    .accessibility-btn:focus-visible {
+    .accessibility-toggle-btn:hover {
       background: var(--bg-card-soft);
-      color: var(--accent);
+      color: var(--text-main);
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.45);
+    }
+
+    .icon-accessibility {
+      font-size: 1rem;
+    }
+
+    .accessibility-panel {
+      position: absolute;
+      right: 0;
+      bottom: 3.1rem;
+      width: 270px;
+      max-width: 80vw;
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.95);
+      padding: 0.9rem 0.95rem;
+      display: none;
+    }
+
+    .accessibility-widget.open .accessibility-panel {
+      display: block;
+    }
+
+    .accessibility-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.55rem;
+    }
+
+    .accessibility-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .accessibility-row-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+    }
+
+    .accessibility-row-actions {
+      display: flex;
+      gap: 0.35rem;
+    }
+
+    .accessibility-chip {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-main);
+      font-size: 0.72rem;
+      padding: 0.25rem 0.6rem;
+      cursor: pointer;
+    }
+
+    .accessibility-chip:hover {
       border-color: var(--accent-soft);
-      box-shadow: 0 0 12px rgba(0,255,200,0.4);
-      transform: translateY(-1px);
-      outline: none;
+      box-shadow: 0 0 12px rgba(0, 255, 200, 0.4);
     }
 
-    .accessibility-btn:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
+    /* High contrast + reduced motion states */
+    body.high-contrast {
+      background: #000000 !important;
+      color: #ffffff !important;
     }
 
-    .accessibility-btn[aria-pressed="true"] {
-      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
-      color: #020409;
-      border-color: transparent;
-      box-shadow: 0 0 14px rgba(0,255,200,0.6);
+    body.high-contrast .card {
+      background: #000000 !important;
+      border-color: #ffffff !important;
     }
 
-    @media (max-width: 640px) {
-      .accessibility-toolbar {
-        right: 0.75rem;
-        bottom: 0.75rem;
-      }
+    body.high-contrast .page-intro,
+    body.high-contrast .card-text,
+    body.high-contrast .members-status-text {
+      color: #f9fafb !important;
+    }
+
+    body.reduced-motion * {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
     }
   </style>
 </head>
 <body>
   <div class="ambient-orbit"></div>
-
-  <!-- Floating accessibility controls (minimal icons to keep it subtle) -->
-  <div class="accessibility-toolbar" aria-label="Accessibility controls">
-    <button
-      type="button"
-      class="accessibility-btn"
-      id="themeToggleBtn"
-      title="Toggle light / dark theme"
-      aria-pressed="false"
-    >
-      ☾
-    </button>
-    <button
-      type="button"
-      class="accessibility-btn"
-      id="fontMinusBtn"
-      title="Decrease text size"
-    >
-      A-
-    </button>
-    <button
-      type="button"
-      class="accessibility-btn"
-      id="fontPlusBtn"
-      title="Increase text size"
-    >
-      A+
-    </button>
-    <button
-      type="button"
-      class="accessibility-btn"
-      id="motionToggleBtn"
-      title="Toggle reduced motion"
-      aria-pressed="false"
-    >
-      ⏸
-    </button>
-  </div>
 
   <header>
     <nav class="nav">
@@ -929,7 +901,7 @@
       </div>
 
       <div class="nav-links">
-        <a href="theforge.html#overview">Overview</a>
+        <a href="theforge.html">Overview</a>
         <a href="members.html" class="active">Members</a>
         <a href="prayerrequests.html">Prayer Requests</a>
       </div>
@@ -957,7 +929,7 @@
     <!-- Mobile nav overlay -->
     <div class="mobile-nav" id="mobileNav">
       <div class="mobile-nav-inner">
-        <a href="theforge.html#overview">Overview</a>
+        <a href="theforge.html">Overview</a>
         <a href="members.html">Members</a>
         <a href="prayerrequests.html">Prayer Requests</a>
 
@@ -1035,6 +1007,49 @@
         </div>
       </section>
     </section>
+
+    <!-- ACCESSIBILITY WIDGET -->
+    <div class="accessibility-widget" id="accessibilityWidget">
+      <button
+        type="button"
+        class="accessibility-toggle-btn"
+        id="accessibilityToggle"
+        aria-expanded="false"
+        aria-controls="accessibilityPanel"
+      >
+        <span class="icon-accessibility" aria-hidden="true">♿</span>
+        <span class="accessibility-label">Accessibility</span>
+      </button>
+
+      <div class="accessibility-panel" id="accessibilityPanel">
+        <div class="accessibility-row">
+          <span class="accessibility-row-label">Text size</span>
+          <div class="accessibility-row-actions">
+            <button type="button" class="accessibility-chip" data-action="text-smaller">A−</button>
+            <button type="button" class="accessibility-chip" data-action="text-larger">A+</button>
+            <button type="button" class="accessibility-chip" data-action="text-reset">Reset</button>
+          </div>
+        </div>
+
+        <div class="accessibility-row">
+          <span class="accessibility-row-label">Contrast</span>
+          <div class="accessibility-row-actions">
+            <button type="button" class="accessibility-chip" data-action="toggle-contrast">
+              Toggle
+            </button>
+          </div>
+        </div>
+
+        <div class="accessibility-row">
+          <span class="accessibility-row-label">Motion</span>
+          <div class="accessibility-row-actions">
+            <button type="button" class="accessibility-chip" data-action="toggle-motion">
+              Reduce
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- ACCESSIBILITY NOTE (Footer Position) -->
     <section class="accessibility-note-footer" aria-label="Accessibility information">
@@ -1266,66 +1281,85 @@
       // Expose to auth.js so it can close nav when opening account modal
       window.__forgeCloseMobileNav = closeNav;
     })();
+  </script>
 
-    // ========== ACCESSIBILITY CONTROLS ==========
+  <script>
+    // ACCESSIBILITY WIDGET LOGIC (same as prayerrequests.html)
     (function () {
+      const widget = document.getElementById('accessibilityWidget');
+      const toggleBtn = document.getElementById('accessibilityToggle');
+      const panel = document.getElementById('accessibilityPanel');
+      if (!widget || !toggleBtn || !panel) return;
+
       const root = document.documentElement;
       const body = document.body;
 
-      const themeToggleBtn = document.getElementById('themeToggleBtn');
-      const fontMinusBtn = document.getElementById('fontMinusBtn');
-      const fontPlusBtn = document.getElementById('fontPlusBtn');
-      const motionToggleBtn = document.getElementById('motionToggleBtn');
+      const TEXT_KEY = 'forgeTextScale';
+      const CONTRAST_KEY = 'forgeHighContrast';
+      const MOTION_KEY = 'forgeReducedMotion';
 
-      if (!themeToggleBtn || !fontMinusBtn || !fontPlusBtn || !motionToggleBtn) return;
-
-      // THEME
-      const savedTheme = localStorage.getItem('forge-theme');
-      if (savedTheme === 'light' || savedTheme === 'dark') {
-        root.setAttribute('data-theme', savedTheme);
-        themeToggleBtn.setAttribute('aria-pressed', savedTheme === 'light' ? 'true' : 'false');
+      function applyScale(s) {
+        const clamped = Math.min(1.3, Math.max(0.85, s));
+        root.style.setProperty('--forge-text-scale', String(clamped));
+        localStorage.setItem(TEXT_KEY, String(clamped));
+        return clamped;
       }
 
-      themeToggleBtn.addEventListener('click', () => {
-        const current = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-        const next = current === 'light' ? 'dark' : 'light';
-        root.setAttribute('data-theme', next);
-        localStorage.setItem('forge-theme', next);
-        themeToggleBtn.setAttribute('aria-pressed', next === 'light' ? 'true' : 'false');
-      });
+      let scale = parseFloat(localStorage.getItem(TEXT_KEY) || '1');
+      if (isNaN(scale)) scale = 1;
+      scale = applyScale(scale);
 
-      // FONT SIZE (scale html font-size)
-      let fontScale = parseFloat(localStorage.getItem('forge-font-scale') || '1');
-      applyFontScale();
-
-      function applyFontScale() {
-        const clamped = Math.min(1.4, Math.max(0.85, fontScale));
-        fontScale = clamped;
-        root.style.fontSize = (clamped * 100) + '%';
-        localStorage.setItem('forge-font-scale', String(clamped));
+      if (localStorage.getItem(CONTRAST_KEY) === '1') {
+        body.classList.add('high-contrast');
+      }
+      if (localStorage.getItem(MOTION_KEY) === '1') {
+        body.classList.add('reduced-motion');
       }
 
-      fontPlusBtn.addEventListener('click', () => {
-        fontScale += 0.1;
-        applyFontScale();
+      toggleBtn.addEventListener('click', () => {
+        const open = !widget.classList.contains('open');
+        widget.classList.toggle('open', open);
+        toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
 
-      fontMinusBtn.addEventListener('click', () => {
-        fontScale -= 0.1;
-        applyFontScale();
+      panel.addEventListener('click', (evt) => {
+        const btn = evt.target.closest('button[data-action]');
+        if (!btn) return;
+        const action = btn.getAttribute('data-action');
+
+        switch (action) {
+          case 'text-smaller':
+            scale = applyScale(scale - 0.1);
+            break;
+          case 'text-larger':
+            scale = applyScale(scale + 0.1);
+            break;
+          case 'text-reset':
+            scale = applyScale(1);
+            break;
+          case 'toggle-contrast':
+            body.classList.toggle('high-contrast');
+            localStorage.setItem(
+              CONTRAST_KEY,
+              body.classList.contains('high-contrast') ? '1' : '0'
+            );
+            break;
+          case 'toggle-motion':
+            body.classList.toggle('reduced-motion');
+            localStorage.setItem(
+              MOTION_KEY,
+              body.classList.contains('reduced-motion') ? '1' : '0'
+            );
+            break;
+        }
       });
 
-      // REDUCED MOTION
-      const savedMotion = localStorage.getItem('forge-reduce-motion');
-      if (savedMotion === 'true') {
-        body.classList.add('reduce-motion');
-        motionToggleBtn.setAttribute('aria-pressed', 'true');
-      }
-
-      motionToggleBtn.addEventListener('click', () => {
-        const isOn = body.classList.toggle('reduce-motion');
-        localStorage.setItem('forge-reduce-motion', isOn ? 'true' : 'false');
-        motionToggleBtn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+      // Close the panel when clicking outside
+      document.addEventListener('click', (evt) => {
+        if (!widget.classList.contains('open')) return;
+        if (widget.contains(evt.target)) return;
+        widget.classList.remove('open');
+        toggleBtn.setAttribute('aria-expanded', 'false');
       });
     })();
   </script>

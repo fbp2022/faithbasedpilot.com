@@ -205,93 +205,125 @@
       color: var(--text-main);
     }
 
-    /* ================== ACCESSIBILITY TOOLBAR ================== */
-    .accessibility-toolbar {
-      position: fixed;
-      bottom: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 60;
-      max-width: 1120px;
-      width: calc(100% - 2rem);
-    }
+  /* ================== ACCESSIBILITY TOOLBAR ================== */
+.accessibility-toolbar {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 60;
+  max-width: 320px;
+}
 
-    .accessibility-toolbar-inner {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 0.9rem;
-      border-radius: var(--radius-full);
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-strong);
-      font-size: 0.8rem;
-    }
+/* Launcher button (floating) */
+.a11y-launcher {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.3rem;
+  box-shadow: var(--shadow-strong);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
 
-    .accessibility-toolbar-label {
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-soft);
-      white-space: nowrap;
-    }
+.a11y-launcher:hover {
+  background: var(--bg-card-soft);
+  color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgba(0, 255, 200, 0.45);
+}
 
-    .a11y-button-group {
-      display: inline-flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-left: auto;
-    }
+/* Popover panel */
+.accessibility-toolbar-inner {
+  display: none;
+  margin-bottom: 0.4rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-strong);
+  font-size: 0.8rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
 
-    .a11y-btn {
-      border-radius: var(--radius-full);
-      border: 1px solid var(--border-subtle);
-      padding: 0.25rem 0.7rem;
-      background: var(--bg-elevated);
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        color var(--transition-fast),
-        transform var(--transition-fast);
-    }
+/* When widget is open, show the panel */
+.accessibility-toolbar.open .accessibility-toolbar-inner {
+  display: flex;
+}
 
-    .a11y-btn:hover {
-      background: var(--bg-card-soft);
-      border-color: var(--accent-soft);
-      color: var(--text-main);
-      transform: translateY(-1px);
-    }
+.accessibility-toolbar-label {
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  white-space: nowrap;
+}
 
-    .a11y-btn[aria-pressed="true"] {
-      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
-      color: #020409;
-      border-color: transparent;
-    }
+.a11y-button-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-left: auto;
+}
 
-    .a11y-btn span.icon {
-      font-size: 0.9rem;
-    }
+.a11y-btn {
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  padding: 0.25rem 0.7rem;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
 
-    @media (max-width: 700px) {
-      .accessibility-toolbar-inner {
-        border-radius: var(--radius-md);
-      }
-      .accessibility-toolbar-label {
-        width: 100%;
-      }
-      .a11y-button-group {
-        margin-left: 0;
-      }
-    }
+.a11y-btn:hover {
+  background: var(--bg-card-soft);
+  border-color: var(--accent-soft);
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
+
+.a11y-btn[aria-pressed="true"] {
+  background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+  color: #020409;
+  border-color: transparent;
+}
+
+.a11y-btn span.icon {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 700px) {
+  .accessibility-toolbar {
+    bottom: 0.75rem;
+    right: 0.75rem;
+  }
+  .accessibility-toolbar-inner {
+    max-width: 260px;
+  }
+}
+
 
     /* ===== FIXED HEADER ON ALL DEVICES ===== */
     header {
@@ -2233,79 +2265,120 @@
       autoResize(); // initial sizing
     })();
 
-    // ACCESSIBILITY TOOLBAR LOGIC
-    (function () {
-      const htmlEl = document.documentElement;
-      const bodyEl = document.body;
+// ACCESSIBILITY TOOLBAR LOGIC
+(function () {
+  const htmlEl = document.documentElement;
+  const bodyEl = document.body;
 
-      const btnFontInc = document.getElementById('a11yFontIncrease');
-      const btnFontDec = document.getElementById('a11yFontDecrease');
-      const btnFontReset = document.getElementById('a11yFontReset');
-      const btnContrast = document.getElementById('a11yContrast');
-      const btnMotion = document.getElementById('a11yMotion');
+  const widget = document.querySelector('.accessibility-toolbar');
+  const launcher = document.getElementById('a11yLauncher');
+  const panel = document.querySelector('.accessibility-toolbar-inner');
 
-      let fontSizePercent = 100;
+  const btnFontInc = document.getElementById('a11yFontIncrease');
+  const btnFontDec = document.getElementById('a11yFontDecrease');
+  const btnFontReset = document.getElementById('a11yFontReset');
+  const btnContrast = document.getElementById('a11yContrast');
+  const btnMotion = document.getElementById('a11yMotion');
 
-      function applyFontSize() {
-        htmlEl.style.fontSize = fontSizePercent + '%';
+  let fontSizePercent = 100;
+
+  function applyFontSize() {
+    htmlEl.style.fontSize = fontSizePercent + '%';
+  }
+
+  function increaseFont() {
+    if (fontSizePercent < 150) {
+      fontSizePercent += 10;
+      applyFontSize();
+    }
+  }
+
+  function decreaseFont() {
+    if (fontSizePercent > 80) {
+      fontSizePercent -= 10;
+      applyFontSize();
+    }
+  }
+
+  function resetFont() {
+    fontSizePercent = 100;
+    applyFontSize();
+  }
+
+  function toggleContrast() {
+    const isHigh = htmlEl.getAttribute('data-contrast') === 'high';
+    if (isHigh) {
+      htmlEl.removeAttribute('data-contrast');
+      btnContrast.setAttribute('aria-pressed', 'false');
+    } else {
+      htmlEl.setAttribute('data-contrast', 'high');
+      btnContrast.setAttribute('aria-pressed', 'true');
+    }
+  }
+
+  function toggleMotion() {
+    const isReduced = bodyEl.classList.contains('reduce-motion');
+    if (isReduced) {
+      bodyEl.classList.remove('reduce-motion');
+      btnMotion.setAttribute('aria-pressed', 'false');
+    } else {
+      bodyEl.classList.add('reduce-motion');
+      btnMotion.setAttribute('aria-pressed', 'true');
+    }
+  }
+
+  // Wire up controls
+  if (btnFontInc) btnFontInc.addEventListener('click', increaseFont);
+  if (btnFontDec) btnFontDec.addEventListener('click', decreaseFont);
+  if (btnFontReset) btnFontReset.addEventListener('click', resetFont);
+  if (btnContrast) btnContrast.addEventListener('click', toggleContrast);
+  if (btnMotion) btnMotion.addEventListener('click', toggleMotion);
+
+  // Respect prefers-reduced-motion by default
+  const prefersReducedMotion =
+    window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (prefersReducedMotion) {
+    bodyEl.classList.add('reduce-motion');
+    if (btnMotion) btnMotion.setAttribute('aria-pressed', 'true');
+  }
+
+  // Launcher open/close logic
+  if (widget && launcher && panel) {
+    function setOpen(isOpen) {
+      widget.classList.toggle('open', isOpen);
+      launcher.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      if (isOpen) {
+        // focus first button inside panel for keyboard users
+        const firstBtn = panel.querySelector('button');
+        if (firstBtn) firstBtn.focus();
       }
+    }
 
-      function increaseFont() {
-        if (fontSizePercent < 150) {
-          fontSizePercent += 10;
-          applyFontSize();
-        }
+    launcher.addEventListener('click', () => {
+      const isOpen = !widget.classList.contains('open');
+      setOpen(isOpen);
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!widget.classList.contains('open')) return;
+      if (!widget.contains(e.target)) {
+        setOpen(false);
       }
+    });
 
-      function decreaseFont() {
-        if (fontSizePercent > 80) {
-          fontSizePercent -= 10;
-          applyFontSize();
-        }
+    // Keyboard: Esc closes when open
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && widget.classList.contains('open')) {
+        setOpen(false);
+        launcher.focus();
       }
+    });
+  }
+})();
 
-      function resetFont() {
-        fontSizePercent = 100;
-        applyFontSize();
-      }
-
-      function toggleContrast() {
-        const isHigh = htmlEl.getAttribute('data-contrast') === 'high';
-        if (isHigh) {
-          htmlEl.removeAttribute('data-contrast');
-          btnContrast.setAttribute('aria-pressed', 'false');
-        } else {
-          htmlEl.setAttribute('data-contrast', 'high');
-          btnContrast.setAttribute('aria-pressed', 'true');
-        }
-      }
-
-      function toggleMotion() {
-        const isReduced = bodyEl.classList.contains('reduce-motion');
-        if (isReduced) {
-          bodyEl.classList.remove('reduce-motion');
-          btnMotion.setAttribute('aria-pressed', 'false');
-        } else {
-          bodyEl.classList.add('reduce-motion');
-          btnMotion.setAttribute('aria-pressed', 'true');
-        }
-      }
-
-      if (btnFontInc) btnFontInc.addEventListener('click', increaseFont);
-      if (btnFontDec) btnFontDec.addEventListener('click', decreaseFont);
-      if (btnFontReset) btnFontReset.addEventListener('click', resetFont);
-      if (btnContrast) btnContrast.addEventListener('click', toggleContrast);
-      if (btnMotion) btnMotion.addEventListener('click', toggleMotion);
-
-      // Respect prefers-reduced-motion by default
-      const prefersReducedMotion = window.matchMedia &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      if (prefersReducedMotion) {
-        bodyEl.classList.add('reduce-motion');
-        if (btnMotion) btnMotion.setAttribute('aria-pressed', 'true');
-      }
-    })();
   </script>
 </body>
 </html>

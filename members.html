@@ -86,6 +86,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* Reduced motion helper */
     body.reduce-motion {
       scroll-behavior: auto;
     }
@@ -109,10 +110,6 @@
       mix-blend-mode: screen;
     }
 
-    body.reduce-motion .ambient-orbit {
-      animation: none;
-    }
-
     @keyframes orbit {
       0% {
         transform: translate3d(0, 0, 0) scale(1);
@@ -123,6 +120,10 @@
       100% {
         transform: translate3d(3%, -4%, 0) scale(1.02);
       }
+    }
+
+    body.reduce-motion .ambient-orbit {
+      animation: none;
     }
 
     .shell {
@@ -821,29 +822,21 @@
       display: inline-flex;
       align-items: center;
       gap: 0.3rem;
-      padding: 0.35rem 0.45rem;
+      padding: 0.35rem 0.4rem;
       border-radius: 999px;
-      background: rgba(15, 23, 42, 0.92);
+      background: rgba(15, 23, 42, 0.95);
       border: 1px solid var(--border-subtle);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.75);
       z-index: 50;
     }
 
-    .accessibility-toolbar span {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-soft);
-      margin-right: 0.15rem;
-    }
-
     .accessibility-btn {
       border: 1px solid rgba(148, 163, 184, 0.55);
       border-radius: 999px;
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(15, 23, 42, 0.98);
       color: var(--text-muted);
       font-size: 0.7rem;
-      padding: 0.25rem 0.45rem;
+      padding: 0.2rem 0.45rem;
       cursor: pointer;
       min-width: 2rem;
       text-align: center;
@@ -881,11 +874,6 @@
       .accessibility-toolbar {
         right: 0.75rem;
         bottom: 0.75rem;
-        padding: 0.3rem 0.4rem;
-      }
-
-      .accessibility-toolbar span {
-        display: none;
       }
     }
   </style>
@@ -893,9 +881,8 @@
 <body>
   <div class="ambient-orbit"></div>
 
-  <!-- Floating accessibility controls -->
+  <!-- Floating accessibility controls (minimal icons to keep it subtle) -->
   <div class="accessibility-toolbar" aria-label="Accessibility controls">
-    <span>Accessibility</span>
     <button
       type="button"
       class="accessibility-btn"

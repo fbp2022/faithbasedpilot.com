@@ -773,120 +773,146 @@
       }
     }
 
-    /* ================== ACCESSIBILITY WIDGET ================== */
-    .accessibility-widget {
-      position: fixed;
-      right: 1.25rem;
-      bottom: 1.25rem;
-      z-index: 60;
-      font-size: 0.8rem;
-    }
+/* ================== ACCESSIBILITY WIDGET (MATCH theforge.html) ================== */
+.accessibility-widget {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 60;
+  font-size: 0.8rem;
+}
 
-    .accessibility-toggle-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: rgba(15, 23, 42, 0.96);
-      color: var(--text-soft);
-      padding: 0.45rem 0.9rem;
-      cursor: pointer;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-    }
+/* Round icon button */
+.accessibility-toggle-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background:
+    radial-gradient(circle at 30% 30%, #1d4ed8, #0f172a);
+  color: #e5edff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
+  transition:
+    background var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast),
+    border-color var(--transition-fast);
+}
 
-    .accessibility-toggle-btn:hover {
-      background: var(--bg-card-soft);
-      color: var(--text-main);
-      box-shadow: 0 0 20px rgba(0, 255, 200, 0.45);
-    }
+/* Hide the text label so the button looks like just the icon (like your screenshot) */
+.accessibility-label {
+  display: none;
+}
 
-    .icon-accessibility {
-      font-size: 1rem;
-    }
+.accessibility-toggle-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent-soft);
+  box-shadow: 0 0 26px rgba(59, 130, 246, 0.8);
+}
 
-    .accessibility-panel {
-      position: absolute;
-      right: 0;
-      bottom: 3.1rem;
-      width: 270px;
-      max-width: 80vw;
-      border-radius: 16px;
-      background: rgba(15, 23, 42, 0.98);
-      border: 1px solid rgba(148, 163, 184, 0.55);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.95);
-      padding: 0.9rem 0.95rem;
-      display: none;
-    }
+/* Panel */
+.accessibility-panel {
+  position: absolute;
+  right: 0;
+  bottom: 3.2rem;
+  width: 280px;
+  max-width: 80vw;
+  border-radius: 18px;
+  background: rgba(10, 16, 35, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(15, 23, 42, 0.95);
+  padding: 0.85rem 0.95rem 0.95rem;
+  display: none;
+}
 
-    .accessibility-widget.open .accessibility-panel {
-      display: block;
-    }
+.accessibility-widget.open .accessibility-panel {
+  display: block;
+}
 
-    .accessibility-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      margin-bottom: 0.55rem;
-    }
+/* Panel header: “ACCESSIBILITY” */
+.accessibility-panel-header {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-soft);
+  margin-bottom: 0.6rem;
+}
 
-    .accessibility-row:last-child {
-      margin-bottom: 0;
-    }
+/* Rows + chips */
+.accessibility-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
 
-    .accessibility-row-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-soft);
-    }
+.accessibility-row:last-child {
+  margin-bottom: 0;
+}
 
-    .accessibility-row-actions {
-      display: flex;
-      gap: 0.35rem;
-    }
+.accessibility-row-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-soft);
+}
 
-    .accessibility-chip {
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      background: rgba(15, 23, 42, 0.95);
-      color: var(--text-main);
-      font-size: 0.72rem;
-      padding: 0.25rem 0.6rem;
-      cursor: pointer;
-    }
+.accessibility-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
 
-    .accessibility-chip:hover {
-      border-color: var(--accent-soft);
-      box-shadow: 0 0 12px rgba(0, 255, 200, 0.4);
-    }
+.accessibility-chip {
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: radial-gradient(circle at 0 0, rgba(15,23,42,0.95), rgba(15,23,42,0.98));
+  color: var(--text-main);
+  font-size: 0.72rem;
+  padding: 0.25rem 0.7rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
 
-    /* High contrast + reduced motion states */
-    body.high-contrast {
-      background: #000000 !important;
-      color: #ffffff !important;
-    }
+.accessibility-chip:hover {
+  border-color: var(--accent-soft);
+  box-shadow: 0 0 14px rgba(0, 255, 200, 0.45);
+}
 
-    body.high-contrast .card {
-      background: #000000 !important;
-      border-color: #ffffff !important;
-    }
+/* High contrast + reduced motion states */
+body.high-contrast {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
 
-    body.high-contrast .page-intro,
-    body.high-contrast .card-text,
-    body.high-contrast .members-status-text {
-      color: #f9fafb !important;
-    }
+body.high-contrast .card {
+  background: #000000 !important;
+  border-color: #ffffff !important;
+}
 
-    body.reduced-motion * {
-      animation: none !important;
-      transition: none !important;
-      scroll-behavior: auto !important;
-    }
-  </style>
+body.high-contrast .page-intro,
+body.high-contrast .card-text,
+body.high-contrast .members-status-text {
+  color: #f9fafb !important;
+}
+
+body.reduced-motion * {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+</style>
 </head>
 <body>
   <div class="ambient-orbit"></div>
@@ -1008,48 +1034,50 @@
       </section>
     </section>
 
-    <!-- ACCESSIBILITY WIDGET -->
-    <div class="accessibility-widget" id="accessibilityWidget">
-      <button
-        type="button"
-        class="accessibility-toggle-btn"
-        id="accessibilityToggle"
-        aria-expanded="false"
-        aria-controls="accessibilityPanel"
-      >
-        <span class="icon-accessibility" aria-hidden="true">♿</span>
-        <span class="accessibility-label">Accessibility</span>
-      </button>
+<!-- ACCESSIBILITY WIDGET -->
+<div class="accessibility-widget" id="accessibilityWidget">
+  <button
+    type="button"
+    class="accessibility-toggle-btn"
+    id="accessibilityToggle"
+    aria-expanded="false"
+    aria-controls="accessibilityPanel"
+  >
+    <span class="icon-accessibility" aria-hidden="true">♿</span>
+    <span class="accessibility-label">Accessibility</span>
+  </button>
 
-      <div class="accessibility-panel" id="accessibilityPanel">
-        <div class="accessibility-row">
-          <span class="accessibility-row-label">Text size</span>
-          <div class="accessibility-row-actions">
-            <button type="button" class="accessibility-chip" data-action="text-smaller">A−</button>
-            <button type="button" class="accessibility-chip" data-action="text-larger">A+</button>
-            <button type="button" class="accessibility-chip" data-action="text-reset">Reset</button>
-          </div>
-        </div>
+  <div class="accessibility-panel" id="accessibilityPanel">
+    <div class="accessibility-panel-header">Accessibility</div>
 
-        <div class="accessibility-row">
-          <span class="accessibility-row-label">Contrast</span>
-          <div class="accessibility-row-actions">
-            <button type="button" class="accessibility-chip" data-action="toggle-contrast">
-              Toggle
-            </button>
-          </div>
-        </div>
-
-        <div class="accessibility-row">
-          <span class="accessibility-row-label">Motion</span>
-          <div class="accessibility-row-actions">
-            <button type="button" class="accessibility-chip" data-action="toggle-motion">
-              Reduce
-            </button>
-          </div>
-        </div>
+    <div class="accessibility-row">
+      <span class="accessibility-row-label">Text size</span>
+      <div class="accessibility-row-actions">
+        <button type="button" class="accessibility-chip" data-action="text-smaller">A− Text</button>
+        <button type="button" class="accessibility-chip" data-action="text-larger">A+ Text</button>
+        <button type="button" class="accessibility-chip" data-action="text-reset">⟲ Reset</button>
       </div>
     </div>
+
+    <div class="accessibility-row">
+      <span class="accessibility-row-label">Contrast</span>
+      <div class="accessibility-row-actions">
+        <button type="button" class="accessibility-chip" data-action="toggle-contrast">
+          ● Contrast
+        </button>
+      </div>
+    </div>
+
+    <div class="accessibility-row">
+      <span class="accessibility-row-label">Motion</span>
+      <div class="accessibility-row-actions">
+        <button type="button" class="accessibility-chip" data-action="toggle-motion">
+          ‖ Motion
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- ACCESSIBILITY NOTE (Footer Position) -->
     <section class="accessibility-note-footer" aria-label="Accessibility information">

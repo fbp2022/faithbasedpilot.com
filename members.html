@@ -175,7 +175,51 @@
       <div>© <span id="year"></span> The Forge · Members</div>
       <div class="auth-status-text" id="authStatus">Not signed in</div>
     </footer>
+<!-- ACCESSIBILITY WIDGET -->
+<div class="accessibility-widget" id="accessibilityWidget">
+  <button
+    type="button"
+    class="accessibility-toggle-btn"
+    id="accessibilityToggle"
+    aria-expanded="false"
+    aria-controls="accessibilityPanel"
+  >
+    <span class="icon-accessibility" aria-hidden="true">♿</span>
+    <span class="accessibility-label">Accessibility</span>
+  </button>
 
+  <div class="accessibility-panel" id="accessibilityPanel">
+    <div class="accessibility-panel-header">Accessibility</div>
+
+    <div class="accessibility-row">
+      <span class="accessibility-row-label">Text size</span>
+      <div class="accessibility-row-actions">
+        <button type="button" class="accessibility-chip" data-action="text-smaller">A− Text</button>
+        <button type="button" class="accessibility-chip" data-action="text-larger">A+ Text</button>
+        <button type="button" class="accessibility-chip" data-action="text-reset">⟲ Reset</button>
+      </div>
+    </div>
+
+    <div class="accessibility-row">
+      <span class="accessibility-row-label">Contrast</span>
+      <div class="accessibility-row-actions">
+        <button type="button" class="accessibility-chip" data-action="toggle-contrast">
+          ● Contrast
+        </button>
+      </div>
+    </div>
+
+    <div class="accessibility-row">
+      <span class="accessibility-row-label">Motion</span>
+      <div class="accessibility-row-actions">
+        <button type="button" class="accessibility-chip" data-action="toggle-motion">
+          ‖ Motion
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+    
   </main>
 
   <!-- =========================================================

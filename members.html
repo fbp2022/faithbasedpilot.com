@@ -54,7 +54,7 @@
         <!-- Account Button -->
         <button id="accountButton" class="account-btn" type="button">
           <span class="icon">👤</span>
-          <span id="navAuthButtonLabel">Sign In</span>
+          <span id="navAuthButtonLabel">My Account</span>
         </button>
 
         <!-- Hamburger -->
@@ -110,7 +110,7 @@
         This page is private and only visible to signed-in members.
       </p>
 
-      <!-- SIGN-IN MESSAGE (auth.js hides on login) -->
+      <!-- SIGN-IN MESSAGE -->
       <article class="card" id="membersSignInPrompt">
         <div class="card-inner">
           <div class="card-kicker">Private Area</div>
@@ -129,9 +129,7 @@
 
         <div class="members-layout">
 
-          <!-- =====================
-               LEADERS CARD
-               ===================== -->
+          <!-- LEADERS CARD -->
           <article class="card">
             <div class="card-inner">
               <div class="card-kicker">Leaders</div>
@@ -143,9 +141,7 @@
             </div>
           </article>
 
-          <!-- =====================
-               MEMBERS CARD
-               ===================== -->
+          <!-- MEMBERS CARD -->
           <article class="card">
             <div class="card-inner">
               <div class="card-kicker">Members</div>
@@ -162,8 +158,55 @@
 
     </section>
 
-    <!-- ACCESSIBILITY NOTE -->
-    <section class="accessibility-note-footer">
+    <!-- =========================================================
+         ACCESSIBILITY TOOLBAR (same as prayerrequests)
+         ========================================================= -->
+    <div class="accessibility-widget" id="accessibilityWidget">
+      <button
+        type="button"
+        class="accessibility-toggle-btn"
+        id="accessibilityToggle"
+        aria-expanded="false"
+        aria-controls="accessibilityPanel"
+      >
+        <span class="icon-accessibility" aria-hidden="true">♿</span>
+        <span class="accessibility-label">Accessibility</span>
+      </button>
+
+      <div class="accessibility-panel" id="accessibilityPanel">
+        <div class="accessibility-panel-header">Accessibility</div>
+
+        <div class="accessibility-row">
+          <span class="accessibility-row-label">Text size</span>
+          <div class="accessibility-row-actions">
+            <button type="button" class="accessibility-chip" data-action="text-smaller">A− Text</button>
+            <button type="button" class="accessibility-chip" data-action="text-larger">A+ Text</button>
+            <button type="button" class="accessibility-chip" data-action="text-reset">⟲ Reset</button>
+          </div>
+        </div>
+
+        <div class="accessibility-row">
+          <span class="accessibility-row-label">Contrast</span>
+          <div class="accessibility-row-actions">
+            <button type="button" class="accessibility-chip" data-action="toggle-contrast">
+              ● Contrast
+            </button>
+          </div>
+        </div>
+
+        <div class="accessibility-row">
+          <span class="accessibility-row-label">Motion</span>
+          <div class="accessibility-row-actions">
+            <button type="button" class="accessibility-chip" data-action="toggle-motion">
+              ‖ Motion
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCESSIBILITY NOTE (PUSHED DOWN) -->
+    <section class="accessibility-note-footer" style="margin-top:3rem; margin-bottom:3.5rem;">
       <p>
         <strong>Accessibility:</strong>
         The Forge follows WCAG 2.1 AA standards. If you need assistance,
@@ -175,105 +218,27 @@
       <div>© <span id="year"></span> The Forge · Members</div>
       <div class="auth-status-text" id="authStatus">Not signed in</div>
     </footer>
-<!-- ACCESSIBILITY WIDGET -->
-<div class="accessibility-widget" id="accessibilityWidget">
-  <button
-    type="button"
-    class="accessibility-toggle-btn"
-    id="accessibilityToggle"
-    aria-expanded="false"
-    aria-controls="accessibilityPanel"
-  >
-    <span class="icon-accessibility" aria-hidden="true">♿</span>
-    <span class="accessibility-label">Accessibility</span>
-  </button>
 
-  <div class="accessibility-panel" id="accessibilityPanel">
-    <div class="accessibility-panel-header">Accessibility</div>
-
-    <div class="accessibility-row">
-      <span class="accessibility-row-label">Text size</span>
-      <div class="accessibility-row-actions">
-        <button type="button" class="accessibility-chip" data-action="text-smaller">A− Text</button>
-        <button type="button" class="accessibility-chip" data-action="text-larger">A+ Text</button>
-        <button type="button" class="accessibility-chip" data-action="text-reset">⟲ Reset</button>
-      </div>
-    </div>
-
-    <div class="accessibility-row">
-      <span class="accessibility-row-label">Contrast</span>
-      <div class="accessibility-row-actions">
-        <button type="button" class="accessibility-chip" data-action="toggle-contrast">
-          ● Contrast
-        </button>
-      </div>
-    </div>
-
-    <div class="accessibility-row">
-      <span class="accessibility-row-label">Motion</span>
-      <div class="accessibility-row-actions">
-        <button type="button" class="accessibility-chip" data-action="toggle-motion">
-          ‖ Motion
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-    
   </main>
-
-  <!-- =========================================================
-       AUTH MODAL
-       ========================================================= -->
-  <div id="authOverlay" class="auth-overlay" aria-modal="true" role="dialog">
-    <!-- (Your full updated modal — unchanged because auth.js requires exact IDs) -->
-    <!-- COPY EXACTLY FROM YOUR EXISTING VERSION -->
-  </div>
 
   <!-- =========================================================
        SCRIPTS
        ========================================================= -->
 
-  <!-- Footer year -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 
-  <!-- MOBILE NAV -->
-  <script>
-    (function () {
-      const hamburger = document.getElementById('hamburger');
-      const mobileNav = document.getElementById('mobileNav');
+  <!-- Mobile Nav -->
+  <script src="js/mobile-nav.js"></script>
 
-      if (!hamburger || !mobileNav) return;
+  <!-- Theme system -->
+  <script src="js/theme.js"></script>
 
-      function closeNav() {
-        mobileNav.classList.remove('open');
-        hamburger.classList.remove('is-open');
-        hamburger.setAttribute('aria-expanded', 'false');
-      }
+  <!-- Accessibility Widget -->
+  <script src="js/accessibility-widget.js"></script>
 
-      function openNav() {
-        mobileNav.classList.add('open');
-        hamburger.classList.add('is-open');
-        hamburger.setAttribute('aria-expanded', 'true');
-      }
-
-      hamburger.addEventListener('click', () => {
-        mobileNav.classList.contains('open') ? closeNav() : openNav();
-      });
-
-      window.__forgeCloseMobileNav = closeNav;
-    })();
-  </script>
-
-  <!-- THEME SYSTEM -->
-  <script src="theme.js"></script>
-
-  <!-- ACCESSIBILITY SYSTEM -->
-  <script src="accessibility-widget.js"></script>
-
-  <!-- FIREBASE AUTH -->
+  <!-- Firebase Auth -->
   <script type="module" src="auth.js"></script>
 
 </body>

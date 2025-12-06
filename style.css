@@ -1239,6 +1239,182 @@ footer {
   }
 }
 
+/* ============================================================
+   MEMBERS PAGE — FINAL FORGE LAYOUT (DARK + LIGHT)
+   ============================================================ */
+
+/* ---------- Layout wrapper ---------- */
+.members-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr);
+  gap: 1.75rem;
+  align-items: flex-start;
+  margin-top: 0.4rem;
+}
+
+@media (max-width: 880px) {
+  .members-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------- Section text ---------- */
+.members-status-text {
+  font-size: 0.82rem;
+  color: var(--text-soft);
+  margin-bottom: 0.75rem;
+}
+
+/* ---------- Card components unique to Members ---------- */
+.card-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.card-kicker {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.20em;
+  color: var(--text-soft);
+  margin-bottom: 0.3rem;
+}
+
+.card-title-main {
+  font-size: 1.15rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  margin-bottom: 1.05rem;
+  color: var(--text-main);
+}
+
+/* ---------- Member grid ---------- */
+.member-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.8rem;
+  margin-top: 0.4rem;
+}
+
+/* ---------- Member cards ---------- */
+.member-card {
+  border-radius: 14px;
+  background: rgba(7, 11, 23, 0.92);
+  border: 1px solid rgba(15, 23, 42, 0.9);
+  padding: 0.7rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.6);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast),
+    background var(--transition-fast);
+}
+
+/* Small indicator dot (for both themes) */
+.member-card::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  flex-shrink: 0;
+}
+
+/* Hover effect */
+.member-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 18px var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+
+/* ---------- Leader card special variant ---------- */
+.member-card.leader {
+  border-color: var(--accent-soft);
+  background: radial-gradient(
+      circle at 0 0,
+      rgba(0, 255, 200, 0.12),
+      rgba(7, 11, 23, 0.98)
+    );
+}
+
+/* Text inside cards */
+.member-name {
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.member-role-pill {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-soft);
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  padding: 0.1rem 0.45rem;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   LIGHT THEME OVERRIDES FOR MEMBERS PAGE
+   ============================================================ */
+:root[data-theme="light"] .member-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 102, 204, 0.25);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+:root[data-theme="light"] .member-card:hover {
+  border-color: var(--accent-soft);
+  box-shadow: 0 0 14px rgba(0, 116, 255, 0.35);
+  background: #ffffff;
+}
+
+:root[data-theme="light"] .member-card.leader {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 116, 255, 0.12),
+    rgba(255, 255, 255, 0.95)
+  );
+  border-color: rgba(0, 116, 255, 0.45);
+  box-shadow: 0 0 18px rgba(0, 116, 255, 0.25);
+}
+
+:root[data-theme="light"] .card-kicker {
+  color: #6b7a99;
+}
+
+:root[data-theme="light"] .card-title-main {
+  color: #0a1220;
+}
+
+:root[data-theme="light"] .member-name {
+  color: #0a1220;
+}
+
+:root[data-theme="light"] .member-role-pill {
+  border-color: rgba(100, 116, 139, 0.45);
+  color: #4b5563;
+}
+
+:root[data-theme="light"] .members-status-text {
+  color: #6b7a99;
+}
+
+/* Better readability on light background */
+:root[data-theme="light"] .card {
+  background: #ffffff;
+  border-color: rgba(0, 102, 204, 0.18);
+}
+
+:root[data-theme="light"] .card:hover {
+  box-shadow: 0 0 20px rgba(0,116,255,0.25);
+  border-color: rgba(0,116,255,0.35);
+}
+
 @media (max-width: 600px) {
   .shell {
     padding: 0 1.1rem 3rem;

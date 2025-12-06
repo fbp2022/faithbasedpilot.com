@@ -3,67 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>The Forge · Members</title>
 
-  <!-- Metadata -->
   <meta name="color-scheme" content="dark light" />
   <meta name="description" content="Private members list for The Forge men’s community." />
 
-  <!-- Global Styles -->
+  <!-- Global CSS -->
   <link rel="stylesheet" href="style.css" />
-</head>
 
+</head>
 <body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <div class="ambient-orbit"></div>
 
-  <!-- ================= HEADER ================= -->
+  <!-- =========================================================
+       HEADER / NAVIGATION
+       ========================================================= -->
   <header>
     <nav class="nav">
-      <!-- Brand -->
+
+      <!-- BRAND -->
       <div class="brand">
         <img src="images/theforgelogo.png" alt="The Forge logo" class="brand-logo" />
         <div class="brand-text-main">The Forge</div>
       </div>
 
-      <!-- Desktop Nav Links -->
+      <!-- DESKTOP NAV -->
       <div class="nav-links">
         <a href="theforge.html">Overview</a>
         <a href="members.html" class="active">Members</a>
         <a href="prayerrequests.html">Prayer Requests</a>
       </div>
 
-      <!-- Nav Actions (Account + Theme Toggle + Hamburger) -->
+      <!-- NAV ACTIONS -->
       <div class="nav-actions">
 
         <!-- Desktop Theme Toggle -->
         <button
           id="themeToggleDesktop"
-          class="theme-btn"
+          class="account-btn"
           type="button"
           aria-label="Toggle theme"
-        >🌙</button>
+        >
+          🌙
+        </button>
 
+        <!-- Account Button -->
         <button id="accountButton" class="account-btn" type="button">
           <span class="icon">👤</span>
           <span id="navAuthButtonLabel">Sign In</span>
         </button>
 
         <!-- Hamburger -->
-        <button
-          class="hamburger"
-          id="hamburger"
-          type="button"
-          aria-label="Toggle navigation"
-          aria-expanded="false"
-        >
+        <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
         </button>
+
       </div>
     </nav>
 
-    <!-- Mobile Nav Overlay -->
+    <!-- MOBILE NAV MENU -->
     <div class="mobile-nav" id="mobileNav">
       <div class="mobile-nav-inner">
 
@@ -71,93 +75,99 @@
         <a href="members.html">Members</a>
         <a href="prayerrequests.html">Prayer Requests</a>
 
-        <!-- Mobile Theme Toggle -->
-        <button
-          id="themeToggleMobile"
-          class="mobile-theme-btn"
-          type="button"
-        >Theme: 🌙</button>
+        <!-- MOBILE THEME TOGGLE -->
+        <button id="themeToggleMobile"
+                class="mobile-account-btn"
+                type="button">
+          Theme: 🌙
+        </button>
 
-        <!-- Mobile Account -->
         <div class="mobile-account-meta">
           <span id="navMobileUserLabel">Guest</span>
         </div>
 
-        <button
-          class="mobile-account-btn"
-          id="mobileAccountButton"
-          type="button"
-        >
+        <button id="mobileAccountButton"
+                class="mobile-account-btn"
+                type="button">
           <span id="navMobileAuthButtonLabel">Sign In / Create</span>
         </button>
+
       </div>
     </div>
   </header>
 
-  <!-- ================= MAIN ================= -->
-  <main class="shell">
+  <!-- =========================================================
+       MAIN CONTENT
+       ========================================================= -->
+  <main id="main-content" class="shell">
+
     <section aria-labelledby="page-title">
 
       <div class="page-header-kicker">Brotherhood</div>
       <h1 id="page-title" class="page-title">Members of The Forge</h1>
       <p class="page-intro">
-        This page lists the men who are part of The Forge community. This page is private and only visible to signed-in members.
+        This page lists the men who are part of The Forge community.
+        This page is private and only visible to signed-in members.
       </p>
 
-      <!-- Sign-in Required Notice -->
+      <!-- SIGN-IN MESSAGE (auth.js hides on login) -->
       <article class="card" id="membersSignInPrompt">
         <div class="card-inner">
           <div class="card-kicker">Private Area</div>
           <h2 class="card-title-main">Sign in to see the members of The Forge.</h2>
           <p class="card-text">
-            To protect privacy and keep this space gated, only men with an active Forge account can view the
-            member list. Use the <strong>Account</strong> button in the header to sign in or create an account
-            with your invite code.
+            Only members with an active Forge account can access this page.
+            Use the <strong>Account</strong> button to sign in or create an account with your invite code.
           </p>
         </div>
       </article>
 
-      <!-- Members Section (hidden until signed in) -->
+      <!-- MEMBERS WRAPPER -->
       <section id="membersWrapper" style="display:none;">
+
         <p id="membersStatus" class="members-status-text">Loading members…</p>
 
         <div class="members-layout">
-          <!-- Leaders -->
+
+          <!-- =====================
+               LEADERS CARD
+               ===================== -->
           <article class="card">
             <div class="card-inner">
               <div class="card-kicker">Leaders</div>
               <h2 class="card-title-main">Forge Leaders</h2>
               <p class="card-text">
-                These are the men who help lead, steward, and guard the culture of The Forge — owners,
-                admins, and core leaders.
+                These men help lead, steward, and guard the culture of The Forge.
               </p>
               <div id="leadersGrid" class="member-grid"></div>
             </div>
           </article>
 
-          <!-- Members -->
+          <!-- =====================
+               MEMBERS CARD
+               ===================== -->
           <article class="card">
             <div class="card-inner">
               <div class="card-kicker">Members</div>
               <h2 class="card-title-main">Brothers in The Forge</h2>
               <p class="card-text">
-                Every name here represents a real man walking through real battles. Pray for one another,
-                encourage one another, and remember that you’re not alone in the fight.
+                Every name represents a real man walking through real battles.
               </p>
               <div id="membersGrid" class="member-grid"></div>
             </div>
           </article>
+
         </div>
       </section>
+
     </section>
 
-    <!-- ================= ACCESSIBILITY FOOTER NOTE ================= -->
+    <!-- ACCESSIBILITY NOTE -->
     <section class="accessibility-note-footer">
       <p>
         <strong>Accessibility:</strong>
-        The Forge website follows <strong>WCAG 2.1 AA</strong> standards for contrast, keyboard navigation,
-        screen reader structure, and reduced-motion support. If you need assistance, email
-        <a href="mailto:theforgetncommunity@gmail.com">theforgetncommunity@gmail.com</a>.
+        The Forge follows WCAG 2.1 AA standards. If you need assistance,
+        email <a href="mailto:theforgetncommunity@gmail.com">theforgetncommunity@gmail.com</a>.
       </p>
     </section>
 
@@ -165,24 +175,29 @@
       <div>© <span id="year"></span> The Forge · Members</div>
       <div class="auth-status-text" id="authStatus">Not signed in</div>
     </footer>
+
   </main>
 
-  <!-- ================= AUTH MODAL ================= -->
+  <!-- =========================================================
+       AUTH MODAL
+       ========================================================= -->
   <div id="authOverlay" class="auth-overlay" aria-modal="true" role="dialog">
-    <!-- (unchanged — everything matches auth.js) -->
-    <!-- Your full modal stays exactly as you had it -->
+    <!-- (Your full updated modal — unchanged because auth.js requires exact IDs) -->
+    <!-- COPY EXACTLY FROM YOUR EXISTING VERSION -->
   </div>
 
-  <!-- ================= SCRIPTS ================= -->
+  <!-- =========================================================
+       SCRIPTS
+       ========================================================= -->
 
-  <!-- Footer Year -->
+  <!-- Footer year -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 
-  <!-- Mobile Nav Toggle -->
+  <!-- MOBILE NAV -->
   <script>
-    (function() {
+    (function () {
       const hamburger = document.getElementById('hamburger');
       const mobileNav = document.getElementById('mobileNav');
 
@@ -191,11 +206,13 @@
       function closeNav() {
         mobileNav.classList.remove('open');
         hamburger.classList.remove('is-open');
+        hamburger.setAttribute('aria-expanded', 'false');
       }
 
       function openNav() {
         mobileNav.classList.add('open');
         hamburger.classList.add('is-open');
+        hamburger.setAttribute('aria-expanded', 'true');
       }
 
       hamburger.addEventListener('click', () => {
@@ -206,13 +223,13 @@
     })();
   </script>
 
-  <!-- Accessibility Widget -->
-  <script src="accessibility-widget.js"></script>
-
-  <!-- Theme System -->
+  <!-- THEME SYSTEM -->
   <script src="theme.js"></script>
 
-  <!-- Firebase Auth -->
+  <!-- ACCESSIBILITY SYSTEM -->
+  <script src="accessibility-widget.js"></script>
+
+  <!-- FIREBASE AUTH -->
   <script type="module" src="auth.js"></script>
 
 </body>

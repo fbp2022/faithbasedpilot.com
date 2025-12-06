@@ -3,243 +3,1099 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>The Forge · Members</title>
-
   <meta name="color-scheme" content="dark light" />
   <meta name="description" content="Private members list for The Forge men’s community." />
 
-  <!-- Global CSS -->
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ================== BASE / THEME ================== */
+    :root {
+      --bg-main: #05070f;
+      --bg-elevated: rgba(10, 14, 30, 0.95);
+      --bg-card: rgba(9, 14, 32, 0.95);
+      --bg-card-soft: rgba(18, 24, 48, 0.9);
+      --bg-deep: #000000;
 
+      --bg-header-strong: rgba(0, 0, 0, 0.9);
+      --bg-header-soft: rgba(0, 0, 0, 0.7);
+      --bg-mobile-overlay: rgba(2, 4, 10, 0.97);
+
+      --border-subtle: rgba(0, 255, 200, 0.25);
+      --accent: #00ffd0;
+      --accent-soft: rgba(0, 255, 200, 0.5);
+      --accent-alt: #00aaff;
+
+      --text-main: #e3f6ff;
+      --text-muted: #a6bfdc;
+      --text-soft: #7e91b8;
+      --danger: #ff4b4b;
+
+      --shadow-strong: 0 0 35px rgba(0, 0, 0, 0.9);
+      --shadow-accent: 0 0 24px rgba(0, 255, 200, 0.45);
+
+      --nav-height: 64px;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-full: 999px;
+      --transition-fast: 0.18s ease;
+      --transition-med: 0.25s ease;
+    }
+
+    :root[data-theme="light"] {
+      --bg-main: #f5f7fb;
+      --bg-elevated: rgba(255, 255, 255, 0.98);
+      --bg-card: rgba(255, 255, 255, 0.98);
+      --bg-card-soft: rgba(245, 247, 252, 0.98);
+      --bg-deep: #c7d2fe;
+
+      --bg-header-strong: rgba(255, 255, 255, 0.98);
+      --bg-header-soft: rgba(248, 250, 252, 0.9);
+      --bg-mobile-overlay: rgba(245, 247, 252, 0.98);
+
+      --border-subtle: rgba(0, 140, 255, 0.25);
+      --accent: #0074ff;
+      --accent-soft: rgba(0, 116, 255, 0.5);
+      --accent-alt: #00b8ff;
+
+      --text-main: #071420;
+      --text-muted: #4f5c77;
+      --text-soft: #7a8799;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(
+        circle at 0% 0%,
+        var(--bg-card-soft) 0,
+        var(--bg-main) 40%,
+        var(--bg-deep) 100%
+      );
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .ambient-orbit {
+      position: fixed;
+      inset: -40%;
+      pointer-events: none;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(0, 255, 200, 0.16), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(0, 140, 255, 0.18), transparent 60%);
+      opacity: 0.75;
+      animation: orbit 30s linear infinite alternate;
+      mix-blend-mode: screen;
+    }
+
+    @keyframes orbit {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(-3%, 4%, 0) scale(1.05); }
+      100% { transform: translate3d(3%, -4%, 0) scale(1.02); }
+    }
+
+    .shell {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3.5rem;
+    }
+
+    /* ================== HEADER / NAV (MATCH THEFORGE) ================== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(16px);
+      background: linear-gradient(
+        to bottom,
+        var(--bg-header-strong),
+        var(--bg-header-soft),
+        transparent
+      );
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--nav-height);
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      gap: 1.5rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      white-space: nowrap;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      object-fit: cover;
+      border: 1px solid rgba(248, 250, 252, 0.5);
+      box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 0.9),
+        0 12px 30px rgba(0, 0, 0, 0.7);
+      background: radial-gradient(circle at 30% 30%, #facc15, #f97316);
+    }
+
+    .brand-text-main {
+      font-size: 1rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .brand-text-sub {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-soft);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      position: relative;
+      padding-bottom: 0.15rem;
+      cursor: pointer;
+      transition: color var(--transition-fast);
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-alt));
+      transition: width var(--transition-fast);
+    }
+
+    .nav-links a:hover {
+      color: var(--text-main);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-links a.active {
+      color: var(--text-main);
+    }
+
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .account-btn {
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+      padding: 0.35rem 0.9rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      background: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast),
+        color var(--transition-fast);
+    }
+
+    .account-btn:hover {
+      background: var(--bg-card-soft);
+      transform: translateY(-1px);
+      box-shadow: 0 0 16px rgba(0, 255, 200, 0.35);
+      color: var(--text-main);
+    }
+
+    .account-btn span.icon {
+      font-size: 0.95rem;
+    }
+
+    .user-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+    }
+
+    .hamburger {
+      display: none;
+      width: 40px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      flex-direction: column;
+      padding: 6px 0;
+      transition:
+        background var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .hamburger-line {
+      width: 18px;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--text-muted);
+      transition:
+        transform var(--transition-fast),
+        opacity var(--transition-fast),
+        background var(--transition-fast);
+    }
+
+    .hamburger:hover {
+      background: var(--bg-card-soft);
+      box-shadow: 0 0 15px rgba(0, 255, 200, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .hamburger.is-open .hamburger-line:nth-child(1) {
+      transform: translateY(4px) rotate(45deg);
+      background: var(--accent);
+    }
+
+    .hamburger.is-open .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.is-open .hamburger-line:nth-child(3) {
+      transform: translateY(-4px) rotate(-45deg);
+      background: var(--accent);
+    }
+
+    /* Mobile nav overlay (borrowed behavior from theforge + prayerrequests) */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      inset: var(--nav-height) 0 0 0;
+      background:
+        radial-gradient(circle at 0 0, rgba(0, 255, 200, 0.16), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(0, 140, 255, 0.18), transparent 60%),
+        var(--bg-mobile-overlay);
+      backdrop-filter: blur(20px);
+      z-index: 35;
+    }
+
+    .mobile-nav.open {
+      display: block;
+    }
+
+    .mobile-nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mobile-nav-inner a,
+    .mobile-nav-inner button.mobile-account-btn {
+      text-decoration: none;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      cursor: pointer;
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+      background: transparent;
+      text-align: left;
+    }
+
+    .mobile-nav-inner a:last-child,
+    .mobile-nav-inner button.mobile-account-btn:last-child {
+      border-bottom: none;
+    }
+
+    .mobile-nav-inner a:hover,
+    .mobile-nav-inner button.mobile-account-btn:hover {
+      color: var(--accent);
+      border-color: rgba(0, 255, 200, 0.5);
+    }
+
+    .mobile-account-meta {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+      margin-top: 0.4rem;
+    }
+
+    .mobile-account-btn {
+      border: none;
+      background: transparent;
+      padding-left: 0;
+    }
+
+    @media (max-width: 840px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      /* hide desktop account button on mobile */
+      .account-btn {
+        display: none;
+      }
+    }
+
+    /* ================== PAGE LAYOUT ================== */
+    main {
+      padding-top: 2.4rem;
+    }
+
+    .page-header-kicker {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--text-soft);
+      margin-bottom: 0.9rem;
+    }
+
+    .page-title {
+      font-size: clamp(2rem, 3.4vw, 2.6rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .page-intro {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 640px;
+      line-height: 1.7;
+      margin-bottom: 1.9rem;
+    }
+
+    .card {
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 1.5rem 1.35rem;
+      box-shadow: var(--shadow-strong);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.6rem;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(0,255,200,0.12), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(0,140,255,0.18), transparent 65%);
+      mix-blend-mode: screen;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-kicker {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-soft);
+      margin-bottom: 0.3rem;
+    }
+
+    .card-title-main {
+      font-size: 1.15rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 1.05rem;
+    }
+
+    .card-text {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ================== MEMBERS GRID ================== */
+
+    .members-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr);
+      gap: 1.75rem;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 840px) {
+      .members-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .member-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.8rem;
+      margin-top: 0.4rem;
+    }
+
+    .member-card {
+      border-radius: 14px;
+      background: rgba(7, 11, 23, 0.92);
+      border: 1px solid rgba(15, 23, 42, 0.9);
+      padding: 0.7rem 0.85rem;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast),
+        background var(--transition-fast);
+    }
+
+    .member-card::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      flex-shrink: 0;
+    }
+
+    .member-card.leader {
+      border-color: var(--accent-soft);
+      background: radial-gradient(circle at 0 0, rgba(0,255,200,0.12), rgba(7,11,23,0.98));
+    }
+
+    .member-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 18px rgba(0, 255, 200, 0.4);
+      border-color: var(--accent-soft);
+    }
+
+    .member-name {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .member-role-pill {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 0.1rem 0.45rem;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    .members-status-text {
+      font-size: 0.82rem;
+      color: var(--text-soft);
+      margin-bottom: 0.75rem;
+    }
+
+    /* ================== FOOTER ================== */
+
+    footer {
+      margin-top: 2.2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .auth-status-text {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+    }
+
+    @media (max-width: 600px) {
+      .shell {
+        padding: 0 1.1rem 3rem;
+      }
+
+      .nav {
+        padding: 0 1.1rem;
+      }
+
+      footer {
+        flex-direction: column;
+      }
+    }
+
+    /* ================== AUTH MODAL (WIRED TO auth.js) ================== */
+
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 0 0, rgba(0,0,0,0.65), rgba(0,0,0,0.92));
+      backdrop-filter: blur(18px);
+      z-index: 999;
+    }
+
+    .auth-overlay.open {
+      display: flex;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 0 30px rgba(0,0,0,0.9);
+      padding: 1.4rem 1.4rem 1.2rem;
+      color: var(--text-main);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 10% 0, rgba(0,255,200,0.2), transparent 65%),
+        radial-gradient(circle at 100% 100%, rgba(0,140,255,0.25), transparent 70%);
+      mix-blend-mode: screen;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .auth-card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-card-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .auth-card-title {
+      font-size: 1rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .auth-card-sub {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      max-width: 230px;
+      text-align: right;
+    }
+
+    .auth-close-btn {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.7rem;
+      border: none;
+      background: transparent;
+      color: var(--text-soft);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.2rem;
+    }
+
+    .auth-toggle-row {
+      display: flex;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      margin-bottom: 0.8rem;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .auth-toggle-btn {
+      flex: 1;
+      padding: 0.45rem 0.3rem;
+      text-align: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--text-soft);
+    }
+
+    .auth-toggle-btn.active {
+      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+      color: #020409;
+      font-weight: 600;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 0.55rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .auth-field {
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .auth-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--text-soft);
+    }
+
+    .auth-input {
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      padding: 0.5rem 0.7rem;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .auth-input:focus {
+      border-color: var(--accent-soft);
+      box-shadow: 0 0 12px rgba(0,255,200,0.45);
+    }
+
+    .auth-btn {
+      margin-top: 0.5rem;
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      padding: 0.55rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+      color: #020409;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(0,255,200,0.5);
+    }
+
+    .auth-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 24px rgba(0,255,200,0.7);
+    }
+
+    .auth-error {
+      font-size: 0.78rem;
+      color: var(--danger);
+      min-height: 1em;
+      margin-top: 0.2rem;
+    }
+
+    .auth-footnote {
+      margin-top: 0.4rem;
+      font-size: 0.74rem;
+      color: var(--text-soft);
+    }
+
+    .forgot-password-link {
+      font-size: 0.75rem;
+      color: var(--accent);
+      cursor: pointer;
+      text-decoration: underline;
+      margin-top: 0.15rem;
+      align-self: flex-end;
+    }
+  </style>
 </head>
 <body>
-
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-
   <div class="ambient-orbit"></div>
 
-  <!-- =========================================================
-       HEADER / NAVIGATION
-       ========================================================= -->
   <header>
     <nav class="nav">
-
-      <!-- BRAND -->
       <div class="brand">
         <img src="images/theforgelogo.png" alt="The Forge logo" class="brand-logo" />
-        <div class="brand-text-main">The Forge</div>
+        <div>
+          <div class="brand-text-main">The Forge</div>
+        </div>
       </div>
 
-      <!-- DESKTOP NAV -->
       <div class="nav-links">
-        <a href="theforge.html">Overview</a>
+        <a href="theforge.html#overview">Overview</a>
         <a href="members.html" class="active">Members</a>
         <a href="prayerrequests.html">Prayer Requests</a>
       </div>
 
-      <!-- NAV ACTIONS -->
       <div class="nav-actions">
-
-        <!-- Desktop Theme Toggle -->
-        <button
-          id="themeToggleDesktop"
-          class="account-btn"
-          type="button"
-          aria-label="Toggle theme"
-        >
-          🌙
-        </button>
-
-        <!-- Account Button -->
-        <button id="accountButton" class="account-btn" type="button">
+       <button id="accountButton" class="account-btn" type="button">
           <span class="icon">👤</span>
-          <span id="navAuthButtonLabel">My Account</span>
+          <span id="navAuthButtonLabel">Sign In</span>
         </button>
 
-        <!-- Hamburger -->
         <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
         </button>
-
       </div>
     </nav>
 
-    <!-- MOBILE NAV MENU -->
+    <!-- Mobile nav overlay -->
     <div class="mobile-nav" id="mobileNav">
       <div class="mobile-nav-inner">
-
-        <a href="theforge.html">Overview</a>
+        <a href="theforge.html#overview">Overview</a>
         <a href="members.html">Members</a>
         <a href="prayerrequests.html">Prayer Requests</a>
-
-        <!-- MOBILE THEME TOGGLE -->
-        <button id="themeToggleMobile"
-                class="mobile-account-btn"
-                type="button">
-          Theme: 🌙
-        </button>
 
         <div class="mobile-account-meta">
           <span id="navMobileUserLabel">Guest</span>
         </div>
-
-        <button id="mobileAccountButton"
-                class="mobile-account-btn"
-                type="button">
+        <button
+          class="mobile-account-btn"
+          id="mobileAccountButton"
+          type="button"
+        >
           <span id="navMobileAuthButtonLabel">Sign In / Create</span>
         </button>
-
       </div>
     </div>
   </header>
 
-  <!-- =========================================================
-       MAIN CONTENT
-       ========================================================= -->
-  <main id="main-content" class="shell">
-
+  <main class="shell">
     <section aria-labelledby="page-title">
-
       <div class="page-header-kicker">Brotherhood</div>
       <h1 id="page-title" class="page-title">Members of The Forge</h1>
       <p class="page-intro">
-        This page lists the men who are part of The Forge community.
-        This page is private and only visible to signed-in members.
+        This page lists the men who are part of The Forge community. This page is private and only visible to signed-in members.
       </p>
 
-      <!-- SIGN-IN MESSAGE -->
+      <!-- Sign-in required notice (auth.js will hide this when signed in) -->
       <article class="card" id="membersSignInPrompt">
         <div class="card-inner">
           <div class="card-kicker">Private Area</div>
           <h2 class="card-title-main">Sign in to see the members of The Forge.</h2>
           <p class="card-text">
-            Only members with an active Forge account can access this page.
-            Use the <strong>Account</strong> button to sign in or create an account with your invite code.
+            To protect privacy and keep this space gated, only men with an active Forge account can view the
+            member list. Use the <strong>Account</strong> button in the header to sign in or create an account
+            with your invite code.
           </p>
         </div>
       </article>
 
-      <!-- MEMBERS WRAPPER -->
-      <section id="membersWrapper" style="display:none;">
-
-        <p id="membersStatus" class="members-status-text">Loading members…</p>
+      <!-- Auth-gated members layout -->
+      <section id="membersWrapper" style="display: none;">
+        <p id="membersStatus" class="members-status-text">
+          Loading members…
+        </p>
 
         <div class="members-layout">
-
-          <!-- LEADERS CARD -->
+          <!-- LEADERS -->
           <article class="card">
             <div class="card-inner">
               <div class="card-kicker">Leaders</div>
               <h2 class="card-title-main">Forge Leaders</h2>
               <p class="card-text">
-                These men help lead, steward, and guard the culture of The Forge.
+                These are the men who help lead, steward, and guard the culture of The Forge — owners,
+                admins, and core leaders. They’re still brothers among brothers, but they carry added responsibility.
               </p>
-              <div id="leadersGrid" class="member-grid"></div>
+              <div id="leadersGrid" class="member-grid">
+                <!-- Populated by auth.js from Firestore profiles where role = owner/admin -->
+              </div>
             </div>
           </article>
 
-          <!-- MEMBERS CARD -->
+          <!-- MEMBERS -->
           <article class="card">
             <div class="card-inner">
               <div class="card-kicker">Members</div>
               <h2 class="card-title-main">Brothers in The Forge</h2>
               <p class="card-text">
-                Every name represents a real man walking through real battles.
+                Every name here represents a real man walking through real battles. Pray for one another, encourage one
+                another, and remember that you’re not alone in the fight.
               </p>
-              <div id="membersGrid" class="member-grid"></div>
+              <div id="membersGrid" class="member-grid">
+                <!-- Populated by auth.js with all other profiles -->
+              </div>
             </div>
           </article>
-
         </div>
       </section>
-
-    </section>
-
-    <!-- =========================================================
-         ACCESSIBILITY TOOLBAR (same as prayerrequests)
-         ========================================================= -->
-    <div class="accessibility-widget" id="accessibilityWidget">
-      <button
-        type="button"
-        class="accessibility-toggle-btn"
-        id="accessibilityToggle"
-        aria-expanded="false"
-        aria-controls="accessibilityPanel"
-      >
-        <span class="icon-accessibility" aria-hidden="true">♿</span>
-        <span class="accessibility-label">Accessibility</span>
-      </button>
-
-      <div class="accessibility-panel" id="accessibilityPanel">
-        <div class="accessibility-panel-header">Accessibility</div>
-
-        <div class="accessibility-row">
-          <span class="accessibility-row-label">Text size</span>
-          <div class="accessibility-row-actions">
-            <button type="button" class="accessibility-chip" data-action="text-smaller">A− Text</button>
-            <button type="button" class="accessibility-chip" data-action="text-larger">A+ Text</button>
-            <button type="button" class="accessibility-chip" data-action="text-reset">⟲ Reset</button>
-          </div>
-        </div>
-
-        <div class="accessibility-row">
-          <span class="accessibility-row-label">Contrast</span>
-          <div class="accessibility-row-actions">
-            <button type="button" class="accessibility-chip" data-action="toggle-contrast">
-              ● Contrast
-            </button>
-          </div>
-        </div>
-
-        <div class="accessibility-row">
-          <span class="accessibility-row-label">Motion</span>
-          <div class="accessibility-row-actions">
-            <button type="button" class="accessibility-chip" data-action="toggle-motion">
-              ‖ Motion
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ACCESSIBILITY NOTE (PUSHED DOWN) -->
-    <section class="accessibility-note-footer" style="margin-top:3rem; margin-bottom:3.5rem;">
-      <p>
-        <strong>Accessibility:</strong>
-        The Forge follows WCAG 2.1 AA standards. If you need assistance,
-        email <a href="mailto:theforgetncommunity@gmail.com">theforgetncommunity@gmail.com</a>.
-      </p>
     </section>
 
     <footer>
       <div>© <span id="year"></span> The Forge · Members</div>
-      <div class="auth-status-text" id="authStatus">Not signed in</div>
+      <div class="auth-status-text" id="authStatus">
+        Not signed in
+      </div>
     </footer>
-
   </main>
 
-  <!-- =========================================================
-       SCRIPTS
-       ========================================================= -->
+  <!-- AUTH MODAL (WIRED TO auth.js) -->
+  <div
+    class="auth-overlay"
+    id="authOverlay"
+    aria-modal="true"
+    role="dialog"
+    aria-hidden="true"
+  >
+    <div class="auth-card">
+      <button
+        type="button"
+        class="auth-close-btn"
+        id="authCloseBtn"
+        aria-label="Close account window"
+      >
+        ✕
+      </button>
+      <div class="auth-card-inner">
+        <div class="auth-card-header">
+          <div class="auth-card-title">Forge Account</div>
+          <div class="auth-card-sub">
+            Invite-only access. Use the code you were given by the group owner.
+          </div>
+        </div>
+
+        <div class="auth-toggle-row">
+          <button
+            type="button"
+            class="auth-toggle-btn active"
+            data-mode="signin"
+          >
+            Sign In
+          </button>
+          <button
+            type="button"
+            class="auth-toggle-btn"
+            data-mode="signup"
+          >
+            Create Account
+          </button>
+        </div>
+
+        <!-- Sign In (IDs match auth.js) -->
+        <form id="loginForm" class="auth-form" autocomplete="on">
+          <div class="auth-field">
+            <label class="auth-label" for="loginEmail">Email</label>
+            <input
+              id="loginEmail"
+              type="email"
+              class="auth-input"
+              autocomplete="email"
+              required
+            />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="loginPassword">Password</label>
+            <input
+              id="loginPassword"
+              type="password"
+              class="auth-input"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+          <div
+            id="forgotPasswordLink"
+            class="forgot-password-link"
+          >
+            Forgot password?
+          </div>
+          <button type="submit" class="auth-btn">Sign In</button>
+          <div class="auth-error" id="authErrorLogin"></div>
+          <div class="auth-footnote">
+            Already joined? Use the email and password you created.
+          </div>
+        </form>
+
+        <!-- Sign Up (IDs match auth.js) -->
+        <form id="signupForm" class="auth-form" style="display:none;" autocomplete="on">
+          <div class="auth-field">
+            <label class="auth-label" for="signupFirstName">First Name</label>
+            <input
+              id="signupFirstName"
+              type="text"
+              class="auth-input"
+              autocomplete="given-name"
+              required
+            />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="signupLastName">Last Name</label>
+            <input
+              id="signupLastName"
+              type="text"
+              class="auth-input"
+              autocomplete="family-name"
+              required
+            />
+          </div>
+
+          <!-- Optional legacy display name field (used by auth.js fallback) -->
+          <input id="signupName" type="hidden" />
+
+          <div class="auth-field">
+            <label class="auth-label" for="signupEmail">Email</label>
+            <input
+              id="signupEmail"
+              type="email"
+              class="auth-input"
+              autocomplete="email"
+              required
+            />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="signupPassword">Password</label>
+            <input
+              id="signupPassword"
+              type="password"
+              class="auth-input"
+              autocomplete="new-password"
+              required
+            />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="signupPassword2">Confirm Password</label>
+            <input
+              id="signupPassword2"
+              type="password"
+              class="auth-input"
+              autocomplete="new-password"
+              required
+            />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="signupInvite">Invite Code</label>
+            <input
+              id="signupInvite"
+              type="text"
+              class="auth-input"
+              placeholder="Enter your invite code"
+              required
+            />
+          </div>
+          <button type="submit" class="auth-btn">Create Account</button>
+          <div class="auth-error" id="authErrorSignup"></div>
+          <div class="auth-footnote">
+            Accounts are invite-only. If you don’t have a code, ask the group owner.
+          </div>
+        </form>
+
+        <!-- Sign Out (only when logged in; wired by auth.js) -->
+        <button
+          type="button"
+          id="signOutButton"
+          class="auth-btn"
+          style="margin-top: 0.75rem; display: none;"
+        >
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </div>
 
   <script>
+    // FOOTER YEAR
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // MOBILE NAV TOGGLE (needed by auth.js when opening mobile account)
+    (function () {
+      const hamburger = document.getElementById('hamburger');
+      const mobileNav = document.getElementById('mobileNav');
+
+      if (!hamburger || !mobileNav) return;
+
+      function closeNav() {
+        mobileNav.classList.remove('open');
+        hamburger.classList.remove('is-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+      }
+
+      function openNav() {
+        mobileNav.classList.add('open');
+        hamburger.classList.add('is-open');
+        hamburger.setAttribute('aria-expanded', 'true');
+      }
+
+      hamburger.addEventListener('click', () => {
+        if (mobileNav.classList.contains('open')) {
+          closeNav();
+        } else {
+          openNav();
+        }
+      });
+
+      mobileNav.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => {
+          closeNav();
+        });
+      });
+
+      // Expose to auth.js so it can close nav when opening account modal
+      window.__forgeCloseMobileNav = closeNav;
+    })();
   </script>
 
-  <!-- Mobile Nav -->
-  <script src="js/mobile-nav.js"></script>
-
-  <!-- Theme system -->
-  <script src="js/theme.js"></script>
-
-  <!-- Accessibility Widget -->
-  <script src="js/accessibility-widget.js"></script>
-
-  <!-- Firebase Auth -->
+  <!-- Firebase wiring & logic -->
   <script type="module" src="auth.js"></script>
-
 </body>
 </html>

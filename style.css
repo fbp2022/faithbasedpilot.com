@@ -197,6 +197,12 @@ main a {
   color: var(--text-main);
 }
 
+/* Extra spacing for footer version */
+.accessibility-note-footer {
+  margin-top: 2.75rem !important;
+  margin-bottom: 2.75rem !important;
+}
+
 /* ================== ACCESSIBILITY TOOLBAR ================== */
 .accessibility-toolbar {
   position: fixed;

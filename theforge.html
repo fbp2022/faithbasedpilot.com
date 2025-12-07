@@ -185,6 +185,7 @@
     .btn,
     .nav-links a,
     .mobile-nav-inner a,
+    .mobile-theme-toggle,
     .card a.btn {
       text-decoration: none;
     }
@@ -205,125 +206,124 @@
       color: var(--text-main);
     }
 
-  /* ================== ACCESSIBILITY TOOLBAR ================== */
-.accessibility-toolbar {
-  position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-  z-index: 60;
-  max-width: 320px;
-}
+    /* ================== ACCESSIBILITY TOOLBAR ================== */
+    .accessibility-toolbar {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 60;
+      max-width: 320px;
+    }
 
-/* Launcher button (floating) */
-.a11y-launcher {
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-card);
-  color: var(--text-muted);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 1.3rem;
-  box-shadow: var(--shadow-strong);
-  transition:
-    background var(--transition-fast),
-    color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast);
-}
+    /* Launcher button (floating) */
+    .a11y-launcher {
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.3rem;
+      box-shadow: var(--shadow-strong);
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+    }
 
-.a11y-launcher:hover {
-  background: var(--bg-card-soft);
-  color: var(--accent);
-  transform: translateY(-1px);
-  box-shadow: 0 0 18px rgba(0, 255, 200, 0.45);
-}
+    .a11y-launcher:hover {
+      background: var(--bg-card-soft);
+      color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: 0 0 18px rgba(0, 255, 200, 0.45);
+    }
 
-/* Popover panel */
-.accessibility-toolbar-inner {
-  display: none;
-  margin-bottom: 0.4rem;
-  padding: 0.6rem 0.9rem;
-  border-radius: var(--radius-lg);
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-strong);
-  font-size: 0.8rem;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-}
+    /* Popover panel */
+    .accessibility-toolbar-inner {
+      display: none;
+      margin-bottom: 0.4rem;
+      padding: 0.6rem 0.9rem;
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-strong);
+      font-size: 0.8rem;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
-/* When widget is open, show the panel */
-.accessibility-toolbar.open .accessibility-toolbar-inner {
-  display: flex;
-}
+    /* When widget is open, show the panel */
+    .accessibility-toolbar.open .accessibility-toolbar-inner {
+      display: flex;
+    }
 
-.accessibility-toolbar-label {
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-soft);
-  white-space: nowrap;
-}
+    .accessibility-toolbar-label {
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      white-space: nowrap;
+    }
 
-.a11y-button-group {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-left: auto;
-}
+    .a11y-button-group {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-left: auto;
+    }
 
-.a11y-btn {
-  border-radius: var(--radius-full);
-  border: 1px solid var(--border-subtle);
-  padding: 0.25rem 0.7rem;
-  background: var(--bg-elevated);
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 0.76rem;
-  text-transform: uppercase;
-  letter-spacing: 0.13em;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  transition:
-    background var(--transition-fast),
-    border-color var(--transition-fast),
-    color var(--transition-fast),
-    transform var(--transition-fast);
-}
+    .a11y-btn {
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+      padding: 0.25rem 0.7rem;
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        transform var(--transition-fast);
+    }
 
-.a11y-btn:hover {
-  background: var(--bg-card-soft);
-  border-color: var(--accent-soft);
-  color: var(--text-main);
-  transform: translateY(-1px);
-}
+    .a11y-btn:hover {
+      background: var(--bg-card-soft);
+      border-color: var(--accent-soft);
+      color: var(--text-main);
+      transform: translateY(-1px);
+    }
 
-.a11y-btn[aria-pressed="true"] {
-  background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
-  color: #020409;
-  border-color: transparent;
-}
+    .a11y-btn[aria-pressed="true"] {
+      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+      color: #020409;
+      border-color: transparent;
+    }
 
-.a11y-btn span.icon {
-  font-size: 0.9rem;
-}
+    .a11y-btn span.icon {
+      font-size: 0.9rem;
+    }
 
-@media (max-width: 700px) {
-  .accessibility-toolbar {
-    bottom: 0.75rem;
-    right: 0.75rem;
-  }
-  .accessibility-toolbar-inner {
-    max-width: 260px;
-  }
-}
-
+    @media (max-width: 700px) {
+      .accessibility-toolbar {
+        bottom: 0.75rem;
+        right: 0.75rem;
+      }
+      .accessibility-toolbar-inner {
+        max-width: 260px;
+      }
+    }
 
     /* ===== FIXED HEADER ON ALL DEVICES ===== */
     header {
@@ -432,6 +432,60 @@
       gap: 0.75rem;
     }
 
+    /* ================== THEME TOGGLE (DESKTOP BUTTON) ================== */
+    .theme-toggle-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      font-size: 1.1rem;
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.7);
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast),
+        border-color var(--transition-fast);
+    }
+
+    .theme-toggle-btn:hover {
+      background: var(--bg-card-soft);
+      color: var(--accent);
+      border-color: var(--accent-soft);
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.35);
+    }
+
+    .theme-toggle-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 0 12px rgba(0, 255, 200, 0.25);
+    }
+
+    .theme-icon {
+      display: block;
+      line-height: 1;
+    }
+
+    /* Default (dark): show moon, hide sun */
+    .theme-icon-sun {
+      display: none;
+    }
+
+    :root[data-theme="light"] .theme-icon-moon {
+      display: none;
+    }
+
+    :root[data-theme="light"] .theme-icon-sun {
+      display: block;
+    }
+
     /* Hamburger (mobile) */
     .hamburger {
       display: none;
@@ -523,13 +577,45 @@
       text-align: left;
     }
 
-    .mobile-nav-inner a:last-child {
-      border-bottom: none;
+    .mobile-nav-inner a:last-of-type {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .mobile-nav-inner a:hover {
       color: var(--accent);
       border-color: rgba(0, 255, 200, 0.5);
+    }
+
+    /* Mobile theme toggle (inside hamburger menu, bottom) */
+    .mobile-theme-toggle {
+      margin-top: 0.9rem;
+      padding: 0.8rem 0;
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .mobile-theme-toggle span.mobile-theme-label {
+      flex: 1;
+      text-align: left;
+    }
+
+    .mobile-theme-toggle span.mobile-theme-icon {
+      font-size: 1.1rem;
+    }
+
+    .mobile-theme-toggle:hover {
+      color: var(--accent);
+      border-top-color: var(--accent-soft);
     }
 
     @media (max-width: 840px) {
@@ -539,6 +625,11 @@
 
       .hamburger {
         display: flex;
+      }
+
+      /* Hide desktop theme button on mobile */
+      .theme-toggle-btn {
+        display: none;
       }
     }
 
@@ -1291,6 +1382,18 @@
       </div>
 
       <div class="nav-actions">
+        <!-- Desktop theme toggle button (top-right) -->
+        <button
+          type="button"
+          class="theme-toggle-btn"
+          id="themeToggle"
+          aria-label="Switch to light theme"
+          aria-pressed="false"
+        >
+          <span class="theme-icon theme-icon-moon" aria-hidden="true">🌙</span>
+          <span class="theme-icon theme-icon-sun" aria-hidden="true">☀️</span>
+        </button>
+
         <button
           class="hamburger"
           id="hamburger"
@@ -1321,6 +1424,18 @@
         <a href="#contact">Contact</a>
         <a href="members.html">Members</a>
         <a href="prayerrequests.html">Prayer Requests</a>
+
+        <!-- Mobile theme toggle (lives at bottom of hamburger menu) -->
+        <button
+          type="button"
+          class="mobile-theme-toggle"
+          id="mobileThemeToggle"
+          aria-label="Switch to light theme"
+          aria-pressed="false"
+        >
+          <span class="mobile-theme-label">Switch to light theme</span>
+          <span class="mobile-theme-icon" aria-hidden="true">🌙</span>
+        </button>
       </div>
     </nav>
   </header>
@@ -1962,21 +2077,20 @@
       </div>
     </section>
 
-<!-- ACCESSIBILITY NOTE (Footer Position) -->
-<section class="accessibility-note-footer" aria-label="Accessibility information">
-  <p>
-    <strong>Accessibility:</strong>
-    The Forge website is designed to follow 
-    <strong>WCAG 2.1 AA</strong> standards for contrast, keyboard navigation,
-    screen-reader structure, and reduced-motion support.
-    If you experience difficulty accessing any part of this site or The Forge Discord,
-    please email 
-    <a href="mailto:theforgetncommunity@gmail.com">theforgetncommunity@gmail.com</a>
-    and we will work with you to provide alternative access or assistance.
-  </p>
-</section>
+    <!-- ACCESSIBILITY NOTE (Footer Position) -->
+    <section class="accessibility-note-footer" aria-label="Accessibility information">
+      <p>
+        <strong>Accessibility:</strong>
+        The Forge website is designed to follow 
+        <strong>WCAG 2.1 AA</strong> standards for contrast, keyboard navigation,
+        screen-reader structure, and reduced-motion support.
+        If you experience difficulty accessing any part of this site or The Forge Discord,
+        please email 
+        <a href="mailto:theforgetncommunity@gmail.com">theforgetncommunity@gmail.com</a>
+        and we will work with you to provide alternative access or assistance.
+      </p>
+    </section>
 
-    
     <footer>
       <div>© <span id="year"></span> The Forge · ESTD 2025</div>
       <div>
@@ -2269,121 +2383,207 @@
       autoResize(); // initial sizing
     })();
 
-// ACCESSIBILITY TOOLBAR LOGIC
-(function () {
-  const htmlEl = document.documentElement;
-  const bodyEl = document.body;
+    // ACCESSIBILITY TOOLBAR LOGIC
+    (function () {
+      const htmlEl = document.documentElement;
+      const bodyEl = document.body;
 
-  const widget = document.querySelector('.accessibility-toolbar');
-  const launcher = document.getElementById('a11yLauncher');
-  const panel = document.querySelector('.accessibility-toolbar-inner');
+      const widget = document.querySelector('.accessibility-toolbar');
+      const launcher = document.getElementById('a11yLauncher');
+      const panel = document.querySelector('.accessibility-toolbar-inner');
 
-  const btnFontInc = document.getElementById('a11yFontIncrease');
-  const btnFontDec = document.getElementById('a11yFontDecrease');
-  const btnFontReset = document.getElementById('a11yFontReset');
-  const btnContrast = document.getElementById('a11yContrast');
-  const btnMotion = document.getElementById('a11yMotion');
+      const btnFontInc = document.getElementById('a11yFontIncrease');
+      const btnFontDec = document.getElementById('a11yFontDecrease');
+      const btnFontReset = document.getElementById('a11yFontReset');
+      const btnContrast = document.getElementById('a11yContrast');
+      const btnMotion = document.getElementById('a11yMotion');
 
-  let fontSizePercent = 100;
+      let fontSizePercent = 100;
 
-  function applyFontSize() {
-    htmlEl.style.fontSize = fontSizePercent + '%';
-  }
-
-  function increaseFont() {
-    if (fontSizePercent < 150) {
-      fontSizePercent += 10;
-      applyFontSize();
-    }
-  }
-
-  function decreaseFont() {
-    if (fontSizePercent > 80) {
-      fontSizePercent -= 10;
-      applyFontSize();
-    }
-  }
-
-  function resetFont() {
-    fontSizePercent = 100;
-    applyFontSize();
-  }
-
-  function toggleContrast() {
-    const isHigh = htmlEl.getAttribute('data-contrast') === 'high';
-    if (isHigh) {
-      htmlEl.removeAttribute('data-contrast');
-      btnContrast.setAttribute('aria-pressed', 'false');
-    } else {
-      htmlEl.setAttribute('data-contrast', 'high');
-      btnContrast.setAttribute('aria-pressed', 'true');
-    }
-  }
-
-  function toggleMotion() {
-    const isReduced = bodyEl.classList.contains('reduce-motion');
-    if (isReduced) {
-      bodyEl.classList.remove('reduce-motion');
-      btnMotion.setAttribute('aria-pressed', 'false');
-    } else {
-      bodyEl.classList.add('reduce-motion');
-      btnMotion.setAttribute('aria-pressed', 'true');
-    }
-  }
-
-  // Wire up controls
-  if (btnFontInc) btnFontInc.addEventListener('click', increaseFont);
-  if (btnFontDec) btnFontDec.addEventListener('click', decreaseFont);
-  if (btnFontReset) btnFontReset.addEventListener('click', resetFont);
-  if (btnContrast) btnContrast.addEventListener('click', toggleContrast);
-  if (btnMotion) btnMotion.addEventListener('click', toggleMotion);
-
-  // Respect prefers-reduced-motion by default
-  const prefersReducedMotion =
-    window.matchMedia &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (prefersReducedMotion) {
-    bodyEl.classList.add('reduce-motion');
-    if (btnMotion) btnMotion.setAttribute('aria-pressed', 'true');
-  }
-
-  // Launcher open/close logic
-  if (widget && launcher && panel) {
-    function setOpen(isOpen) {
-      widget.classList.toggle('open', isOpen);
-      launcher.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      if (isOpen) {
-        // focus first button inside panel for keyboard users
-        const firstBtn = panel.querySelector('button');
-        if (firstBtn) firstBtn.focus();
+      function applyFontSize() {
+        htmlEl.style.fontSize = fontSizePercent + '%';
       }
-    }
 
-    launcher.addEventListener('click', () => {
-      const isOpen = !widget.classList.contains('open');
-      setOpen(isOpen);
-    });
-
-    // Close when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!widget.classList.contains('open')) return;
-      if (!widget.contains(e.target)) {
-        setOpen(false);
+      function increaseFont() {
+        if (fontSizePercent < 150) {
+          fontSizePercent += 10;
+          applyFontSize();
+        }
       }
-    });
 
-    // Keyboard: Esc closes when open
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && widget.classList.contains('open')) {
-        setOpen(false);
-        launcher.focus();
+      function decreaseFont() {
+        if (fontSizePercent > 80) {
+          fontSizePercent -= 10;
+          applyFontSize();
+        }
       }
-    });
-  }
-})();
 
+      function resetFont() {
+        fontSizePercent = 100;
+        applyFontSize();
+      }
+
+      function toggleContrast() {
+        const isHigh = htmlEl.getAttribute('data-contrast') === 'high';
+        if (isHigh) {
+          htmlEl.removeAttribute('data-contrast');
+          btnContrast.setAttribute('aria-pressed', 'false');
+        } else {
+          htmlEl.setAttribute('data-contrast', 'high');
+          btnContrast.setAttribute('aria-pressed', 'true');
+        }
+      }
+
+      function toggleMotion() {
+        const isReduced = bodyEl.classList.contains('reduce-motion');
+        if (isReduced) {
+          bodyEl.classList.remove('reduce-motion');
+          btnMotion.setAttribute('aria-pressed', 'false');
+        } else {
+          bodyEl.classList.add('reduce-motion');
+          btnMotion.setAttribute('aria-pressed', 'true');
+        }
+      }
+
+      // Wire up controls
+      if (btnFontInc) btnFontInc.addEventListener('click', increaseFont);
+      if (btnFontDec) btnFontDec.addEventListener('click', decreaseFont);
+      if (btnFontReset) btnFontReset.addEventListener('click', resetFont);
+      if (btnContrast) btnContrast.addEventListener('click', toggleContrast);
+      if (btnMotion) btnMotion.addEventListener('click', toggleMotion);
+
+      // Respect prefers-reduced-motion by default
+      const prefersReducedMotion =
+        window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (prefersReducedMotion) {
+        bodyEl.classList.add('reduce-motion');
+        if (btnMotion) btnMotion.setAttribute('aria-pressed', 'true');
+      }
+
+      // Launcher open/close logic
+      if (widget && launcher && panel) {
+        function setOpen(isOpen) {
+          widget.classList.toggle('open', isOpen);
+          launcher.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+          if (isOpen) {
+            // focus first button inside panel for keyboard users
+            const firstBtn = panel.querySelector('button');
+            if (firstBtn) firstBtn.focus();
+          }
+        }
+
+        launcher.addEventListener('click', () => {
+          const isOpen = !widget.classList.contains('open');
+          setOpen(isOpen);
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!widget.classList.contains('open')) return;
+          if (!widget.contains(e.target)) {
+            setOpen(false);
+          }
+        });
+
+        // Keyboard: Esc closes when open
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && widget.classList.contains('open')) {
+            setOpen(false);
+            launcher.focus();
+          }
+        });
+      }
+    })();
+
+    // THEME TOGGLE (DESKTOP + MOBILE) WITH PERSISTENCE
+    (function () {
+      const htmlEl = document.documentElement;
+      const metaColor = document.querySelector('meta[name="color-scheme"]');
+      const desktopToggle = document.getElementById('themeToggle');
+      const mobileToggle = document.getElementById('mobileThemeToggle');
+      const STORAGE_KEY = 'forge_theme';
+
+      let currentTheme = 'dark';
+
+      function applyTheme(theme) {
+        currentTheme = theme === 'light' ? 'light' : 'dark';
+
+        if (currentTheme === 'light') {
+          htmlEl.setAttribute('data-theme', 'light');
+          if (metaColor) metaColor.setAttribute('content', 'light dark');
+        } else {
+          htmlEl.removeAttribute('data-theme'); // fall back to base (dark) variables
+          if (metaColor) metaColor.setAttribute('content', 'dark light');
+        }
+
+        // Sync desktop toggle button
+        if (desktopToggle) {
+          const isLight = currentTheme === 'light';
+          desktopToggle.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+          desktopToggle.setAttribute(
+            'aria-label',
+            isLight ? 'Switch to dark theme' : 'Switch to light theme'
+          );
+        }
+
+        // Sync mobile toggle button
+        if (mobileToggle) {
+          const isLight = currentTheme === 'light';
+          const iconEl = mobileToggle.querySelector('.mobile-theme-icon');
+          const labelEl = mobileToggle.querySelector('.mobile-theme-label');
+
+          mobileToggle.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+          mobileToggle.setAttribute(
+            'aria-label',
+            isLight ? 'Switch to dark theme' : 'Switch to light theme'
+          );
+
+          if (labelEl) {
+            labelEl.textContent = isLight ? 'Switch to dark theme' : 'Switch to light theme';
+          }
+          if (iconEl) {
+            iconEl.textContent = isLight ? '☀️' : '🌙';
+          }
+        }
+      }
+
+      // Load initial theme (localStorage or system preference)
+      let savedTheme = null;
+      try {
+        savedTheme = window.localStorage.getItem(STORAGE_KEY);
+      } catch {
+        savedTheme = null;
+      }
+
+      if (savedTheme !== 'light' && savedTheme !== 'dark') {
+        const prefersLight =
+          window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: light)').matches;
+        savedTheme = prefersLight ? 'light' : 'dark';
+      }
+
+      applyTheme(savedTheme);
+
+      function toggleTheme() {
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        applyTheme(newTheme);
+        try {
+          window.localStorage.setItem(STORAGE_KEY, newTheme);
+        } catch {
+          // ignore storage errors
+        }
+      }
+
+      if (desktopToggle) {
+        desktopToggle.addEventListener('click', toggleTheme);
+      }
+
+      if (mobileToggle) {
+        mobileToggle.addEventListener('click', toggleTheme);
+      }
+    })();
   </script>
 </body>
 </html>
-```

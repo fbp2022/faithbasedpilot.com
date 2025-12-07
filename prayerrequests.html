@@ -48,6 +48,28 @@
       --forge-text-scale: 1;
     }
 
+    /* Light theme overrides (matches theforge/members) */
+    :root[data-theme="light"] {
+      --bg-main: #f5f7fb;
+      --bg-elevated: rgba(255, 255, 255, 0.98);
+      --bg-card: rgba(255, 255, 255, 0.98);
+      --bg-card-soft: rgba(245, 247, 252, 0.98);
+      --bg-deep: #c7d2fe;
+
+      --bg-header-strong: rgba(255, 255, 255, 0.98);
+      --bg-header-soft: rgba(248, 250, 252, 0.9);
+      --bg-mobile-overlay: rgba(245, 247, 252, 0.98);
+
+      --border-subtle: rgba(0, 140, 255, 0.25);
+      --accent: #0074ff;
+      --accent-soft: rgba(0, 116, 255, 0.5);
+      --accent-alt: #00b8ff;
+
+      --text-main: #071420;
+      --text-muted: #4f5c77;
+      --text-soft: #7a8799;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -115,7 +137,7 @@
       padding: 0 1.5rem 3.5rem;
     }
 
-    /* ================== HEADER / NAV (MATCH THEFORGE.HTML) ================== */
+    /* ================== HEADER / NAV ================== */
     header {
       position: sticky;
       top: 0;
@@ -232,6 +254,59 @@
       text-transform: uppercase;
       letter-spacing: 0.16em;
       color: var(--text-soft);
+    }
+
+    /* Desktop theme toggle: icon only */
+    .theme-toggle-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      font-size: 1.1rem;
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.7);
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast),
+        border-color var(--transition-fast);
+    }
+
+    .theme-toggle-btn:hover {
+      background: var(--bg-card-soft);
+      color: var(--accent);
+      border-color: var(--accent-soft);
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.35);
+    }
+
+    .theme-toggle-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 0 12px rgba(0, 255, 200, 0.25);
+    }
+
+    .theme-icon {
+      display: block;
+      line-height: 1;
+    }
+
+    .theme-icon-sun {
+      display: none;
+    }
+
+    :root[data-theme="light"] .theme-icon-moon {
+      display: none;
+    }
+
+    :root[data-theme="light"] .theme-icon-sun {
+      display: block;
     }
 
     .account-btn {
@@ -375,6 +450,38 @@
       margin-bottom: 0.25rem;
     }
 
+    /* Mobile theme toggle inside menu */
+    .mobile-theme-toggle {
+      margin-top: 0.4rem;
+      padding: 0.7rem 0 0.4rem;
+      border: none;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .mobile-theme-toggle span.mobile-theme-label {
+      flex: 1;
+      text-align: left;
+    }
+
+    .mobile-theme-toggle span.mobile-theme-icon {
+      font-size: 1.1rem;
+    }
+
+    .mobile-theme-toggle:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent-soft);
+    }
+
     @media (max-width: 840px) {
       .nav-links {
         display: none;
@@ -384,7 +491,8 @@
         display: flex;
       }
 
-      .account-btn {
+      .account-btn,
+      .theme-toggle-btn {
         display: none;
       }
     }
@@ -668,8 +776,8 @@
 
     .prayer-card {
       border-radius: 14px;
-      background: rgba(7, 11, 23, 0.92);
-      border: 1px solid rgba(15, 23, 42, 0.9);
+      background: var(--bg-card-soft);
+      border: 1px solid var(--border-subtle);
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65);
       overflow: hidden;
       transition:
@@ -690,6 +798,17 @@
         rgba(0, 255, 200, 0.09),
         rgba(7, 11, 23, 0.98)
       );
+    }
+
+    :root[data-theme="light"] .prayer-card.open {
+      background: radial-gradient(
+        circle at 0 0,
+        rgba(0, 148, 255, 0.18),
+        var(--bg-card-soft)
+      );
+      box-shadow:
+        0 0 0 1px rgba(148, 163, 184, 0.5),
+        0 0 26px rgba(0, 148, 255, 0.35);
     }
 
     .prayer-header {
@@ -734,6 +853,12 @@
       border: 1px solid rgba(148, 163, 184, 0.35);
     }
 
+    :root[data-theme="light"] .meta-pill {
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--text-soft);
+      border-color: rgba(148, 163, 184, 0.5);
+    }
+
     .chevron {
       font-size: 1.2rem;
       color: var(--text-soft);
@@ -752,6 +877,11 @@
       transition: max-height 0.25s ease;
       border-top: 1px solid rgba(15, 23, 42, 0.85);
       border-bottom: 1px solid rgba(15, 23, 42, 0.85);
+    }
+
+    :root[data-theme="light"] .prayer-body {
+      border-top-color: rgba(148, 163, 184, 0.4);
+      border-bottom-color: rgba(148, 163, 184, 0.4);
     }
 
     .prayer-body-inner {
@@ -798,7 +928,7 @@
     footer {
       margin-top: 2.2rem;
       padding-top: 1.5rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-top: 1px solid var(--border-subtle);
       font-size: 0.8rem;
       color: var(--text-soft);
       display: flex;
@@ -824,6 +954,12 @@
       color: var(--text-soft);
     }
 
+    :root[data-theme="light"] .accessibility-note-footer {
+      background: rgba(255, 255, 255, 0.98);
+      border-color: rgba(148, 163, 184, 0.6);
+      color: var(--text-soft);
+    }
+
     .accessibility-note-footer a {
       color: var(--accent);
       text-decoration: underline;
@@ -834,7 +970,7 @@
       color: var(--accent-alt);
     }
 
-    /* ================== AUTH MODAL (MATCH AUTH.JS) ================== */
+    /* ================== AUTH MODAL ================== */
     .auth-overlay {
       position: fixed;
       inset: 0;
@@ -1041,7 +1177,7 @@
       }
     }
 
-    /* ================== ACCESSIBILITY WIDGET (MATCH THEFORGE LOOK) ================== */
+    /* ================== ACCESSIBILITY WIDGET ================== */
     .accessibility-widget {
       position: fixed;
       right: 1.5rem;
@@ -1050,7 +1186,6 @@
       font-size: 0.8rem;
     }
 
-    /* Round icon button */
     .accessibility-toggle-btn {
       width: 42px;
       height: 42px;
@@ -1071,7 +1206,6 @@
         border-color var(--transition-fast);
     }
 
-    /* hide text label so button is icon-only */
     .accessibility-label {
       display: none;
     }
@@ -1086,7 +1220,6 @@
       font-size: 1.1rem;
     }
 
-    /* Panel */
     .accessibility-panel {
       position: absolute;
       right: 0;
@@ -1160,7 +1293,6 @@
       box-shadow: 0 0 14px rgba(0, 255, 200, 0.45);
     }
 
-    /* High contrast + reduced motion states */
     body.high-contrast {
       background: #000000 !important;
       color: #ffffff !important;
@@ -1204,6 +1336,17 @@
       </div>
 
       <div class="nav-actions">
+        <!-- Desktop theme toggle -->
+        <button
+          id="themeToggle"
+          class="theme-toggle-btn"
+          type="button"
+          aria-label="Toggle light/dark theme"
+        >
+          <span class="theme-icon theme-icon-moon">🌙</span>
+          <span class="theme-icon theme-icon-sun">☀️</span>
+        </button>
+
         <button id="accountButton" class="account-btn" type="button">
           <span class="icon">👤</span>
           <span id="navAuthButtonLabel">Sign In</span>
@@ -1229,6 +1372,16 @@
         <a href="theforge.html">Overview</a>
         <a href="members.html">Members</a>
         <a href="prayerrequests.html">Prayer Requests</a>
+
+        <!-- Mobile theme toggle -->
+        <button
+          class="mobile-theme-toggle"
+          id="mobileThemeToggle"
+          type="button"
+        >
+          <span class="mobile-theme-label">Toggle theme</span>
+          <span class="mobile-theme-icon" id="mobileThemeIcon">🌙</span>
+        </button>
 
         <div class="mobile-account-meta">
           <span id="navMobileUserLabel">Guest</span>
@@ -1445,7 +1598,7 @@
     </footer>
   </main>
 
-  <!-- AUTH MODAL (WIRED TO auth.js) -->
+  <!-- AUTH MODAL -->
   <div
     class="auth-overlay"
     id="authOverlay"
@@ -1487,7 +1640,7 @@
           </button>
         </div>
 
-        <!-- Sign In (IDs match auth.js) -->
+        <!-- Sign In -->
         <form id="loginForm" class="auth-form" autocomplete="on">
           <div class="auth-field">
             <label class="auth-label" for="loginEmail">Email</label>
@@ -1522,7 +1675,7 @@
           </div>
         </form>
 
-        <!-- Sign Up (IDs match auth.js) -->
+        <!-- Sign Up -->
         <form
           id="signupForm"
           class="auth-form"
@@ -1550,7 +1703,7 @@
             />
           </div>
 
-          <!-- Optional legacy display name field (used by auth.js fallback) -->
+          <!-- Optional legacy display name field -->
           <input id="signupName" type="hidden" />
 
           <div class="auth-field">
@@ -1600,7 +1753,7 @@
           </div>
         </form>
 
-        <!-- Sign Out (only when logged in; wired by auth.js) -->
+        <!-- Sign Out -->
         <button
           type="button"
           id="signOutButton"
@@ -1617,7 +1770,59 @@
     // FOOTER YEAR
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // MOBILE NAV TOGGLE (needed by auth.js when opening mobile account)
+    // THEME TOGGLE + PERSISTENCE
+    (function () {
+      const STORAGE_KEY = "forge_theme";
+      const root = document.documentElement;
+      const desktopToggle = document.getElementById("themeToggle");
+      const mobileToggle = document.getElementById("mobileThemeToggle");
+      const mobileIcon = document.getElementById("mobileThemeIcon");
+
+      function applyTheme(theme, persist) {
+        if (theme === "light") {
+          root.setAttribute("data-theme", "light");
+        } else {
+          root.setAttribute("data-theme", "dark");
+        }
+        if (persist) {
+          try {
+            window.localStorage.setItem(STORAGE_KEY, theme);
+          } catch {}
+        }
+        if (mobileIcon) {
+          mobileIcon.textContent = theme === "light" ? "☀️" : "🌙";
+        }
+      }
+
+      // Initial theme: saved -> system -> default dark
+      let initial = "dark";
+      try {
+        const saved = window.localStorage.getItem(STORAGE_KEY);
+        if (saved === "light" || saved === "dark") {
+          initial = saved;
+        } else if (window.matchMedia &&
+                   window.matchMedia("(prefers-color-scheme: light)").matches) {
+          initial = "light";
+        }
+      } catch {}
+
+      applyTheme(initial, false);
+
+      function toggleTheme() {
+        const current = root.getAttribute("data-theme") === "light" ? "light" : "dark";
+        const next = current === "light" ? "dark" : "light";
+        applyTheme(next, true);
+      }
+
+      if (desktopToggle) {
+        desktopToggle.addEventListener("click", toggleTheme);
+      }
+      if (mobileToggle) {
+        mobileToggle.addEventListener("click", toggleTheme);
+      }
+    })();
+
+    // MOBILE NAV TOGGLE
     (function () {
       const hamburger = document.getElementById('hamburger');
       const mobileNav = document.getElementById('mobileNav');
@@ -1654,7 +1859,7 @@
       window.__forgeCloseMobileNav = closeNav;
     })();
 
-    // FLOATING LABEL BEHAVIOR + TEXTAREA AUTO-GROW
+    // FLOATING LABELS + TEXTAREA AUTO-GROW
     (function () {
       const groups = document.querySelectorAll('.field-group');
 
@@ -1675,11 +1880,9 @@
         control.addEventListener('blur', () => group.classList.remove('focused'));
         control.addEventListener('input', () => updateGroupState(group, control));
 
-        // initial state
         updateGroupState(group, control);
       });
 
-      // Auto-grow the prayer textarea so it's not manually resizable
       const messageEl = document.getElementById('message');
       if (messageEl) {
         const autoResize = () => {
@@ -1687,7 +1890,6 @@
           messageEl.style.height = (messageEl.scrollHeight + 2) + 'px';
         };
         messageEl.addEventListener('input', autoResize);
-        // Initial size
         autoResize();
       }
     })();
@@ -1764,7 +1966,6 @@
         }
       });
 
-      // Close the panel when clicking outside
       document.addEventListener('click', (evt) => {
         if (!widget.classList.contains('open')) return;
         if (widget.contains(evt.target)) return;

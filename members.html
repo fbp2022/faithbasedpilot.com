@@ -86,6 +86,25 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    body.reduce-motion * {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    main a {
+      text-decoration: underline;
+    }
+
     .ambient-orbit {
       position: fixed;
       inset: -40%;
@@ -242,6 +261,7 @@
         transform var(--transition-fast),
         box-shadow var(--transition-fast),
         color var(--transition-fast);
+      text-decoration: none;
     }
 
     .account-btn:hover {
@@ -260,6 +280,41 @@
       text-transform: uppercase;
       letter-spacing: 0.16em;
       color: var(--text-soft);
+    }
+
+    /* Theme toggle (desktop) */
+    .theme-toggle {
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+      padding: 0.3rem 0.85rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      background: var(--bg-elevated);
+      color: var(--text-soft);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .theme-toggle:hover {
+      background: var(--bg-card-soft);
+      border-color: var(--accent-soft);
+      color: var(--text-main);
+      transform: translateY(-1px);
+      box-shadow: 0 0 16px rgba(0, 255, 200, 0.3);
+    }
+
+    .theme-icon {
+      font-size: 0.95rem;
     }
 
     .hamburger {
@@ -312,7 +367,7 @@
       background: var(--accent);
     }
 
-    /* Mobile nav overlay (borrowed behavior from theforge + prayerrequests) */
+    /* Mobile nav overlay */
     .mobile-nav {
       display: none;
       position: fixed;
@@ -339,7 +394,8 @@
     }
 
     .mobile-nav-inner a,
-    .mobile-nav-inner button.mobile-account-btn {
+    .mobile-nav-inner button.mobile-account-btn,
+    .mobile-nav-inner button.mobile-theme-btn {
       text-decoration: none;
       font-size: 0.9rem;
       text-transform: uppercase;
@@ -354,12 +410,14 @@
     }
 
     .mobile-nav-inner a:last-child,
-    .mobile-nav-inner button.mobile-account-btn:last-child {
+    .mobile-nav-inner button.mobile-account-btn:last-child,
+    .mobile-nav-inner button.mobile-theme-btn:last-child {
       border-bottom: none;
     }
 
     .mobile-nav-inner a:hover,
-    .mobile-nav-inner button.mobile-account-btn:hover {
+    .mobile-nav-inner button.mobile-account-btn:hover,
+    .mobile-nav-inner button.mobile-theme-btn:hover {
       color: var(--accent);
       border-color: rgba(0, 255, 200, 0.5);
     }
@@ -372,10 +430,15 @@
       margin-top: 0.4rem;
     }
 
-    .mobile-account-btn {
+    .mobile-account-btn,
+    .mobile-theme-btn {
       border: none;
       background: transparent;
       padding-left: 0;
+    }
+
+    .mobile-theme-label {
+      font-size: 0.9rem;
     }
 
     @media (max-width: 840px) {
@@ -387,9 +450,130 @@
         display: flex;
       }
 
-      /* hide desktop account button on mobile */
+      /* hide desktop account button and theme toggle on mobile */
       .account-btn {
         display: none;
+      }
+
+      .theme-toggle {
+        display: none;
+      }
+    }
+
+    /* ================== ACCESSIBILITY TOOLBAR ================== */
+    .accessibility-toolbar {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 60;
+      max-width: 320px;
+    }
+
+    .a11y-launcher {
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.3rem;
+      box-shadow: var(--shadow-strong);
+      transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .a11y-launcher:hover {
+      background: var(--bg-card-soft);
+      color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: 0 0 18px rgba(0, 255, 200, 0.45);
+    }
+
+    .accessibility-toolbar-inner {
+      display: none;
+      margin-bottom: 0.4rem;
+      padding: 0.6rem 0.9rem;
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-strong);
+      font-size: 0.8rem;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .accessibility-toolbar.open .accessibility-toolbar-inner {
+      display: flex;
+    }
+
+    .accessibility-toolbar-label {
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      white-space: nowrap;
+    }
+
+    .a11y-button-group {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-left: auto;
+    }
+
+    .a11y-btn {
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+      padding: 0.25rem 0.7rem;
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        transform var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .a11y-btn:hover {
+      background: var(--bg-card-soft);
+      border-color: var(--accent-soft);
+      color: var(--text-main);
+      transform: translateY(-1px);
+    }
+
+    .a11y-btn[aria-pressed="true"] {
+      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+      color: #020409;
+      border-color: transparent;
+    }
+
+    .a11y-btn span.icon {
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 700px) {
+      .accessibility-toolbar {
+        bottom: 0.75rem;
+        right: 0.75rem;
+      }
+      .accessibility-toolbar-inner {
+        max-width: 260px;
       }
     }
 
@@ -769,10 +953,10 @@
   </style>
 </head>
 <body>
-  <div class="ambient-orbit"></div>
+  <div class="ambient-orbit" aria-hidden="true"></div>
 
   <header>
-    <nav class="nav">
+    <nav class="nav" aria-label="Main navigation">
       <div class="brand">
         <img src="images/theforgelogo.png" alt="The Forge logo" class="brand-logo" />
         <div>
@@ -787,12 +971,31 @@
       </div>
 
       <div class="nav-actions">
-       <button id="accountButton" class="account-btn" type="button">
+        <button id="accountButton" class="account-btn" type="button">
           <span class="icon">👤</span>
           <span id="navAuthButtonLabel">Sign In</span>
         </button>
 
-        <button class="hamburger" id="hamburger" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <!-- Desktop theme toggle -->
+        <button
+          id="themeToggle"
+          class="theme-toggle"
+          type="button"
+          aria-label="Toggle light or dark theme"
+          aria-pressed="false"
+        >
+          <span class="theme-icon" aria-hidden="true">☀️</span>
+          <span class="theme-label">Light</span>
+        </button>
+
+        <button
+          class="hamburger"
+          id="hamburger"
+          type="button"
+          aria-label="Toggle navigation"
+          aria-expanded="false"
+          aria-controls="mobileNav"
+        >
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
@@ -817,9 +1020,96 @@
         >
           <span id="navMobileAuthButtonLabel">Sign In / Create</span>
         </button>
+
+        <!-- Mobile theme toggle at bottom -->
+        <button
+          class="mobile-theme-btn"
+          id="themeToggleMobile"
+          type="button"
+          aria-label="Toggle light or dark theme"
+          aria-pressed="false"
+        >
+          <span class="mobile-theme-label">Theme: Light</span>
+        </button>
       </div>
     </div>
   </header>
+
+  <!-- ACCESSIBILITY WIDGET -->
+  <div
+    class="accessibility-toolbar"
+    role="region"
+    aria-label="Accessibility options"
+  >
+    <!-- Launcher button (always visible) -->
+    <button
+      type="button"
+      class="a11y-launcher"
+      id="a11yLauncher"
+      aria-label="Open accessibility tools"
+      aria-expanded="false"
+    >
+      ♿
+    </button>
+
+    <!-- Popover panel (opens above the button) -->
+    <div
+      class="accessibility-toolbar-inner"
+      role="group"
+      aria-label="Accessibility options"
+    >
+      <span class="accessibility-toolbar-label">Accessibility</span>
+      <div class="a11y-button-group">
+        <button
+          type="button"
+          class="a11y-btn"
+          id="a11yFontDecrease"
+          aria-label="Decrease text size"
+        >
+          <span class="icon">A−</span>
+          <span>Text</span>
+        </button>
+        <button
+          type="button"
+          class="a11y-btn"
+          id="a11yFontIncrease"
+          aria-label="Increase text size"
+        >
+          <span class="icon">A+</span>
+          <span>Text</span>
+        </button>
+        <button
+          type="button"
+          class="a11y-btn"
+          id="a11yFontReset"
+          aria-label="Reset text size"
+        >
+          <span class="icon">↺</span>
+          <span>Reset</span>
+        </button>
+        <button
+          type="button"
+          class="a11y-btn"
+          id="a11yContrast"
+          aria-pressed="false"
+          aria-label="Toggle high contrast mode"
+        >
+          <span class="icon">◑</span>
+          <span>Contrast</span>
+        </button>
+        <button
+          type="button"
+          class="a11y-btn"
+          id="a11yMotion"
+          aria-pressed="false"
+          aria-label="Toggle reduced motion"
+        >
+          <span class="icon">⏸</span>
+          <span>Motion</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <main class="shell">
     <section aria-labelledby="page-title">
@@ -1092,6 +1382,195 @@
 
       // Expose to auth.js so it can close nav when opening account modal
       window.__forgeCloseMobileNav = closeNav;
+    })();
+
+    // THEME TOGGLE WITH PERSISTENCE (shared behavior with main site)
+    (function () {
+      const storageKey = 'forge_theme';
+      const root = document.documentElement;
+
+      const desktopBtn = document.getElementById('themeToggle');
+      const mobileBtn = document.getElementById('themeToggleMobile');
+
+      let currentTheme = 'light';
+
+      function syncButtons() {
+        const isLight = currentTheme === 'light';
+        const icon = isLight ? '☀️' : '🌙';
+        const label = isLight ? 'Light' : 'Dark';
+
+        if (desktopBtn) {
+          const iconSpan = desktopBtn.querySelector('.theme-icon');
+          const labelSpan = desktopBtn.querySelector('.theme-label');
+          if (iconSpan) iconSpan.textContent = icon;
+          if (labelSpan) labelSpan.textContent = label;
+          desktopBtn.setAttribute('aria-pressed', !isLight ? 'true' : 'false');
+        }
+
+        if (mobileBtn) {
+          const labelSpan = mobileBtn.querySelector('.mobile-theme-label');
+          if (labelSpan) labelSpan.textContent = 'Theme: ' + label;
+          mobileBtn.setAttribute('aria-pressed', !isLight ? 'true' : 'false');
+        }
+      }
+
+      function setTheme(theme) {
+        currentTheme = theme === 'dark' ? 'dark' : 'light';
+
+        if (currentTheme === 'light') {
+          root.setAttribute('data-theme', 'light');
+        } else {
+          root.removeAttribute('data-theme'); // base :root is dark
+        }
+
+        try {
+          localStorage.setItem(storageKey, currentTheme);
+        } catch (e) {
+          // ignore storage errors
+        }
+
+        syncButtons();
+      }
+
+      // Initialize theme: prefer saved, otherwise default to light
+      (function initTheme() {
+        let saved = null;
+        try {
+          saved = localStorage.getItem(storageKey);
+        } catch (e) {
+          saved = null;
+        }
+
+        if (saved === 'light' || saved === 'dark') {
+          setTheme(saved);
+        } else {
+          setTheme('light');
+        }
+      })();
+
+      function toggleTheme() {
+        setTheme(currentTheme === 'light' ? 'dark' : 'light');
+      }
+
+      if (desktopBtn) {
+        desktopBtn.addEventListener('click', toggleTheme);
+      }
+      if (mobileBtn) {
+        mobileBtn.addEventListener('click', toggleTheme);
+      }
+    })();
+
+    // ACCESSIBILITY TOOLBAR LOGIC
+    (function () {
+      const htmlEl = document.documentElement;
+      const bodyEl = document.body;
+
+      const widget = document.querySelector('.accessibility-toolbar');
+      const launcher = document.getElementById('a11yLauncher');
+      const panel = document.querySelector('.accessibility-toolbar-inner');
+
+      const btnFontInc = document.getElementById('a11yFontIncrease');
+      const btnFontDec = document.getElementById('a11yFontDecrease');
+      const btnFontReset = document.getElementById('a11yFontReset');
+      const btnContrast = document.getElementById('a11yContrast');
+      const btnMotion = document.getElementById('a11yMotion');
+
+      let fontSizePercent = 100;
+
+      function applyFontSize() {
+        htmlEl.style.fontSize = fontSizePercent + '%';
+      }
+
+      function increaseFont() {
+        if (fontSizePercent < 150) {
+          fontSizePercent += 10;
+          applyFontSize();
+        }
+      }
+
+      function decreaseFont() {
+        if (fontSizePercent > 80) {
+          fontSizePercent -= 10;
+          applyFontSize();
+        }
+      }
+
+      function resetFont() {
+        fontSizePercent = 100;
+        applyFontSize();
+      }
+
+      function toggleContrast() {
+        const isHigh = htmlEl.getAttribute('data-contrast') === 'high';
+        if (isHigh) {
+          htmlEl.removeAttribute('data-contrast');
+          btnContrast.setAttribute('aria-pressed', 'false');
+        } else {
+          htmlEl.setAttribute('data-contrast', 'high');
+          btnContrast.setAttribute('aria-pressed', 'true');
+        }
+      }
+
+      function toggleMotion() {
+        const isReduced = bodyEl.classList.contains('reduce-motion');
+        if (isReduced) {
+          bodyEl.classList.remove('reduce-motion');
+          btnMotion.setAttribute('aria-pressed', 'false');
+        } else {
+          bodyEl.classList.add('reduce-motion');
+          btnMotion.setAttribute('aria-pressed', 'true');
+        }
+      }
+
+      // Wire up controls
+      if (btnFontInc) btnFontInc.addEventListener('click', increaseFont);
+      if (btnFontDec) btnFontDec.addEventListener('click', decreaseFont);
+      if (btnFontReset) btnFontReset.addEventListener('click', resetFont);
+      if (btnContrast) btnContrast.addEventListener('click', toggleContrast);
+      if (btnMotion) btnMotion.addEventListener('click', toggleMotion);
+
+      // Respect prefers-reduced-motion by default
+      const prefersReducedMotion =
+        window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (prefersReducedMotion) {
+        bodyEl.classList.add('reduce-motion');
+        if (btnMotion) btnMotion.setAttribute('aria-pressed', 'true');
+      }
+
+      // Launcher open/close logic
+      if (widget && launcher && panel) {
+        function setOpen(isOpen) {
+          widget.classList.toggle('open', isOpen);
+          launcher.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+          if (isOpen) {
+            const firstBtn = panel.querySelector('button');
+            if (firstBtn) firstBtn.focus();
+          }
+        }
+
+        launcher.addEventListener('click', () => {
+          const isOpen = !widget.classList.contains('open');
+          setOpen(isOpen);
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!widget.classList.contains('open')) return;
+          if (!widget.contains(e.target)) {
+            setOpen(false);
+          }
+        });
+
+        // Keyboard: Esc closes when open
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && widget.classList.contains('open')) {
+            setOpen(false);
+            launcher.focus();
+          }
+        });
+      }
     })();
   </script>
 

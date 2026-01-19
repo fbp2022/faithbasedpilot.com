@@ -368,18 +368,27 @@
     /* Mobile nav overlay */
 @media (max-width: 840px) {
   .mobile-nav {
+    display: none; /* only show when .open is added */
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: var(--nav-height);
+    bottom: 0;
+
     background: var(--bg-mobile-overlay) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     opacity: 1 !important;
-    z-index: 60;
+
+    z-index: 1000;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobile-nav.open {
+    display: block;
   }
 }
-
-
-    .mobile-nav.open {
-      display: block;
-    }
 
     .mobile-nav-inner {
       max-width: 1120px;

@@ -365,30 +365,39 @@
       background: var(--accent);
     }
 
-    /* Mobile nav overlay */
-@media (max-width: 840px) {
-  .mobile-nav {
-    display: none; /* only show when .open is added */
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: var(--nav-height);
-    bottom: 0;
+    /* ================== MOBILE NAV (FIXED, OPAQUE, MOBILE-ONLY) ================== */
+    .mobile-nav {
+      display: none; /* hidden by default everywhere */
+    }
 
-    background: var(--bg-mobile-overlay) !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    opacity: 1 !important;
+    @media (max-width: 840px) {
+      .mobile-nav {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: var(--nav-height);
+        bottom: 0;
 
-    z-index: 1000;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
+        background: var(--bg-mobile-overlay) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        opacity: 1 !important;
 
-  .mobile-nav.open {
-    display: block;
-  }
-}
+        z-index: 1000;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .mobile-nav.open {
+        display: block;
+      }
+    }
+
+    @media (min-width: 841px) {
+      .mobile-nav {
+        display: none !important; /* never show on desktop even if .open sticks */
+      }
+    }
 
     .mobile-nav-inner {
       max-width: 1120px;
@@ -565,7 +574,6 @@
     }
 
     /* ================== MEMBERS GRID ================== */
-
     .members-layout {
       display: grid;
       grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr);
@@ -647,7 +655,6 @@
     }
 
     /* ================== FOOTER ================== */
-
     footer {
       margin-top: 2.2rem;
       padding-top: 1.5rem;
@@ -680,7 +687,6 @@
     }
 
     /* ================== AUTH MODAL ================== */
-
     .auth-overlay {
       position: fixed;
       inset: 0;
@@ -1256,6 +1262,14 @@
           closeNav();
         });
       });
+
+      // Close if user rotates / resizes into desktop width
+      const mq = window.matchMedia('(min-width: 841px)');
+      function handleMq(e) {
+        if (e.matches) closeNav();
+      }
+      if (mq.addEventListener) mq.addEventListener('change', handleMq);
+      else mq.addListener(handleMq);
 
       // Expose to auth.js so it can close nav when opening account modal
       window.__forgeCloseMobileNav = closeNav;

@@ -295,7 +295,7 @@ header {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 950; /* below mobile nav, below auth */
+  z-index: 950; /* below mobile icon nav, below auth */
   background: linear-gradient(to bottom, var(--bg-header-strong), var(--bg-header-soft), transparent);
   border-bottom: 1px solid var(--border-subtle);
   backdrop-filter: blur(16px);
@@ -440,7 +440,7 @@ header {
 :root[data-theme="dark"] .theme-icon-moon { display: none; }
 :root[data-theme="dark"] .theme-icon-sun { display: inline-block; }
 
-/* Hamburger */
+/* Hamburger (LEGACY - DISABLED ON MOBILE BELOW) */
 .hamburger {
   display: none;
   width: 40px;
@@ -462,14 +462,22 @@ header {
 .hamburger.is-open .hamburger-line:nth-child(2) { opacity: 0; }
 .hamburger.is-open .hamburger-line:nth-child(3) { transform: translateY(-6px) rotate(-45deg); background: var(--accent); }
 
+/* MOBILE HEADER RULES (UPDATED: NO HAMBURGER) */
 @media (max-width: 840px) {
   .nav-links { display: none; }
-  .hamburger { display: flex; }
+
+  /* KILL hamburger completely */
+  .hamburger {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
   .account-btn { padding: 0 0.65rem; }
 }
 
 /* ================== MOBILE NAV (FULL OPAQUE) ================== */
-/* HARD FIX: use background-color + kill any/all background images/gradients */
+/* LEGACY OVERLAY MENU (DISABLED BELOW) */
 .mobile-nav {
   display: block;
   position: fixed;
@@ -577,6 +585,62 @@ header {
     background-image: none !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* DISABLE LEGACY OVERLAY MENU ON MOBILE (YOU DO NOT WANT IT) */
+@media (max-width: 840px) {
+  .mobile-nav { display: none !important; }
+}
+
+/* ================== MOBILE ICON NAV (BOTTOM BAR) ================== */
+.mobile-icon-nav {
+  display: none;
+}
+
+@media (max-width: 840px) {
+  .mobile-icon-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    height: 64px;
+    background: var(--bg-header-strong);
+    border-top: 1px solid var(--border-subtle);
+
+    z-index: 997; /* below auth (999), above page content */
+  }
+
+  .mobile-icon-nav a {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .nav-icon {
+    width: 26px;
+    height: 26px;
+    fill: var(--text-muted);
+    opacity: 0.9;
+    transition: opacity var(--transition-fast), transform var(--transition-fast), fill var(--transition-fast);
+  }
+
+  .mobile-icon-nav a:active .nav-icon {
+    opacity: 0.6;
+    transform: scale(0.96);
+  }
+
+  /* Give content breathing room so it doesn't hide behind the bar */
+  body {
+    padding-bottom: 72px;
   }
 }
 

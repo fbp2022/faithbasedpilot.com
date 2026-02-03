@@ -1,47 +1,43 @@
 // theme.js
-// Handles: theme loading, saving, toggling, and syncing between desktop + mobile buttons.
+// Light theme default on first visit, persist user preference
 
 (function () {
   const STORAGE_KEY = "forge_theme";
 
-  // -----------------------------
-  // 1. Load theme early (no flash)
-  // -----------------------------
   function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem(STORAGE_KEY, theme);
+    try {
+      localStorage.setItem(STORAGE_KEY, theme);
+    } catch {}
   }
 
-  // Load saved theme or default to light
-  const saved = localStorage.getItem(STORAGE_KEY);
-  const initialTheme = saved === "dark" || saved === "light" ? saved : "light";
-  applyTheme(initialTheme);
+  function getInitialTheme() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === "light" || saved === "dark") return saved;
+    } catch {}
 
-  // -----------------------------
-  // 2. Toggle logic
-  // -----------------------------
+    // FIRST VISIT DEFAULT
+    return "light";
+  }
+
   function toggleTheme() {
-    const current = document.documentElement.getAttribute("data-theme");
-    const next = current === "light" ? "dark" : "light";
-    applyTheme(next);
+    const current =
+      document.documentElement.getAttribute("data-theme") || "light";
+    applyTheme(current === "light" ? "dark" : "light");
   }
 
-  // -----------------------------
-  // 3. Connect toggle buttons
-  // -----------------------------
-  function wireButton(btn) {
-    if (!btn) return;
-    btn.addEventListener("click", toggleTheme);
-  }
+  // Apply immediately to prevent flash
+  applyTheme(getInitialTheme());
 
-  // Desktop toggle button
-  wireButton(document.getElementById("themeToggleDesktop"));
+  // Desktop toggle
+  const desktopBtn = document.getElementById("themeToggleDesktop");
+  if (desktopBtn) desktopBtn.addEventListener("click", toggleTheme);
 
-  // Mobile toggle button
-  wireButton(document.getElementById("themeToggleMobile"));
+  // Mobile toggle
+  const mobileBtn = document.getElementById("themeToggleMobile");
+  if (mobileBtn) mobileBtn.addEventListener("click", toggleTheme);
 
-  // -----------------------------
-  // 4. Expose toggle if needed
-  // -----------------------------
+  // Optional external access
   window.__forgeToggleTheme = toggleTheme;
 })();

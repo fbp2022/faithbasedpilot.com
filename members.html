@@ -1,31 +1,297 @@
-    /* Mobile nav overlay (OPAQUE, MOBILE-ONLY, SITS UNDER HEADER) */
-    .mobile-nav {
-      display: none;
-      position: fixed;
-      left: 0;
-      right: 0;
-      top: var(--nav-height);
-      bottom: 0;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Forge - Members</title>
+  <meta name="color-scheme" content="dark light" />
+  <meta name="description" content="Members roster for The Forge (invite-only)." />
 
-      background: var(--bg-mobile-overlay);
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
+  <!-- IMPORTANT:
+       Update this href to your real CSS filename inside the folder named: styling css
+       Example options:
+       href="styling css/styles.css"
+       href="styling css/base.css"
+  -->
+  <link rel="stylesheet" href="styling css/styles.css" />
 
-      /* IMPORTANT: above page content, below header (header is 40) */
-      z-index: 39;
+  <!-- Optional: prevent flash before JS applies persisted theme -->
+  <script>
+    (function () {
+      try {
+        const saved = localStorage.getItem("forge_theme");
+        if (saved === "light" || saved === "dark") {
+          document.documentElement.setAttribute("data-theme", saved);
+        }
+      } catch {}
+    })();
+  </script>
+</head>
 
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
+<body>
+  <a href="#mainContent" class="skip-link">Skip to main content</a>
 
-    .mobile-nav.open {
-      display: block;
-    }
+  <header>
+    <nav class="nav" aria-label="Main navigation">
+      <div class="brand">
+        <img src="images/theforgelogo.png" alt="The Forge logo" class="brand-logo" />
+        <div>
+          <div class="brand-text-main">The Forge</div>
+          <div class="brand-text-sub">Members</div>
+        </div>
+      </div>
 
-    /* Only allow mobile nav to exist on mobile */
-    @media (min-width: 841px) {
-      .mobile-nav,
-      .mobile-nav.open {
-        display: none !important;
-      }
-    }
+      <div class="nav-links">
+        <a href="theforge.html">Home</a>
+        <a href="members.html" aria-current="page">Members</a>
+        <a href="prayerrequests.html" data-requires-auth="true">Prayer Requests</a>
+      </div>
+
+      <div class="nav-actions">
+        <!-- THEME: your theme.js expects themeToggleDesktop/themeToggleMobile -->
+        <button
+          class="theme-toggle"
+          id="themeToggleDesktop"
+          type="button"
+          aria-label="Toggle theme"
+          title="Toggle theme"
+        >🌓</button>
+
+        <!-- ACCOUNT: your auth.js expects accountButton/mobileAccountButton -->
+        <button
+          class="btn btn-outline"
+          id="accountButton"
+          type="button"
+        >
+          <span class="icon">🔒</span>
+          <span id="navAuthButtonLabel">Sign In</span>
+        </button>
+
+        <div class="nav-user">
+          <span class="nav-user-label" id="navUserLabel">Guest</span>
+          <button class="btn btn-danger" id="signOutButton" type="button" style="display:none;">
+            <span class="icon">↩</span><span>Sign Out</span>
+          </button>
+        </div>
+
+        <!-- Hamburger -->
+        <button
+          class="hamburger"
+          id="hamburger"
+          type="button"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
+          aria-controls="mobileNav"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile nav overlay -->
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation" aria-hidden="true">
+      <div class="mobile-nav-inner">
+        <a href="theforge.html">Home</a>
+        <a href="members.html" aria-current="page">Members</a>
+        <a href="prayerrequests.html" data-requires-auth="true">Prayer Requests</a>
+
+        <div style="margin-top: 0.75rem; display: grid; gap: 0.6rem;">
+          <button class="btn btn-outline" id="mobileAccountButton" type="button">
+            <span class="icon">🔒</span>
+            <span id="navMobileAuthButtonLabel">Sign In / Create</span>
+          </button>
+          <div class="nav-user-label" id="navMobileUserLabel">Guest</div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Optional: Accessibility toolbar container (if your CSS supports it) -->
+  <div class="accessibility-toolbar" role="region" aria-label="Accessibility options">
+    <div class="accessibility-toolbar-inner">
+      <span class="accessibility-toolbar-label">Accessibility</span>
+      <div class="a11y-button-group">
+        <button type="button" class="a11y-btn" id="a11yFontDecrease" aria-label="Decrease text size">
+          <span class="icon">A-</span><span>Text</span>
+        </button>
+        <button type="button" class="a11y-btn" id="a11yFontIncrease" aria-label="Increase text size">
+          <span class="icon">A+</span><span>Text</span>
+        </button>
+        <button type="button" class="a11y-btn" id="a11yFontReset" aria-label="Reset text size">
+          <span class="icon">↺</span><span>Reset</span>
+        </button>
+        <button type="button" class="a11y-btn" id="a11yContrast" aria-pressed="false" aria-label="Toggle high contrast mode">
+          <span class="icon">◑</span><span>Contrast</span>
+        </button>
+        <button type="button" class="a11y-btn" id="a11yMotion" aria-pressed="false" aria-label="Toggle reduced motion">
+          <span class="icon">⏸</span><span>Motion</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <main id="mainContent" class="shell">
+    <section class="section" aria-labelledby="members-title">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">Roster</div>
+          <h1 id="members-title" class="section-title">Members of The Forge</h1>
+        </div>
+        <p class="section-subtitle">
+          Invite-only access. Leaders and members are shown below once signed in.
+        </p>
+      </div>
+
+      <!-- This is the prompt shown when not signed in -->
+      <div id="membersSignInPrompt" class="card" style="display:block;">
+        <h2 class="card-title">Sign In Required</h2>
+        <p class="card-text">
+          This roster is restricted to verified members. Use the Account button to sign in.
+        </p>
+        <button class="btn btn-primary" type="button" id="openAccountFromPrompt">
+          <span class="icon">🔒</span><span>Open Account</span>
+        </button>
+      </div>
+
+      <!-- Wrapper shown when signed in -->
+      <div id="membersWrapper" style="display:none;">
+        <div class="card" style="margin-bottom: 1.25rem;">
+          <h2 class="card-title">Status</h2>
+          <p class="card-text" id="membersStatus">Loading members…</p>
+        </div>
+
+        <div class="beliefs-grid">
+          <section class="beliefs-list" aria-label="Leaders list">
+            <h2 class="card-title" style="margin-bottom: 0.85rem;">Leaders</h2>
+            <div id="leadersGrid" class="members-grid"></div>
+          </section>
+
+          <section class="beliefs-list" aria-label="Members list">
+            <h2 class="card-title" style="margin-bottom: 0.85rem;">Members</h2>
+            <div id="membersGrid" class="members-grid"></div>
+          </section>
+        </div>
+      </div>
+
+      <p class="auth-footnote" style="margin-top: 1rem;">
+        <span id="authStatus">Not signed in</span>
+      </p>
+    </section>
+
+    <footer>
+      <div>© <span id="year"></span> The Forge · ESTD 2025</div>
+      <div>
+        For access questions, email
+        <a href="mailto:theforgetncommunity@gmail.com">theforgetncommunity@gmail.com</a>.
+      </div>
+    </footer>
+  </main>
+
+  <!-- AUTH MODAL (must match your auth.js IDs) -->
+  <div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authDialogTitle" aria-hidden="true">
+    <div class="auth-card" tabindex="-1">
+      <button type="button" class="auth-close-btn" id="authCloseBtn" aria-label="Close account window">✕</button>
+
+      <div class="auth-card-inner">
+        <div class="auth-card-header">
+          <div id="authDialogTitle" class="auth-card-title">Forge Account</div>
+          <div class="auth-card-sub">Invite-only access. Use the code you were given by the group owner.</div>
+        </div>
+
+        <div class="auth-toggle-row" role="tablist" aria-label="Account options">
+          <button type="button" class="auth-toggle-btn active" data-mode="signin" role="tab" aria-selected="true">
+            Sign In
+          </button>
+          <button type="button" class="auth-toggle-btn" data-mode="signup" role="tab" aria-selected="false">
+            Create Account
+          </button>
+        </div>
+
+        <!-- SIGN IN -->
+        <form id="loginForm" class="auth-form" aria-label="Sign in form">
+          <div class="auth-field">
+            <label class="auth-label" for="loginEmail">Email</label>
+            <input id="loginEmail" type="email" class="auth-input" autocomplete="email" required />
+          </div>
+
+          <div class="auth-field">
+            <label class="auth-label" for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" class="auth-input" autocomplete="current-password" required />
+          </div>
+
+          <div class="auth-footnote">
+            <a href="#" id="forgotPasswordLink">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="auth-btn">Sign In</button>
+          <div class="auth-error" id="authErrorLogin" role="status" aria-live="polite"></div>
+        </form>
+
+        <!-- SIGN UP -->
+        <form id="signupForm" class="auth-form" style="display:none;" aria-label="Create account form">
+          <div class="auth-field">
+            <label class="auth-label" for="signupFirstName">First Name</label>
+            <input id="signupFirstName" type="text" class="auth-input" autocomplete="given-name" required />
+          </div>
+
+          <div class="auth-field">
+            <label class="auth-label" for="signupLastName">Last Name</label>
+            <input id="signupLastName" type="text" class="auth-input" autocomplete="family-name" required />
+          </div>
+
+          <!-- Legacy optional single field (auth.js supports it) -->
+          <input id="signupName" type="text" class="auth-input" style="display:none;" />
+
+          <div class="auth-field">
+            <label class="auth-label" for="signupEmail">Email</label>
+            <input id="signupEmail" type="email" class="auth-input" autocomplete="email" required />
+          </div>
+
+          <div class="auth-field">
+            <label class="auth-label" for="signupPassword">Password</label>
+            <input id="signupPassword" type="password" class="auth-input" autocomplete="new-password" required />
+          </div>
+
+          <div class="auth-field">
+            <label class="auth-label" for="signupPassword2">Confirm Password</label>
+            <input id="signupPassword2" type="password" class="auth-input" autocomplete="new-password" required />
+          </div>
+
+          <div class="auth-field">
+            <label class="auth-label" for="signupInvite">Invite Code</label>
+            <input id="signupInvite" type="text" class="auth-input" required />
+          </div>
+
+          <button type="submit" class="auth-btn">Create Account</button>
+          <div class="auth-error" id="authErrorSignup" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Prompt button -> open modal
+    (function () {
+      const btn = document.getElementById("openAccountFromPrompt");
+      const accountBtn = document.getElementById("accountButton");
+      if (!btn || !accountBtn) return;
+      btn.addEventListener("click", () => accountBtn.click());
+    })();
+  </script>
+
+  <!-- Shared JS -->
+  <script src="theme.js"></script>
+  <script src="mobile-nav.js"></script>
+  <script src="a11y.js"></script>
+
+  <!-- Auth must be module -->
+  <script type="module" src="auth.js"></script>
+
+  <!-- Optional: if you still use the unified widget -->
+  <!-- <script src="accessibility-widget.js"></script> -->
+</body>
+</html>

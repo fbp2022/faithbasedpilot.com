@@ -9,7 +9,94 @@
   const STORAGE_KEY = "forge_a11y_settings";
 
   function loadSettings() {
+    try {// accessibility-widget.js
+// Unified accessibility controls with persistence
+
+(function () {
+  const STORAGE_KEY = "forge_a11y";
+
+  function load() {
     try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    } catch {
+      return {};
+    }
+  }
+
+  function save(update) {
+    try {
+      const current = load();
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ ...current, ...update })
+      );
+    } catch {}
+  }
+
+  const html = document.documentElement;
+  const body = document.body;
+
+  const btnInc = document.getElementById("a11yFontIncrease");
+  const btnDec = document.getElementById("a11yFontDecrease");
+  const btnReset = document.getElementById("a11yFontReset");
+  const btnContrast = document.getElementById("a11yContrast");
+  const btnMotion = document.getElementById("a11yMotion");
+
+  const state = load();
+
+  // Font size
+  let fontSize = state.fontSize || 100;
+  html.style.fontSize = fontSize + "%";
+
+  // Contrast
+  if (state.highContrast) {
+    html.setAttribute("data-contrast", "high");
+    btnContrast?.setAttribute("aria-pressed", "true");
+  }
+
+  // Motion
+  if (state.reduceMotion) {
+    body.classList.add("reduce-motion");
+    btnMotion?.setAttribute("aria-pressed", "true");
+  }
+
+  btnInc?.addEventListener("click", () => {
+    if (fontSize < 150) {
+      fontSize += 10;
+      html.style.fontSize = fontSize + "%";
+      save({ fontSize });
+    }
+  });
+
+  btnDec?.addEventListener("click", () => {
+    if (fontSize > 80) {
+      fontSize -= 10;
+      html.style.fontSize = fontSize + "%";
+      save({ fontSize });
+    }
+  });
+
+  btnReset?.addEventListener("click", () => {
+    fontSize = 100;
+    html.style.fontSize = "100%";
+    save({ fontSize });
+  });
+
+  btnContrast?.addEventListener("click", () => {
+    const active = html.getAttribute("data-contrast") === "high";
+    html.toggleAttribute("data-contrast", !active);
+    btnContrast.setAttribute("aria-pressed", String(!active));
+    save({ highContrast: !active });
+  });
+
+  btnMotion?.addEventListener("click", () => {
+    const active = body.classList.contains("reduce-motion");
+    body.classList.toggle("reduce-motion", !active);
+    btnMotion.setAttribute("aria-pressed", String(!active));
+    save({ reduceMotion: !active });
+  });
+})();
+
       const raw = window.localStorage.getItem(STORAGE_KEY);
       return raw ? JSON.parse(raw) : {};
     } catch {

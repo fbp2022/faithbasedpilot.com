@@ -4,967 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Forge</title>
+
   <meta name="color-scheme" content="dark light" />
   <meta name="description" content="The Forge is a biblically grounded men's community focused on real spiritual growth, accountability, and brotherhood." />
 
-  <style>
-    /* ================== BASE / THEME ================== */
-    :root {
-      --bg-main: #05070f;
-      --bg-elevated: rgba(10, 14, 30, 0.95);
-      --bg-card: rgba(9, 14, 32, 0.95);
-      --bg-card-soft: rgba(18, 24, 48, 0.9);
-      --bg-deep: #000000;
-
-      --bg-header-strong: rgba(0, 0, 0, 0.9);
-      --bg-header-soft: rgba(0, 0, 0, 0.7);
-      --bg-mobile-overlay: rgba(2, 4, 10, 0.97);
-
-      --border-subtle: rgba(0, 255, 200, 0.25);
-      --accent: #00ffd0;
-      --accent-soft: rgba(0, 255, 200, 0.5);
-      --accent-alt: #00aaff;
-
-      --text-main: #e3f6ff;
-      --text-muted: #c2d6f0;
-      --text-soft: #9ab0d1;
-      --danger: #ff4b4b;
-
-      --shadow-strong: 0 0 35px rgba(0, 0, 0, 0.9);
-      --shadow-accent: 0 0 24px rgba(0, 255, 200, 0.45);
-
-      --nav-height: 64px;
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-full: 999px;
-      --transition-fast: 0.18s ease;
-      --transition-med: 0.25s ease;
-    }
-
-    :root[data-theme="light"] {
-      --bg-main: #f5f7fb;
-      --bg-elevated: rgba(255, 255, 255, 0.98);
-      --bg-card: rgba(255, 255, 255, 0.98);
-      --bg-card-soft: rgba(245, 247, 252, 0.98);
-      --bg-deep: #c7d2fe;
-
-      --bg-header-strong: rgba(255, 255, 255, 0.98);
-      --bg-header-soft: rgba(248, 250, 252, 0.9);
-      --bg-mobile-overlay: rgba(245, 247, 252, 0.98);
-
-      --border-subtle: rgba(0, 140, 255, 0.25);
-      --accent: #0074ff;
-      --accent-soft: rgba(0, 116, 255, 0.5);
-      --accent-alt: #00b8ff;
-
-      --text-main: #071420;
-      --text-muted: #334155;
-      --text-soft: #64748b;
-    }
-
-    :root[data-contrast="high"] {
-      --bg-main: #000000;
-      --bg-card: #050810;
-      --bg-card-soft: #070b18;
-      --text-main: #ffffff;
-      --text-muted: #f3f4f6;
-      --text-soft: #d1d5db;
-      --accent: #00ffd0;
-      --accent-alt: #00c4ff;
-      --accent-soft: rgba(0, 255, 208, 0.75);
-      --border-subtle: rgba(255, 255, 255, 0.5);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body { height: 100%; scroll-behavior: smooth; }
-    html { font-size: 100%; }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at 0% 0%, var(--bg-card-soft) 0, var(--bg-main) 40%, var(--bg-deep) 100%);
-      color: var(--text-main);
-      -webkit-font-smoothing: antialiased;
-      padding-top: var(--nav-height);
-    }
-
-    body.reduce-motion * {
-      animation-duration: 0.001ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.001ms !important;
-      scroll-behavior: auto !important;
-    }
-
-    /* Prevent background scroll when overlays open */
-    body.no-scroll { overflow: hidden; }
-
-    /* Ambient animated background */
-    .ambient-orbit {
-      position: fixed;
-      inset: -40%;
-      pointer-events: none;
-      z-index: -1;
-      background:
-        radial-gradient(circle at 10% 0%, rgba(0, 255, 200, 0.16), transparent 55%),
-        radial-gradient(circle at 100% 100%, rgba(0, 140, 255, 0.18), transparent 60%);
-      opacity: 0.75;
-      animation: orbit 30s linear infinite alternate;
-      mix-blend-mode: screen;
-    }
-
-    @keyframes orbit {
-      0% { transform: translate3d(0, 0, 0) scale(1); }
-      50% { transform: translate3d(-3%, 4%, 0) scale(1.05); }
-      100% { transform: translate3d(3%, -4%, 0) scale(1.02); }
-    }
-
-    .shell {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 0 1.5rem 3.5rem;
-    }
-
-    /* Skip link */
-    .skip-link {
-      position: absolute;
-      left: -999px;
-      top: 0.5rem;
-      z-index: 100;
-      padding: 0.5rem 0.9rem;
-      border-radius: var(--radius-full);
-      background: var(--bg-card);
-      color: var(--text-main);
-      border: 1px solid var(--accent-soft);
-      text-decoration: none;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-    }
-    .skip-link:focus {
-      left: 50%;
-      transform: translateX(-50%);
-      outline: 2px solid var(--accent);
-      outline-offset: 3px;
-    }
-
-    /* Global focus */
-    a:focus-visible,
-    button:focus-visible,
-    input:focus-visible,
-    textarea:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 3px;
-    }
-
-    main a { text-decoration: underline; }
-    .btn, .nav-links a, .mobile-nav-inner a, .card a.btn { text-decoration: none; }
-
-    /* Accessibility note */
-    .accessibility-note {
-      margin: 0 0 1.6rem;
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius-md);
-      background: var(--bg-card-soft);
-      border: 2px solid var(--accent-soft);
-      font-size: 0.86rem;
-      line-height: 1.6;
-      color: var(--text-muted);
-    }
-    .accessibility-note strong { color: var(--text-main); }
-
-    /* Accessibility toolbar */
-    .accessibility-toolbar {
-      position: fixed;
-      bottom: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 60;
-      max-width: 1120px;
-      width: calc(100% - 2rem);
-    }
-
-    .accessibility-toolbar-inner {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 0.9rem;
-      border-radius: var(--radius-full);
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-strong);
-      font-size: 0.8rem;
-    }
-
-    .accessibility-toolbar-label {
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-soft);
-      white-space: nowrap;
-    }
-
-    .a11y-button-group {
-      display: inline-flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-left: auto;
-    }
-
-    .a11y-btn {
-      border-radius: var(--radius-full);
-      border: 1px solid var(--border-subtle);
-      padding: 0.25rem 0.7rem;
-      background: var(--bg-elevated);
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
-    }
-
-    .a11y-btn:hover {
-      background: var(--bg-card-soft);
-      border-color: var(--accent-soft);
-      color: var(--text-main);
-      transform: translateY(-1px);
-    }
-
-    .a11y-btn[aria-pressed="true"] {
-      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
-      color: #020409;
-      border-color: transparent;
-    }
-
-    .a11y-btn span.icon { font-size: 0.9rem; }
-
-    @media (max-width: 700px) {
-      .accessibility-toolbar-inner { border-radius: var(--radius-md); }
-      .accessibility-toolbar-label { width: 100%; }
-      .a11y-button-group { margin-left: 0; }
-    }
-
-    /* Fixed header */
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 50;
-      backdrop-filter: blur(16px);
-      background: linear-gradient(to bottom, var(--bg-header-strong), var(--bg-header-soft), transparent);
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: var(--nav-height);
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-      gap: 1.5rem;
-    }
-
-    .brand { display: flex; align-items: center; gap: 0.75rem; white-space: nowrap; }
-    .brand-logo {
-      width: 40px; height: 40px;
-      border-radius: 999px;
-      object-fit: cover;
-      border: 1px solid rgba(248, 250, 252, 0.5);
-      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9), 0 12px 30px rgba(0, 0, 0, 0.7);
-      background: radial-gradient(circle at 30% 30%, #facc15, #f97316);
-    }
-    .brand-text-main {
-      font-size: 1rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-    .brand-text-sub {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--text-soft);
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: var(--text-muted);
-      position: relative;
-      padding-bottom: 0.15rem;
-      cursor: pointer;
-      transition: color var(--transition-fast);
-    }
-
-    .nav-links a::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 0;
-      height: 2px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-alt));
-      transition: width var(--transition-fast);
-    }
-
-    .nav-links a:hover { color: var(--text-main); }
-    .nav-links a:hover::after,
-    .nav-links a:focus-visible::after { width: 100%; }
-
-    .nav-actions { display: flex; align-items: center; gap: 0.6rem; }
-
-    /* Theme toggle button */
-    .theme-toggle {
-      width: 40px;
-      height: 34px;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-elevated);
-      color: var(--text-muted);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: background var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast), color var(--transition-fast);
-    }
-    .theme-toggle:hover {
-      background: var(--bg-card-soft);
-      box-shadow: 0 0 15px rgba(0, 255, 200, 0.35);
-      transform: translateY(-1px);
-      color: var(--text-main);
-    }
-
-    /* Hamburger */
-    .hamburger {
-      display: none;
-      width: 40px;
-      height: 34px;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-elevated);
-      cursor: pointer;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      flex-direction: column;
-      padding: 6px 0;
-      transition: background var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
-    }
-    .hamburger-line {
-      width: 18px;
-      height: 2px;
-      border-radius: 999px;
-      background: var(--text-muted);
-      transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
-    }
-    .hamburger:hover {
-      background: var(--bg-card-soft);
-      box-shadow: 0 0 15px rgba(0, 255, 200, 0.35);
-      transform: translateY(-1px);
-    }
-    .hamburger.is-open .hamburger-line:nth-child(1) { transform: translateY(4px) rotate(45deg); background: var(--accent); }
-    .hamburger.is-open .hamburger-line:nth-child(2) { opacity: 0; }
-    .hamburger.is-open .hamburger-line:nth-child(3) { transform: translateY(-4px) rotate(-45deg); background: var(--accent); }
-
-    /* Mobile nav overlay */
-    .mobile-nav {
-      display: none;
-      position: fixed;
-      inset: var(--nav-height) 0 0 0;
-      background:
-        radial-gradient(circle at 0 0, rgba(0, 255, 200, 0.16), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(0, 140, 255, 0.18), transparent 60%),
-        var(--bg-mobile-overlay);
-      backdrop-filter: blur(20px);
-      z-index: 35;
-    }
-    .mobile-nav.open { display: block; }
-
-    .mobile-nav-inner {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 1.25rem 1.5rem 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .mobile-nav-inner a {
-      text-decoration: none;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--text-muted);
-      padding: 0.6rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      cursor: pointer;
-      transition: color var(--transition-fast), border-color var(--transition-fast);
-      background: transparent;
-      text-align: left;
-    }
-    .mobile-nav-inner a:last-child { border-bottom: none; }
-    .mobile-nav-inner a:hover { color: var(--accent); border-color: rgba(0, 255, 200, 0.5); }
-
-    @media (max-width: 840px) {
-      .nav-links { display: none; }
-      .hamburger { display: flex; }
-    }
-
-    /* Hero */
-    main { padding-top: 2.4rem; }
-
-    .hero {
-      margin: 2.4rem 0 2.5rem;
-      display: grid;
-      grid-template-columns: minmax(0, 3.2fr) minmax(0, 2.8fr);
-      gap: 2.25rem;
-      align-items: center;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.2rem 0.75rem 0.2rem 0.25rem;
-      border-radius: 999px;
-      background: radial-gradient(circle at 0 0, rgba(0, 255, 200, 0.3), transparent 70%);
-      border: 1px solid var(--border-subtle);
-      box-shadow: 0 0 18px rgba(0, 255, 200, 0.25);
-      margin-bottom: 1.1rem;
-    }
-
-    .hero-badge-label {
-      padding: 0.25rem 0.6rem;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
-      color: #020409;
-      font-size: 0.6rem;
-      font-weight: 600;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-    }
-
-    .hero-badge-text {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--text-soft);
-    }
-
-    .hero-title {
-      font-size: clamp(2.3rem, 4vw, 3rem);
-      line-height: 1.1;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 0.75rem;
-      color: var(--text-main);
-      text-shadow: 0 0 18px rgba(0, 255, 200, 0.4);
-    }
-
-    .hero-subtitle {
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.25em;
-      color: var(--text-soft);
-      margin-bottom: 1.4rem;
-    }
-
-    .hero-text {
-      font-size: 0.98rem;
-      color: var(--text-muted);
-      line-height: 1.7;
-      margin-bottom: 1.2rem;
-    }
-
-    .hero-scripture {
-      font-size: 0.85rem;
-      color: var(--text-soft);
-      border-left: 2px solid var(--accent-soft);
-      padding-left: 0.75rem;
-      margin-bottom: 1.7rem;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      align-items: center;
-    }
-
-    .btn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.45rem;
-      padding: 0.7rem 1.6rem;
-      border-radius: var(--radius-full);
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      border: 1px solid var(--border-subtle);
-      cursor: pointer;
-      text-decoration: none;
-      transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
-    }
-
-    .btn-primary {
-      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
-      color: #020409;
-      box-shadow: var(--shadow-accent);
-      border-color: transparent;
-    }
-
-    .btn-outline { background: var(--bg-elevated); color: var(--text-main); }
-
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 0 22px rgba(0, 255, 200, 0.4); }
-    .btn:active { transform: translateY(0); box-shadow: 0 0 10px rgba(0, 255, 200, 0.3); }
-    .btn span.icon { font-size: 1rem; }
-
-    .hero-panel {
-      position: relative;
-      border-radius: var(--radius-lg);
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      padding: 1.5rem 1.3rem;
-      box-shadow: var(--shadow-strong);
-      overflow: hidden;
-    }
-    .hero-panel-glow {
-      position: absolute;
-      inset: -40%;
-      background:
-        radial-gradient(circle at 10% 0%, rgba(0, 255, 200, 0.2), transparent 60%),
-        radial-gradient(circle at 90% 100%, rgba(0, 140, 255, 0.18), transparent 65%);
-      pointer-events: none;
-      mix-blend-mode: screen;
-      opacity: 0.75;
-    }
-    .hero-panel-content { position: relative; z-index: 1; }
-    .hero-panel-heading {
-      font-size: 0.85rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-soft);
-      margin-bottom: 0.4rem;
-    }
-    .hero-panel-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--text-main);
-      margin-bottom: 0.9rem;
-    }
-    .hero-panel-text {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 1rem;
-    }
-    .hero-panel-meta {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.75rem;
-      font-size: 0.8rem;
-      color: var(--text-soft);
-    }
-    .hero-panel-meta-item {
-      padding: 0.5rem 0.65rem;
-      border-radius: 12px;
-      background: var(--bg-card-soft);
-      border: 1px solid rgba(0, 255, 200, 0.18);
-    }
-    .meta-label {
-      font-size: 0.68rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--text-soft);
-      margin-bottom: 0.15rem;
-    }
-    .meta-value { font-size: 0.85rem; color: var(--text-main); }
-
-    /* Sections */
-    .section { margin-bottom: 2.75rem; }
-
-    .section-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 0.75rem;
-      margin-bottom: 1.25rem;
-    }
-    .section-kicker {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.22em;
-      color: var(--text-soft);
-      margin-bottom: 0.25rem;
-    }
-    .section-title {
-      font-size: 1.35rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-main);
-    }
-    .section-subtitle {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      max-width: 360px;
-    }
-
-    .card-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2.5fr);
-      gap: 1.75rem;
-    }
-
-    .card {
-      border-radius: var(--radius-lg);
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      padding: 1.5rem 1.35rem;
-      box-shadow: var(--shadow-strong);
-      transition: transform var(--transition-med), box-shadow var(--transition-med), border-color var(--transition-med), background var(--transition-med);
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 0 26px rgba(0, 255, 200, 0.35);
-      border-color: var(--accent-soft);
-    }
-
-    .card-title {
-      font-size: 1rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      margin-bottom: 0.65rem;
-      color: var(--text-main);
-    }
-
-    .card-text {
-      font-size: 0.96rem;
-      color: var(--text-muted);
-      line-height: 1.7;
-      margin-bottom: 0.6rem;
-    }
-
-    .card-list { list-style: none; margin-top: 0.4rem; }
-
-    .card-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-      font-size: 0.93rem;
-      color: var(--text-muted);
-      margin-bottom: 0.4rem;
-    }
-
-    .card-list-bullet {
-      width: 5px;
-      height: 5px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      margin-top: 0.45rem;
-      flex-shrink: 0;
-    }
-
-    .scripture-ref { font-size: 0.85rem; color: var(--text-soft); margin-top: 0.5rem; }
-
-    /* Beliefs */
-    .belief-intro { font-size: 0.96rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.1rem; }
-
-    .beliefs-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.8fr);
-      gap: 1.75rem;
-    }
-
-    .beliefs-list {
-      border-radius: var(--radius-lg);
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      padding: 1.4rem 1.35rem;
-      box-shadow: var(--shadow-strong);
-    }
-
-    .belief-item {
-      margin-bottom: 0.9rem;
-      padding-bottom: 0.7rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    }
-    .belief-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-
-    .belief-item h3 {
-      font-size: 0.95rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 0.35rem;
-      color: var(--text-main);
-    }
-    .belief-item p { font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; }
-
-    /* Rules */
-    .rules-list { list-style: none; }
-
-    .rules-list li {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      align-items: flex-start;
-      gap: 0.65rem;
-      font-size: 0.93rem;
-      color: var(--text-muted);
-      padding: 0.5rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    }
-    .rules-list li:last-child { border-bottom: none; }
-
-    .rule-number {
-      width: 1.8rem;
-      height: 1.8rem;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      color: var(--text-soft);
-    }
-    .rule-content strong { color: var(--text-main); }
-
-    .notice { margin-top: 0.9rem; font-size: 0.85rem; color: var(--danger); }
-
-    /* Join / Contact */
-    .join-note { font-size: 0.9rem; color: var(--text-muted); margin-top: 0.6rem; }
-
-    .contact-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr);
-      gap: 1.75rem;
-    }
-
-    .contact-form { display: grid; gap: 1.1rem; font-size: 0.9rem; }
-
-    .field { display: grid; gap: 0.3rem; }
-
-    .field label {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--text-soft);
-    }
-
-    .field input, .field textarea {
-      border-radius: 12px;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-elevated);
-      color: var(--text-main);
-      padding: 0.55rem 0.75rem;
-      font-size: 0.9rem;
-      outline: none;
-      min-height: 2.4rem;
-      resize: none;
-    }
-
-    .field textarea { min-height: 6rem; overflow-y: hidden; }
-
-    .field .cf-turnstile { margin-top: 0.35rem; }
-
-    :root[data-theme="light"] .field input,
-    :root[data-theme="light"] .field textarea { background: #ffffff; }
-
-    .field input:focus, .field textarea:focus {
-      border-color: var(--accent-soft);
-      box-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
-    }
-
-    .contact-meta { font-size: 0.93rem; color: var(--text-muted); line-height: 1.7; }
-    .contact-meta p + p { margin-top: 0.7rem; }
-    .contact-meta strong { color: var(--text-main); }
-
-    footer {
-      margin-top: 2rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      font-size: 0.8rem;
-      color: var(--text-soft);
-      display: flex;
-      justify-content: space-between;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    /* ================== AUTH MODAL ================== */
-    .auth-overlay {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at 0 0, rgba(0,0,0,0.65), rgba(0,0,0,0.92));
-      backdrop-filter: blur(18px);
-      z-index: 999;
-    }
-    .auth-overlay.open { display: flex; }
-
-    .auth-card {
-      width: 100%;
-      max-width: 420px;
-      border-radius: 18px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      box-shadow: 0 0 30px rgba(0,0,0,0.9);
-      padding: 1.4rem 1.4rem 1.2rem;
-      color: var(--text-main);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .auth-card::before {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      background:
-        radial-gradient(circle at 10% 0, rgba(0,255,200,0.2), transparent 65%),
-        radial-gradient(circle at 100% 100%, rgba(0,140,255,0.25), transparent 70%);
-      mix-blend-mode: screen;
-      opacity: 0.7;
-      pointer-events: none;
-    }
-
-    .auth-card-inner { position: relative; z-index: 1; }
-
-    .auth-card-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .auth-card-title {
-      font-size: 1rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }
-
-    .auth-card-sub { font-size: 0.78rem; color: var(--text-soft); max-width: 230px; text-align: right; }
-
-    .auth-close-btn {
-      position: absolute;
-      top: 0.6rem;
-      right: 0.7rem;
-      border: none;
-      background: transparent;
-      color: var(--text-soft);
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 0.2rem;
-    }
-
-    .auth-toggle-row {
-      display: flex;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      overflow: hidden;
-      margin-bottom: 0.8rem;
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-    }
-
-    .auth-toggle-btn {
-      flex: 1;
-      padding: 0.45rem 0.3rem;
-      text-align: center;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      color: var(--text-soft);
-    }
-
-    .auth-toggle-btn.active {
-      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
-      color: #020409;
-      font-weight: 600;
-    }
-
-    .auth-form { display: grid; gap: 0.55rem; margin-bottom: 0.6rem; }
-
-    .auth-field { display: grid; gap: 0.25rem; }
-
-    .auth-label {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-      color: var(--text-soft);
-    }
-
-    .auth-input {
-      border-radius: 10px;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-elevated);
-      padding: 0.5rem 0.7rem;
-      font-size: 0.9rem;
-      color: var(--text-main);
-      outline: none;
-    }
-
-    :root[data-theme="light"] .auth-input { background: #ffffff; color: var(--text-main); }
-
-    .auth-input:focus { border-color: var(--accent-soft); box-shadow: 0 0 12px rgba(0,255,200,0.45); }
-
-    .auth-btn {
-      margin-top: 0.5rem;
-      width: 100%;
-      border-radius: 999px;
-      border: none;
-      padding: 0.55rem;
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
-      color: #020409;
-      cursor: pointer;
-      box-shadow: 0 0 18px rgba(0,255,200,0.5);
-    }
-
-    .auth-btn:hover { transform: translateY(-1px); box-shadow: 0 0 24px rgba(0,255,200,0.7); }
-
-    .auth-error { font-size: 0.78rem; color: var(--danger); min-height: 1em; margin-top: 0.2rem; }
-    .auth-footnote { margin-top: 0.4rem; font-size: 0.74rem; color: var(--text-soft); }
-
-    /* Responsive */
-    @media (max-width: 880px) {
-      .hero { grid-template-columns: minmax(0, 1fr); }
-      .hero-panel { order: -1; }
-      .card-grid { grid-template-columns: minmax(0, 1fr); }
-      .beliefs-grid { grid-template-columns: minmax(0, 1fr); }
-      .contact-grid { grid-template-columns: minmax(0, 1fr); }
-    }
-
-    @media (max-width: 600px) {
-      .shell { padding: 0 1.1rem 3rem; }
-      .nav { padding: 0 1.1rem; }
-      footer { flex-direction: column; }
-    }
-  </style>
+  <!-- Global site styles (folder name contains a space, so use %20) -->
+  <link rel="stylesheet" href="styling%20css/styles.css" />
 </head>
 
 <body>
@@ -994,9 +39,10 @@
       </div>
 
       <div class="nav-actions">
+        <!-- IMPORTANT: IDs match theme.js -->
         <button
           class="theme-toggle"
-          id="themeToggle"
+          id="themeToggleDesktop"
           type="button"
           aria-label="Toggle theme"
           title="Toggle theme"
@@ -1019,6 +65,16 @@
 
     <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation" aria-hidden="true">
       <div class="mobile-nav-inner">
+        <!-- Optional: theme toggle available in mobile panel too -->
+        <button
+          class="theme-toggle"
+          id="themeToggleMobile"
+          type="button"
+          aria-label="Toggle theme"
+          title="Toggle theme"
+          style="margin: 0.2rem 0 0.65rem;"
+        >🌓</button>
+
         <a href="#overview">Overview</a>
         <a href="#why">Why</a>
         <a href="#beliefs">Beliefs</a>
@@ -1358,19 +414,17 @@
         <article class="card" aria-label="Contact form">
           <h3 class="card-title">Reach Out</h3>
 
-          <!-- NOTE:
-               Turnstile cannot be meaningfully validated with mailto:
-               so this form posts to /api/contact (your Worker) and falls back to mailto if needed.
-          -->
           <form class="contact-form" id="contactForm" action="#" method="post" novalidate>
             <div class="field">
               <label for="name">Name</label>
               <input id="name" name="name" type="text" autocomplete="name" required />
             </div>
+
             <div class="field">
               <label for="email">Email</label>
               <input id="email" name="email" type="email" autocomplete="email" required />
             </div>
+
             <div class="field">
               <label for="message">Message</label>
               <textarea id="message" name="message" rows="4" required placeholder="Share briefly where you’re at and what you’re looking for."></textarea>
@@ -1414,7 +468,7 @@
     </footer>
   </main>
 
-  <!-- AUTH MODAL -->
+  <!-- AUTH MODAL (auth.js controls open/close/modes) -->
   <div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authDialogTitle" aria-hidden="true">
     <div class="auth-card" tabindex="-1">
       <button type="button" class="auth-close-btn" id="authCloseBtn" aria-label="Close account window">✕</button>
@@ -1475,60 +529,25 @@
     </div>
   </div>
 
+  <!-- Turnstile -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+  <!-- Your site scripts -->
+  <script src="theme.js" defer></script>
+  <script src="accessibility-widget.js" defer></script>
+  <script src="auth.js" defer></script>
 
   <script>
     // YEAR
     document.getElementById('year').textContent = new Date().getFullYear();
 
     // ---------------------------
-    // THEME (persisted)
-    // ---------------------------
-    (function () {
-      const htmlEl = document.documentElement;
-      const btn = document.getElementById('themeToggle');
-
-      function getInitialTheme() {
-        const saved = localStorage.getItem('forge_theme');
-        if (saved === 'light' || saved === 'dark') return saved;
-        const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-        return prefersLight ? 'light' : 'dark';
-      }
-
-      function applyTheme(theme) {
-        if (theme === 'light') htmlEl.setAttribute('data-theme', 'light');
-        else htmlEl.removeAttribute('data-theme');
-        localStorage.setItem('forge_theme', theme);
-      }
-
-      const initial = getInitialTheme();
-      applyTheme(initial);
-
-      if (btn) {
-        btn.addEventListener('click', () => {
-          const isLight = htmlEl.getAttribute('data-theme') === 'light';
-          applyTheme(isLight ? 'dark' : 'light');
-        });
-      }
-    })();
-
-    // ---------------------------
-    // MOBILE NAV (polished)
-    // - closes on Escape, outside click
-    // - traps focus while open
-    // - prevents background scroll
+    // MOBILE NAV (basic + accessible)
     // ---------------------------
     (function () {
       const hamburger = document.getElementById('hamburger');
       const mobileNav = document.getElementById('mobileNav');
       if (!hamburger || !mobileNav) return;
-
-      let lastFocused = null;
-
-      function getFocusable(container) {
-        return Array.from(container.querySelectorAll('a, button, [tabindex]:not([tabindex="-1"])'))
-          .filter(el => !el.hasAttribute('disabled'));
-      }
 
       function closeNav() {
         mobileNav.classList.remove('open');
@@ -1536,198 +555,28 @@
         hamburger.classList.remove('is-open');
         hamburger.setAttribute('aria-expanded', 'false');
         document.body.classList.remove('no-scroll');
-
-        if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
       }
 
       function openNav() {
-        lastFocused = document.activeElement;
         mobileNav.classList.add('open');
         mobileNav.setAttribute('aria-hidden', 'false');
         hamburger.classList.add('is-open');
         hamburger.setAttribute('aria-expanded', 'true');
         document.body.classList.add('no-scroll');
-
-        const focusables = getFocusable(mobileNav);
-        if (focusables.length) focusables[0].focus();
       }
 
       hamburger.addEventListener('click', () => {
         mobileNav.classList.contains('open') ? closeNav() : openNav();
       });
 
-      hamburger.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          mobileNav.classList.contains('open') ? closeNav() : openNav();
-        }
-      });
-
-      // Close on link click
-      mobileNav.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', () => closeNav());
-      });
-
-      // Close on Escape
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && mobileNav.classList.contains('open')) closeNav();
       });
 
-      // Close on outside click (click on overlay background)
-      mobileNav.addEventListener('click', (e) => {
-        if (e.target === mobileNav) closeNav();
-      });
+      mobileNav.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeNav));
 
-      // Focus trap when open
-      mobileNav.addEventListener('keydown', (e) => {
-        if (e.key !== 'Tab' || !mobileNav.classList.contains('open')) return;
-
-        const focusables = getFocusable(mobileNav);
-        if (!focusables.length) return;
-
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
-
-        if (e.shiftKey) {
-          if (document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-          }
-        } else {
-          if (document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
-        }
-      });
-
-      // Expose for other scripts
+      // expose for auth.js to use if needed
       window.__forgeCloseMobileNav = closeNav;
-    })();
-
-    // ---------------------------
-    // AUTH MODAL (now actually opens)
-    // - opens from "Account" button
-    // - intercepts Members/Prayer Requests if "requires auth"
-    // ---------------------------
-    (function () {
-      const overlay = document.getElementById('authOverlay');
-      if (!overlay) return;
-
-      const dialog = overlay.querySelector('.auth-card');
-      const closeBtn = document.getElementById('authCloseBtn');
-      const toggleButtons = overlay.querySelectorAll('.auth-toggle-btn');
-      const signInForm = document.getElementById('authSignInForm');
-      const signUpForm = document.getElementById('authSignUpForm');
-      const errorSignIn = document.getElementById('authError');
-      const errorSignUp = document.getElementById('authErrorSignup');
-
-      const openBtn = document.getElementById('openAccountBtn');
-
-      let lastFocusedElement = null;
-
-      function getFocusableElements() {
-        return overlay.querySelectorAll('button, [href], input, textarea, [tabindex]:not([tabindex="-1"])');
-      }
-
-      function openOverlay(fromElement) {
-        lastFocusedElement = fromElement || document.activeElement;
-        overlay.classList.add('open');
-        overlay.setAttribute('aria-hidden', 'false');
-        document.body.classList.add('no-scroll');
-
-        // Ensure mobile nav is closed if it was open
-        if (window.__forgeCloseMobileNav) window.__forgeCloseMobileNav();
-
-        if (dialog) dialog.focus();
-      }
-
-      function closeOverlay() {
-        overlay.classList.remove('open');
-        overlay.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('no-scroll');
-        if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') lastFocusedElement.focus();
-      }
-
-      if (openBtn) openBtn.addEventListener('click', () => openOverlay(openBtn));
-      if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
-
-      overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) closeOverlay();
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && overlay.classList.contains('open')) closeOverlay();
-      });
-
-      overlay.addEventListener('keydown', (e) => {
-        if (e.key !== 'Tab' || !overlay.classList.contains('open')) return;
-
-        const focusable = Array.from(getFocusableElements());
-        if (focusable.length === 0) return;
-
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if (e.shiftKey) {
-          if (document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-          }
-        } else {
-          if (document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
-        }
-      });
-
-      function setModeCorrect(mode) {
-        toggleButtons.forEach((btn) => {
-          const isActive = btn.dataset.mode === mode;
-          btn.classList.toggle('active', isActive);
-          btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        });
-
-        if (mode === 'signin') {
-          signInForm.style.display = 'grid';
-          signUpForm.style.display = 'none';
-        } else {
-          signInForm.style.display = 'none';
-          signUpForm.style.display = 'grid';
-        }
-
-        if (errorSignIn) errorSignIn.textContent = '';
-        if (errorSignUp) errorSignUp.textContent = '';
-      }
-
-      setModeCorrect('signin');
-
-      toggleButtons.forEach((btn) => {
-        btn.addEventListener('click', () => setModeCorrect(btn.dataset.mode));
-      });
-
-      signInForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        errorSignIn.textContent = "Firebase sign-in is not connected yet. This is UI only.";
-      });
-
-      signUpForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        errorSignUp.textContent = "Firebase account creation is not connected yet. This is UI only.";
-      });
-
-      // Intercept nav links marked requires-auth
-      document.querySelectorAll('a[data-requires-auth="true"]').forEach((a) => {
-        a.addEventListener('click', (e) => {
-          // Since auth is not wired, always intercept for now
-          e.preventDefault();
-          openOverlay(a);
-          if (errorSignIn) errorSignIn.textContent = "Members areas are invite-only. Sign-in is not wired yet.";
-        });
-      });
-
-      window.openForgeAuthOverlay = () => openOverlay();
     })();
 
     // ---------------------------
@@ -1736,124 +585,16 @@
     (function () {
       const messageEl = document.getElementById('message');
       if (!messageEl) return;
-
       const autoResize = () => {
         messageEl.style.height = 'auto';
         messageEl.style.height = messageEl.scrollHeight + 'px';
       };
-
       messageEl.addEventListener('input', autoResize);
       autoResize();
     })();
 
     // ---------------------------
-    // ACCESSIBILITY TOOLBAR (persisted)
-    // ---------------------------
-    (function () {
-      const htmlEl = document.documentElement;
-      const bodyEl = document.body;
-
-      const btnFontInc = document.getElementById('a11yFontIncrease');
-      const btnFontDec = document.getElementById('a11yFontDecrease');
-      const btnFontReset = document.getElementById('a11yFontReset');
-      const btnContrast = document.getElementById('a11yContrast');
-      const btnMotion = document.getElementById('a11yMotion');
-
-      const storageKey = 'forge_a11y';
-      const defaults = { fontSizePercent: 100, highContrast: false, reduceMotion: false };
-
-      function loadState() {
-        try {
-          const raw = localStorage.getItem(storageKey);
-          if (!raw) return { ...defaults };
-          const parsed = JSON.parse(raw);
-          return { ...defaults, ...parsed };
-        } catch {
-          return { ...defaults };
-        }
-      }
-
-      function saveState(state) {
-        try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch {}
-      }
-
-      let state = loadState();
-
-      function applyAll() {
-        htmlEl.style.fontSize = state.fontSizePercent + '%';
-
-        if (state.highContrast) {
-          htmlEl.setAttribute('data-contrast', 'high');
-          if (btnContrast) btnContrast.setAttribute('aria-pressed', 'true');
-        } else {
-          htmlEl.removeAttribute('data-contrast');
-          if (btnContrast) btnContrast.setAttribute('aria-pressed', 'false');
-        }
-
-        if (state.reduceMotion) {
-          bodyEl.classList.add('reduce-motion');
-          if (btnMotion) btnMotion.setAttribute('aria-pressed', 'true');
-        } else {
-          bodyEl.classList.remove('reduce-motion');
-          if (btnMotion) btnMotion.setAttribute('aria-pressed', 'false');
-        }
-      }
-
-      function increaseFont() {
-        if (state.fontSizePercent < 150) {
-          state.fontSizePercent += 10;
-          saveState(state);
-          applyAll();
-        }
-      }
-
-      function decreaseFont() {
-        if (state.fontSizePercent > 80) {
-          state.fontSizePercent -= 10;
-          saveState(state);
-          applyAll();
-        }
-      }
-
-      function resetFont() {
-        state.fontSizePercent = 100;
-        saveState(state);
-        applyAll();
-      }
-
-      function toggleContrast() {
-        state.highContrast = !state.highContrast;
-        saveState(state);
-        applyAll();
-      }
-
-      function toggleMotion() {
-        state.reduceMotion = !state.reduceMotion;
-        saveState(state);
-        applyAll();
-      }
-
-      if (btnFontInc) btnFontInc.addEventListener('click', increaseFont);
-      if (btnFontDec) btnFontDec.addEventListener('click', decreaseFont);
-      if (btnFontReset) btnFontReset.addEventListener('click', resetFont);
-      if (btnContrast) btnContrast.addEventListener('click', toggleContrast);
-      if (btnMotion) btnMotion.addEventListener('click', toggleMotion);
-
-      // Respect prefers-reduced-motion by default only if user has never set state
-      const hasSaved = !!localStorage.getItem(storageKey);
-      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!hasSaved && prefersReducedMotion) {
-        state.reduceMotion = true;
-        saveState(state);
-      }
-
-      applyAll();
-    })();
-
-    // ---------------------------
     // CONTACT FORM
-    // - Turnstile + POST to /api/contact (your Worker endpoint)
-    // - fallback to mailto if endpoint not present
     // ---------------------------
     (function () {
       const form = document.getElementById('contactForm');
@@ -1875,7 +616,6 @@
           return;
         }
 
-        // Turnstile token is injected into form by CF script as "cf-turnstile-response"
         const tokenEl = form.querySelector('input[name="cf-turnstile-response"]');
         const turnstileToken = tokenEl ? tokenEl.value : '';
 
@@ -1886,8 +626,6 @@
 
         setStatus('Sending...');
 
-        // Your Cloudflare Worker should accept POST /api/contact
-        // { name, email, message, turnstileToken }
         try {
           const res = await fetch('/api/contact', {
             method: 'POST',
@@ -1895,14 +633,11 @@
             body: JSON.stringify({ name, email, message, turnstileToken })
           });
 
-          if (!res.ok) {
-            throw new Error('Bad response');
-          }
+          if (!res.ok) throw new Error('Bad response');
 
           setStatus('Message sent. You will hear back soon.');
           form.reset();
         } catch (err) {
-          // fallback to mailto
           const subject = encodeURIComponent('Forge Contact - ' + name);
           const body = encodeURIComponent(
             'Name: ' + name + '\n' +

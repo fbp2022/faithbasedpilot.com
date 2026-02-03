@@ -8,7 +8,6 @@
   <meta name="color-scheme" content="dark light" />
   <meta name="description" content="The Forge is a biblically grounded men's community focused on real spiritual growth, accountability, and brotherhood." />
 
-  <!-- Global site styles (folder name contains a space, so use %20) -->
   <link rel="stylesheet" href="styling.css" />
 </head>
 
@@ -48,47 +47,48 @@
           title="Toggle theme"
         >🌓</button>
 
-        <button
-          class="hamburger"
-          id="hamburger"
-          type="button"
-          aria-label="Toggle navigation menu"
-          aria-expanded="false"
-          aria-controls="mobileNav"
-        >
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-        </button>
-      </div>
-    </nav>
+        <!-- MOBILE TOP ICONS (replaces hamburger) -->
+        <nav class="mobile-top-icons" aria-label="Mobile quick navigation">
+          <!-- Overview -->
+          <a href="#overview" aria-label="Overview">
+            <svg class="mobile-top-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z"></path>
+            </svg>
+          </a>
 
-    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation" aria-hidden="true">
-      <div class="mobile-nav-inner">
-        <!-- Optional: theme toggle available in mobile panel too -->
-        <button
-          class="theme-toggle"
-          id="themeToggleMobile"
-          type="button"
-          aria-label="Toggle theme"
-          title="Toggle theme"
-          style="margin: 0.2rem 0 0.65rem;"
-        >🌓</button>
+          <!-- Members (auth-gated by your auth.js) -->
+          <a href="members.html" data-requires-auth="true" aria-label="Members">
+            <svg class="mobile-top-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"></path>
+            </svg>
+          </a>
 
-        <a href="#overview">Overview</a>
-        <a href="#why">Why</a>
-        <a href="#beliefs">Beliefs</a>
-        <a href="#rules">Rules</a>
-        <a href="#join">Join</a>
-        <a href="#contact">Contact</a>
-        <a href="members.html" data-requires-auth="true">Members</a>
-        <a href="prayerrequests.html" data-requires-auth="true">Prayer Requests</a>
+          <!-- Prayer Requests (auth-gated by your auth.js) -->
+          <a href="prayerrequests.html" data-requires-auth="true" aria-label="Prayer requests">
+            <svg class="mobile-top-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 11c0 5.65-7 10-7 10z"></path>
+            </svg>
+          </a>
+        </nav>
       </div>
     </nav>
   </header>
 
-  <!-- ACCESSIBILITY TOOLBAR -->
-  <div class="accessibility-toolbar" role="region" aria-label="Accessibility options">
+  <!-- ACCESSIBILITY WIDGET (toggles the toolbar) -->
+  <div class="a11y-widget" aria-label="Accessibility widget">
+    <button
+      type="button"
+      class="a11y-widget-btn"
+      id="a11yWidgetBtn"
+      aria-label="Open accessibility options"
+      aria-expanded="false"
+      aria-controls="accessibilityToolbar"
+      title="Accessibility"
+    >♿</button>
+  </div>
+
+  <!-- ACCESSIBILITY TOOLBAR (hidden until .open) -->
+  <div class="accessibility-toolbar" id="accessibilityToolbar" role="region" aria-label="Accessibility options">
     <div class="accessibility-toolbar-inner">
       <span class="accessibility-toolbar-label">Accessibility</span>
       <div class="a11y-button-group">
@@ -540,44 +540,6 @@
   <script>
     // YEAR
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    // ---------------------------
-    // MOBILE NAV (basic + accessible)
-    // ---------------------------
-    (function () {
-      const hamburger = document.getElementById('hamburger');
-      const mobileNav = document.getElementById('mobileNav');
-      if (!hamburger || !mobileNav) return;
-
-      function closeNav() {
-        mobileNav.classList.remove('open');
-        mobileNav.setAttribute('aria-hidden', 'true');
-        hamburger.classList.remove('is-open');
-        hamburger.setAttribute('aria-expanded', 'false');
-        document.body.classList.remove('no-scroll');
-      }
-
-      function openNav() {
-        mobileNav.classList.add('open');
-        mobileNav.setAttribute('aria-hidden', 'false');
-        hamburger.classList.add('is-open');
-        hamburger.setAttribute('aria-expanded', 'true');
-        document.body.classList.add('no-scroll');
-      }
-
-      hamburger.addEventListener('click', () => {
-        mobileNav.classList.contains('open') ? closeNav() : openNav();
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && mobileNav.classList.contains('open')) closeNav();
-      });
-
-      mobileNav.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeNav));
-
-      // expose for auth.js to use if needed
-      window.__forgeCloseMobileNav = closeNav;
-    })();
 
     // ---------------------------
     // Auto-grow contact textarea

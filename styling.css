@@ -1074,19 +1074,35 @@ footer {
 
 /* ================== FORCE OPAQUE MOBILE NAV ================== */
 @media (max-width: 840px) {
+  /* Keep the open/close logic intact */
   .mobile-nav {
-    background: #ffffff !important; /* FULL OPAQUE */
-    opacity: 1 !important;
+    /* FULL OPAQUE background */
+    background: #ffffff !important;
 
+    /* Do NOT force opacity here */
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
 
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   }
 
-  /* Dark theme override */
   :root[data-theme="dark"] .mobile-nav {
-    background: #05070f !important; /* matches dark bg */
+    background: #05070f !important;
+  }
+
+  /* Make link text readable */
+  .mobile-nav-inner a,
+  .mobile-nav-inner button {
+    color: #0f172a !important;
+  }
+
+  :root[data-theme="dark"] .mobile-nav-inner a,
+  :root[data-theme="dark"] .mobile-nav-inner button {
+    color: #e5edff !important;
+  }
+
+  /* Kill ambient bleed on mobile */
+  .ambient-orbit {
+    display: none !important;
   }
 }
-

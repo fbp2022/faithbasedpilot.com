@@ -302,13 +302,12 @@ header {
   -webkit-backdrop-filter: blur(16px);
 }
 
-/* FIX: On mobile, stop the header from fading to transparent.
-   That fade makes the whole thing look like the menu is see-through. */
+/* HARD FIX: on mobile, remove fade/blur so nothing "bleeds" */
 @media (max-width: 840px) {
   header {
-    background: var(--bg-header-strong);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    background: var(--bg-header-strong) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 }
 
@@ -470,21 +469,24 @@ header {
 }
 
 /* ================== MOBILE NAV (FULL OPAQUE) ================== */
+/* HARD FIX: use background-color + kill any/all background images/gradients */
 .mobile-nav {
   display: block;
   position: fixed;
 
-  /* FIX: Cover the ENTIRE viewport.
-     Your old inset started BELOW the header, which makes it look "transparent." */
+  /* cover entire viewport */
   inset: 0;
   padding-top: var(--nav-height);
 
-  background: var(--bg-mobile-overlay);
+  /* FORCE OPAQUE */
+  background-color: var(--bg-mobile-overlay) !important;
+  background-image: none !important;
+  background: var(--bg-mobile-overlay) !important;
 
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 
-  /* FIX: Put it above everything except auth modal */
+  /* above header + toolbars; below auth modal (999) */
   z-index: 998;
 
   opacity: 0;
@@ -494,7 +496,7 @@ header {
 }
 
 .mobile-nav.open {
-  opacity: 1;
+  opacity: 1 !important;
   pointer-events: auto;
   transform: translateY(0);
 }
@@ -566,6 +568,16 @@ header {
   margin-top: 0.6rem;
   font-size: 0.85rem;
   color: var(--text-muted);
+}
+
+/* Extra hardening: on mobile widths, reassert opacity + background */
+@media (max-width: 840px) {
+  .mobile-nav {
+    background-color: var(--bg-mobile-overlay) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }
 
 /* ================== PAGE TYPOGRAPHY ================== */

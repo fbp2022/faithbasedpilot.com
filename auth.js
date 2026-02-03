@@ -170,6 +170,36 @@ function formatDateTime(ts) {
   }
 }
 
+/**
+ * Ensure canDeletePrayers is resolved BEFORE we render the prayer list.
+ * This prevents a race where the list renders without delete buttons,
+ * then permissions arrive later.
+ */
+async function refreshCanDeletePrayers(user) {
+  canDeletePrayers = false;
+
+  if (!user) return;
+
+  if (user.uid === OWNER_UID) {
+    canDeletePrayers = true;
+    return;
+  }
+
+  try {
+    const profileRef = doc(db, "profiles", user.uid);
+    const profileSnap = await getDoc(profileRef);
+    if (profileSnap.exists()) {
+      const data = profileSnap.data();
+      if (data && data.canDeletePrayers === true) {
+        canDeletePrayers = true;
+      }
+    }
+  } catch (err) {
+    console.error("Error checking canDeletePrayers:", err);
+    canDeletePrayers = false;
+  }
+}
+
 /* ================== INVITE CODE (SIGNUP) ================== */
 
 async function loadInviteCode() {
@@ -261,7 +291,7 @@ if (loginForm) {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setLoginError("");
-      window.location.reload();
+      closeAuthOverlay(); // ✅ no reload needed
     } catch (error) {
       console.error("Login error:", error);
       let msg = "Could not sign in. Please check your email and password.";
@@ -381,7 +411,7 @@ if (signupForm) {
       );
 
       setSignupError("");
-      window.location.reload();
+      closeAuthOverlay(); // ✅ no reload needed
     } catch (error) {
       console.error("Signup error:", error);
       let msg = "Could not create account.";
@@ -528,7 +558,7 @@ function renderPrayerList(snapshot, user) {
           prayerCount: increment(1),
           prayedBy: arrayUnion(user.uid),
         });
-        window.location.reload();
+        // ✅ no reload; onSnapshot updates UI
       } catch (error) {
         console.error("Error updating prayer count:", error);
         alert("Could not update prayer count. Try again.");
@@ -555,6 +585,7 @@ function renderPrayerList(snapshot, user) {
         try {
           const ref = doc(db, "prayerRequests", id);
           await deleteDoc(ref);
+          // ✅ no reload; onSnapshot updates UI
         } catch (error) {
           console.error("Error deleting prayer request:", error);
           alert("Could not delete this request. Check permissions and try again.");
@@ -834,31 +865,11 @@ function handleMembersPageAuth(user) {
 
 /* ================== AUTH STATE LISTENER ================== */
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   currentUser = user;
 
-  canDeletePrayers = false;
-
-  if (user) {
-    if (user.uid === OWNER_UID) {
-      canDeletePrayers = true;
-    }
-
-    (async () => {
-      try {
-        const profileRef = doc(db, "profiles", user.uid);
-        const profileSnap = await getDoc(profileRef);
-        if (profileSnap.exists()) {
-          const data = profileSnap.data();
-          if (data && data.canDeletePrayers === true) {
-            canDeletePrayers = true;
-          }
-        }
-      } catch (err) {
-        console.error("Error checking canDeletePrayers:", err);
-      }
-    })();
-  }
+  // ✅ resolve permissions first to avoid delete-button race
+  await refreshCanDeletePrayers(user);
 
   const signedInLabel = user
     ? user.displayName || user.email || "Signed in"

@@ -11,8 +11,7 @@
   />
 
   <!-- Shared site styles -->
-  <!-- If your CSS file name/path differs, update this line only. -->
-  <link rel="stylesheet" href="./styling.css?v=1">
+  <link rel="stylesheet" href="./styling.css?v=1" />
 
   <!-- Optional: apply saved theme ASAP to avoid flash -->
   <script>
@@ -31,7 +30,7 @@
   <div class="ambient-orbit"></div>
 
   <header>
-    <nav class="nav">
+    <nav class="nav" aria-label="Main navigation">
       <div class="brand">
         <img src="images/theforgelogo.png" alt="The Forge logo" class="brand-logo" />
         <div>
@@ -40,6 +39,7 @@
         </div>
       </div>
 
+      <!-- Desktop text nav (shows on desktop, hidden on mobile via CSS) -->
       <div class="nav-links">
         <a href="theforge.html">Overview</a>
         <a href="members.html">Members</a>
@@ -64,43 +64,20 @@
           <span id="navAuthButtonLabel">Sign In</span>
         </button>
 
-        <button
-          class="hamburger"
-          id="hamburger"
-          type="button"
-          aria-label="Toggle navigation"
-          aria-expanded="false"
-          aria-controls="mobileNav"
-        >
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-        </button>
+        <!-- MOBILE: top icon nav (replaces hamburger + removes overlay menu) -->
+        <div class="mobile-top-icons" aria-label="Mobile quick navigation">
+          <a href="theforge.html" class="mobile-top-icon" aria-label="Overview" title="Overview">
+            <span aria-hidden="true">🏠</span>
+          </a>
+          <a href="members.html" class="mobile-top-icon" aria-label="Members" title="Members">
+            <span aria-hidden="true">👥</span>
+          </a>
+          <a href="prayerrequests.html" class="mobile-top-icon active" aria-label="Prayer Requests" title="Prayer Requests">
+            <span aria-hidden="true">🙏</span>
+          </a>
+        </div>
       </div>
     </nav>
-
-    <!-- Mobile nav overlay -->
-    <div class="mobile-nav" id="mobileNav" aria-hidden="true">
-      <div class="mobile-nav-inner">
-        <a href="theforge.html">Overview</a>
-        <a href="members.html">Members</a>
-        <a href="prayerrequests.html" class="active">Prayer Requests</a>
-
-        <!-- Mobile theme toggle -->
-        <button class="mobile-theme-toggle" id="themeToggleMobile" type="button">
-          <span class="mobile-theme-label">Toggle theme</span>
-          <span class="mobile-theme-icon" id="mobileThemeIcon">🌙</span>
-        </button>
-
-        <div class="mobile-account-meta">
-          <span id="navMobileUserLabel">Guest</span>
-        </div>
-
-        <button class="mobile-account-btn" id="mobileAccountButton" type="button">
-          <span id="navMobileAuthButtonLabel">Sign In / Create</span>
-        </button>
-      </div>
-    </div>
   </header>
 
   <main class="shell">

@@ -1,257 +1,126 @@
-// accessibility-widget.js
-// Global accessibility controls for The Forge
-// - Font size (80%–150%)
-// - High contrast mode
-// - Reduced motion
-// - Remembers settings in localStorage
+/* ================== ACCESSIBILITY WIDGET + TOOLBAR ================== */
 
-(function () {
-  const STORAGE_KEY = "forge_a11y_settings";
+/* Floating accessibility widget button */
+.a11y-widget {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 901; /* above content, below header/mobile nav/auth */
+}
 
-  function loadSettings() {
-    try {// accessibility-widget.js
-// Unified accessibility controls with persistence
+.a11y-widget-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  color: var(--text-main);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-strong);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  font-size: 1.25rem;
+  line-height: 1;
+}
 
-(function () {
-  const STORAGE_KEY = "forge_a11y";
+.a11y-widget-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 22px rgba(0, 116, 255, 0.22);
+  background: var(--bg-card-soft);
+}
+:root[data-theme="dark"] .a11y-widget-btn:hover {
+  box-shadow: 0 0 22px rgba(0, 255, 200, 0.35);
+}
 
-  function load() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-    } catch {
-      return {};
-    }
-  }
+.a11y-widget-btn:active {
+  transform: translateY(0);
+}
 
-  function save(update) {
-    try {
-      const current = load();
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ ...current, ...update })
-      );
-    } catch {}
-  }
+/* The toolbar itself (hidden by default) */
+.accessibility-toolbar {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 900; /* below header + mobile icon nav + auth is 999 */
+  max-width: 1120px;
+  width: calc(100% - 2rem);
 
-  const html = document.documentElement;
-  const body = document.body;
+  /* hidden state */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(10px);
+  transition: opacity var(--transition-med), transform var(--transition-med);
+}
 
-  const btnInc = document.getElementById("a11yFontIncrease");
-  const btnDec = document.getElementById("a11yFontDecrease");
-  const btnReset = document.getElementById("a11yFontReset");
-  const btnContrast = document.getElementById("a11yContrast");
-  const btnMotion = document.getElementById("a11yMotion");
+.accessibility-toolbar.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
 
-  const state = load();
+.accessibility-toolbar-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-strong);
+  font-size: 0.8rem;
+}
 
-  // Font size
-  let fontSize = state.fontSize || 100;
-  html.style.fontSize = fontSize + "%";
+.accessibility-toolbar-label {
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  white-space: nowrap;
+}
 
-  // Contrast
-  if (state.highContrast) {
-    html.setAttribute("data-contrast", "high");
-    btnContrast?.setAttribute("aria-pressed", "true");
-  }
+.a11y-button-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-left: auto;
+}
 
-  // Motion
-  if (state.reduceMotion) {
-    body.classList.add("reduce-motion");
-    btnMotion?.setAttribute("aria-pressed", "true");
-  }
+.a11y-btn {
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  padding: 0.25rem 0.7rem;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
 
-  btnInc?.addEventListener("click", () => {
-    if (fontSize < 150) {
-      fontSize += 10;
-      html.style.fontSize = fontSize + "%";
-      save({ fontSize });
-    }
-  });
+.a11y-btn:hover {
+  background: var(--bg-card-soft);
+  border-color: var(--accent-soft);
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
 
-  btnDec?.addEventListener("click", () => {
-    if (fontSize > 80) {
-      fontSize -= 10;
-      html.style.fontSize = fontSize + "%";
-      save({ fontSize });
-    }
-  });
+.a11y-btn[aria-pressed="true"] {
+  background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+  color: #020409;
+  border-color: transparent;
+}
 
-  btnReset?.addEventListener("click", () => {
-    fontSize = 100;
-    html.style.fontSize = "100%";
-    save({ fontSize });
-  });
-
-  btnContrast?.addEventListener("click", () => {
-    const active = html.getAttribute("data-contrast") === "high";
-    html.toggleAttribute("data-contrast", !active);
-    btnContrast.setAttribute("aria-pressed", String(!active));
-    save({ highContrast: !active });
-  });
-
-  btnMotion?.addEventListener("click", () => {
-    const active = body.classList.contains("reduce-motion");
-    body.classList.toggle("reduce-motion", !active);
-    btnMotion.setAttribute("aria-pressed", String(!active));
-    save({ reduceMotion: !active });
-  });
-})();
-
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : {};
-    } catch {
-      return {};
-    }
-  }
-
-  function saveSettings(partial) {
-    try {
-      const current = loadSettings();
-      const next = { ...current, ...partial };
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    } catch {
-      // fail silently; don’t break the page
-    }
-  }
-
-  const htmlEl = document.documentElement;
-  const bodyEl = document.body;
-
-  // Core widget elements
-  const widget = document.querySelector(".accessibility-toolbar");
-  if (!widget || !htmlEl || !bodyEl) return; // nothing to do on pages without the toolbar
-
-  const launcher = document.getElementById("a11yLauncher");
-  const panel = widget.querySelector(".accessibility-toolbar-inner");
-
-  const btnFontInc = document.getElementById("a11yFontIncrease");
-  const btnFontDec = document.getElementById("a11yFontDecrease");
-  const btnFontReset = document.getElementById("a11yFontReset");
-  const btnContrast = document.getElementById("a11yContrast");
-  const btnMotion = document.getElementById("a11yMotion");
-
-  // ----- INITIAL STATE FROM STORAGE / PREFS -----
-  const stored = loadSettings();
-
-  let fontSizePercent =
-    typeof stored.fontSize === "number" ? stored.fontSize : 100;
-
-  function applyFontSize() {
-    htmlEl.style.fontSize = fontSizePercent + "%";
-  }
-
-  applyFontSize();
-
-  // High contrast
-  if (stored.highContrast) {
-    htmlEl.setAttribute("data-contrast", "high");
-    if (btnContrast) btnContrast.setAttribute("aria-pressed", "true");
-  }
-
-  // Reduced motion (respect prefers-reduced-motion + stored value)
-  const prefersReducedMotion =
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  const shouldReduceMotion =
-    stored.reduceMotion === true || (stored.reduceMotion == null && prefersReducedMotion);
-
-  if (shouldReduceMotion) {
-    bodyEl.classList.add("reduce-motion");
-    if (btnMotion) btnMotion.setAttribute("aria-pressed", "true");
-  }
-
-  // ----- FONT SIZE CONTROLS -----
-  function increaseFont() {
-    if (fontSizePercent < 150) {
-      fontSizePercent += 10;
-      applyFontSize();
-      saveSettings({ fontSize: fontSizePercent });
-    }
-  }
-
-  function decreaseFont() {
-    if (fontSizePercent > 80) {
-      fontSizePercent -= 10;
-      applyFontSize();
-      saveSettings({ fontSize: fontSizePercent });
-    }
-  }
-
-  function resetFont() {
-    fontSizePercent = 100;
-    applyFontSize();
-    saveSettings({ fontSize: fontSizePercent });
-  }
-
-  if (btnFontInc) btnFontInc.addEventListener("click", increaseFont);
-  if (btnFontDec) btnFontDec.addEventListener("click", decreaseFont);
-  if (btnFontReset) btnFontReset.addEventListener("click", resetFont);
-
-  // ----- CONTRAST TOGGLE -----
-  function toggleContrast() {
-    const isHigh = htmlEl.getAttribute("data-contrast") === "high";
-    if (isHigh) {
-      htmlEl.removeAttribute("data-contrast");
-      if (btnContrast) btnContrast.setAttribute("aria-pressed", "false");
-      saveSettings({ highContrast: false });
-    } else {
-      htmlEl.setAttribute("data-contrast", "high");
-      if (btnContrast) btnContrast.setAttribute("aria-pressed", "true");
-      saveSettings({ highContrast: true });
-    }
-  }
-
-  if (btnContrast) btnContrast.addEventListener("click", toggleContrast);
-
-  // ----- MOTION TOGGLE -----
-  function toggleMotion() {
-    const isReduced = bodyEl.classList.contains("reduce-motion");
-    if (isReduced) {
-      bodyEl.classList.remove("reduce-motion");
-      if (btnMotion) btnMotion.setAttribute("aria-pressed", "false");
-      saveSettings({ reduceMotion: false });
-    } else {
-      bodyEl.classList.add("reduce-motion");
-      if (btnMotion) btnMotion.setAttribute("aria-pressed", "true");
-      saveSettings({ reduceMotion: true });
-    }
-  }
-
-  if (btnMotion) btnMotion.addEventListener("click", toggleMotion);
-
-  // ----- LAUNCHER OPEN/CLOSE -----
-  if (launcher && panel) {
-    function setOpen(isOpen) {
-      widget.classList.toggle("open", isOpen);
-      launcher.setAttribute("aria-expanded", isOpen ? "true" : "false");
-
-      if (isOpen) {
-        // focus first button inside the panel for keyboard users
-        const firstBtn = panel.querySelector("button");
-        if (firstBtn) firstBtn.focus();
-      }
-    }
-
-    launcher.addEventListener("click", () => {
-      const isOpen = !widget.classList.contains("open");
-      setOpen(isOpen);
-    });
-
-    // Click outside to close
-    document.addEventListener("click", (e) => {
-      if (!widget.classList.contains("open")) return;
-      if (!widget.contains(e.target)) {
-        setOpen(false);
-      }
-    });
-
-    // Esc closes when open
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && widget.classList.contains("open")) {
-        setOpen(false);
-        launcher.focus();
-      }
-    });
-  }
-})();
+/* Small screens: toolbar becomes a card, widget stays bottom-right */
+@media (max-width: 700px) {
+  .accessibility-toolbar-inner { border-radius: var(--radius-md); }
+  .accessibility-toolbar-label { width: 100%; }
+  .a11y-button-group { margin-left: 0; }
+}

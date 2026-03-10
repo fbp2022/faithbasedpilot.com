@@ -1095,9 +1095,561 @@ footer {
   color: var(--text-soft);
 }
 
+/* ================== HERO ================== */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2.5rem;
+  align-items: start;
+  padding: 3rem 0 2.5rem;
+}
+
+@media (max-width: 960px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-panel { display: none; }
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.3rem 0.9rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card-soft);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-soft);
+  margin-bottom: 1.1rem;
+}
+
+.hero-badge-label { color: var(--accent); font-weight: 600; }
+.hero-badge-text  { color: var(--text-soft); }
+
+.hero-title {
+  font-size: clamp(2.8rem, 6vw, 4.8rem);
+  line-height: 1.04;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-soft);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.hero-text {
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 1.75;
+  max-width: 600px;
+  margin-bottom: 0.9rem;
+}
+
+.hero-scripture {
+  font-style: italic;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  margin-bottom: 1.5rem;
+  padding-left: 0.9rem;
+  border-left: 2px solid var(--accent-soft);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Hero side panel */
+.hero-panel {
+  position: relative;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-strong);
+  overflow: hidden;
+}
+
+.hero-panel-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 80% 20%, rgba(0,116,255,0.12), transparent 60%);
+}
+:root[data-theme="dark"] .hero-panel-glow {
+  background: radial-gradient(circle at 80% 20%, rgba(0,255,200,0.1), transparent 60%);
+}
+
+.hero-panel-content { padding: 1.5rem; position: relative; z-index: 1; }
+
+.hero-panel-heading {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  margin-bottom: 0.3rem;
+}
+
+.hero-panel-title {
+  font-size: 1.3rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.hero-panel-text {
+  font-size: 0.93rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 0.75rem;
+}
+
+.hero-panel-meta {
+  margin-top: 1.1rem;
+  display: grid;
+  gap: 0.7rem;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 1rem;
+}
+
+.hero-panel-meta-item {}
+
+.meta-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-soft);
+  margin-bottom: 0.15rem;
+}
+
+.meta-value {
+  font-size: 0.88rem;
+  color: var(--text-main);
+  letter-spacing: 0.1em;
+}
+
+/* ================== SECTIONS ================== */
+.section {
+  padding: 3rem 0 1rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.section-kicker {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  margin-bottom: 0.3rem;
+}
+
+.section-title {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.section-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  max-width: 420px;
+  padding-top: 0.25rem;
+}
+
+/* ================== CARD GRID (two-column) ================== */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 760px) {
+  .card-grid { grid-template-columns: 1fr; }
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  color: var(--text-main);
+}
+
+.card-text {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.72;
+  margin-bottom: 0.75rem;
+}
+
+.card-list {
+  list-style: none;
+  display: grid;
+  gap: 0.45rem;
+  margin-bottom: 0.75rem;
+}
+
+.card-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: 0.93rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.card-list-bullet {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: 0.5rem;
+}
+
+/* ================== BELIEFS ================== */
+.belief-intro {
+  font-size: 0.96rem;
+  color: var(--text-muted);
+  line-height: 1.72;
+  margin-bottom: 1.5rem;
+  max-width: 860px;
+}
+
+.beliefs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 760px) {
+  .beliefs-grid { grid-template-columns: 1fr; }
+}
+
+.beliefs-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.belief-item {
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+}
+
+.belief-item h3 {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.belief-item p {
+  font-size: 0.93rem;
+  color: var(--text-muted);
+  line-height: 1.68;
+}
+
+/* ================== RULES ================== */
+.rules-list {
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+  counter-reset: rules;
+}
+
+.rules-list li {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+}
+
+.rules-list li::before {
+  counter-increment: rules;
+  content: counter(rules);
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+  color: #020409;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.1rem;
+}
+
+.rule-content {
+  font-size: 0.93rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.rule-content strong { color: var(--text-main); }
+
+.notice {
+  margin-top: 1rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-md);
+  background: rgba(255, 75, 75, 0.08);
+  border: 1px solid rgba(255, 75, 75, 0.25);
+  font-size: 0.88rem;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* ================== JOIN ================== */
+.join-note {
+  margin-top: 0.85rem;
+  font-size: 0.88rem;
+  color: var(--text-soft);
+  line-height: 1.65;
+  font-style: italic;
+}
+
+/* ================== CONTACT ================== */
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 760px) {
+  .contact-grid { grid-template-columns: 1fr; }
+}
+
+.contact-form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.field label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: var(--text-soft);
+}
+
+.field input,
+.field textarea {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  color: var(--text-main);
+  padding: 0.55rem 0.75rem;
+  font-size: 0.93rem;
+  outline: none;
+  font-family: inherit;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.field textarea { resize: vertical; min-height: 110px; }
+
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--accent-soft);
+  box-shadow: 0 0 12px rgba(0,116,255,0.18);
+}
+:root[data-theme="dark"] .field input:focus,
+:root[data-theme="dark"] .field textarea:focus {
+  box-shadow: 0 0 12px rgba(0,255,200,0.22);
+}
+
+.contact-meta p {
+  font-size: 0.93rem;
+  color: var(--text-muted);
+  line-height: 1.72;
+  margin-bottom: 0.6rem;
+}
+
+/* ================== SCRIPTURE REFERENCE ================== */
+.scripture-ref {
+  font-style: italic;
+  font-size: 0.88rem;
+  color: var(--text-soft);
+  margin-top: 0.5rem;
+}
+
+/* ================== BTN SOFT + DANGER (prayer wall) ================== */
+.btn-soft {
+  background: var(--bg-card-soft);
+  color: var(--text-main);
+  border-color: var(--border-subtle);
+}
+
+.btn-danger {
+  background: rgba(255,75,75,0.08);
+  color: var(--danger);
+  border-color: rgba(255,75,75,0.3);
+}
+
+.btn-danger:hover { background: rgba(255,75,75,0.16); }
+
+/* ================== PRAYER REQUEST CARDS (auth.js renders these) ================== */
+.prayer-card {
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 0 18px rgba(0,0,0,0.07);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.prayer-card:hover { border-color: var(--accent-soft); }
+
+.prayer-header {
+  padding: 1rem 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.prayer-main { flex: 1; min-width: 0; }
+
+.prayer-title {
+  font-size: 0.93rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-main);
+  margin-bottom: 0.3rem;
+}
+
+.prayer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: var(--text-soft);
+}
+
+.chevron {
+  font-size: 1.3rem;
+  color: var(--text-soft);
+  transition: transform var(--transition-fast);
+  user-select: none;
+}
+
+.prayer-card.open .chevron { transform: rotate(90deg); }
+
+.prayer-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.28s ease;
+}
+
+.prayer-body-inner {
+  padding: 0 1.1rem 0.85rem;
+  font-size: 0.93rem;
+  color: var(--text-muted);
+  line-height: 1.72;
+  white-space: pre-wrap;
+}
+
+.prayer-footer {
+  padding: 0.7rem 1.1rem 0.9rem;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.prayer-count {
+  font-size: 0.82rem;
+  color: var(--text-soft);
+}
+
+.hint-line {
+  font-size: 0.76rem;
+  color: var(--text-soft);
+  opacity: 0.7;
+}
+
+/* ================== MEMBER CARDS (auth.js renders these) ================== */
+.member-card {
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-strong);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.member-card.leader { border-color: var(--accent-soft); }
+
+.member-name {
+  font-size: 0.93rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-main);
+}
+
+.member-role-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  color: var(--text-soft);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  align-self: flex-start;
+}
+
+.member-card.leader .member-role-pill {
+  background: radial-gradient(circle at 0 0, var(--accent), var(--accent-alt));
+  color: #020409;
+  border-color: transparent;
+}
+
 /* ================== RESPONSIVE ================== */
 @media (max-width: 600px) {
   .shell { padding: 0 1.1rem 3rem; }
   .nav { padding: 0 1.1rem; }
   footer { flex-direction: column; }
+  .hero-title { font-size: 2.4rem; }
+  .hero-actions { flex-direction: column; align-items: flex-start; }
+  .section-header { flex-direction: column; }
 }

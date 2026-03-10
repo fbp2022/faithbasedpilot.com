@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Forge</title>
-
   <meta name="color-scheme" content="dark light" />
   <meta name="description" content="The Forge is a biblically grounded men's community focused on real spiritual growth, accountability, and brotherhood." />
 
@@ -38,6 +37,7 @@
         </div>
       </div>
 
+      <!-- Desktop nav links (hidden on mobile) -->
       <div class="nav-links">
         <a href="#overview">Overview</a>
         <a href="#why">Why</a>
@@ -50,7 +50,7 @@
       </div>
 
       <div class="nav-actions">
-        <!-- Theme toggle — IDs match theme.js -->
+        <!-- Theme toggle — ID matches theme.js -->
         <button
           class="theme-toggle"
           id="themeToggleDesktop"
@@ -65,21 +65,21 @@
           <span id="navAuthButtonLabel">Sign In</span>
         </button>
 
-        <!-- Mobile top icons -->
+        <!-- Mobile icon nav (replaces hamburger on small screens) -->
         <nav class="mobile-top-icons" aria-label="Mobile quick navigation">
           <a href="#overview" aria-label="Overview">
             <svg class="mobile-top-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z"></path>
+              <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z"/>
             </svg>
           </a>
           <a href="members.html" aria-label="Members">
             <svg class="mobile-top-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"></path>
+              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"/>
             </svg>
           </a>
           <a href="prayerrequests.html" aria-label="Prayer requests">
             <svg class="mobile-top-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 11c0 5.65-7 10-7 10z"></path>
+              <path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 11c0 5.65-7 10-7 10z"/>
             </svg>
           </a>
         </nav>
@@ -87,7 +87,7 @@
     </nav>
   </header>
 
-  <!-- ACCESSIBILITY WIDGET -->
+  <!-- ACCESSIBILITY WIDGET BUTTON -->
   <div class="a11y-widget" aria-label="Accessibility widget">
     <button
       type="button"
@@ -100,7 +100,7 @@
     >♿</button>
   </div>
 
-  <!-- ACCESSIBILITY TOOLBAR -->
+  <!-- ACCESSIBILITY TOOLBAR (hidden until .open is toggled) -->
   <div class="accessibility-toolbar" id="accessibilityToolbar" role="region" aria-label="Accessibility options">
     <div class="accessibility-toolbar-inner">
       <span class="accessibility-toolbar-label">Accessibility</span>
@@ -114,7 +114,7 @@
         <button type="button" class="a11y-btn" id="a11yFontReset" aria-label="Reset text size">
           <span class="icon">↺</span><span>Reset</span>
         </button>
-        <button type="button" class="a11y-btn" id="a11yContrast" aria-pressed="false" aria-label="Toggle high contrast mode">
+        <button type="button" class="a11y-btn" id="a11yContrast" aria-pressed="false" aria-label="Toggle high contrast">
           <span class="icon">◑</span><span>Contrast</span>
         </button>
         <button type="button" class="a11y-btn" id="a11yMotion" aria-pressed="false" aria-label="Toggle reduced motion">
@@ -162,16 +162,21 @@
           <a href="#overview" class="btn btn-outline">
             <span class="icon">⟶</span><span>Learn More</span>
           </a>
-          <!-- Account button in hero — triggers the same modal -->
+          <!-- Opens the auth modal -->
           <button type="button" class="btn btn-outline" id="openAccountBtn">
             <span class="icon">👤</span><span>Sign In / Account</span>
           </button>
         </div>
 
-        <!-- Auth status shown when signed in -->
-        <p class="nav-user-label" style="margin-top:0.75rem; font-size:0.85rem; color:var(--text-soft);">
+        <!-- Signed-in status display -->
+        <p style="margin-top:0.75rem; font-size:0.85rem; color:var(--text-soft);">
           <span id="navUserLabel"></span>
-          <button type="button" id="signOutButton" class="btn btn-outline" style="display:none; margin-left:0.5rem; font-size:0.8rem; padding:0.25rem 0.7rem;">Sign Out</button>
+          <button
+            type="button"
+            id="signOutButton"
+            class="btn btn-outline"
+            style="display:none; margin-left:0.5rem; font-size:0.78rem; padding:0.25rem 0.75rem;"
+          >Sign Out</button>
         </p>
       </div>
 
@@ -188,7 +193,6 @@
             <strong>God is the Pilot.</strong> As men of faith, we are the copilots - following His lead while helping
             guide others. We don't drift. We don't coast. We walk in obedience and lead with conviction.
           </p>
-
           <div class="hero-panel-meta">
             <div class="hero-panel-meta-item">
               <div class="meta-label">Primary Hub</div>
@@ -214,7 +218,6 @@
           A serious, Scripture-based men's community - not a feel-good hangout. Real growth. Real accountability.
         </p>
       </div>
-
       <div class="card-grid">
         <article class="card">
           <h3 class="card-title">Mission Statement</h3>
@@ -228,7 +231,6 @@
             <li><span class="card-list-bullet"></span><span>A place for men to lean on one another - something rare in today's culture.</span></li>
           </ul>
         </article>
-
         <article class="card">
           <h3 class="card-title">How We Meet</h3>
           <p class="card-text">The group primarily meets through Discord. This website serves as the home base for:</p>
@@ -253,7 +255,6 @@
           Real Christian brotherhood is hard to find. Men need a place to be sharpened, challenged, and supported.
         </p>
       </div>
-
       <div class="card-grid">
         <article class="card">
           <h3 class="card-title">The Need</h3>
@@ -268,7 +269,6 @@
             The Forge exists because growth happens better in community than alone - and because men need other men they can trust.
           </p>
         </article>
-
         <article class="card">
           <h3 class="card-title">Built on Scripture</h3>
           <p class="card-text">This community reflects clear biblical truth:</p>
@@ -292,57 +292,24 @@
         </div>
         <p class="section-subtitle">The Forge is built on the authority of Scripture. These beliefs shape everything we do.</p>
       </div>
-
       <p class="belief-intro">
         The Forge is built on the absolute authority of Scripture. Everything we believe, teach, and practice is rooted
         in the Word of God - not culture, tradition, or personal opinion.
       </p>
-
       <div class="beliefs-grid">
-        <div class="beliefs-list" aria-label="Statement of beliefs, items 1 through 5">
-          <div class="belief-item">
-            <h3>1. The Bible</h3>
-            <p>The Bible is the inspired, infallible, and authoritative Word of God (2 Timothy 3:16). It is the final standard for all faith and conduct.</p>
-          </div>
-          <div class="belief-item">
-            <h3>2. God</h3>
-            <p>There is one God who eternally exists in three Persons - Father, Son, and Holy Spirit (Matthew 28:19).</p>
-          </div>
-          <div class="belief-item">
-            <h3>3. Jesus Christ</h3>
-            <p>Jesus is the eternal Son of God - fully God and fully man. He lived a sinless life, died for our sins, rose from the dead, and is the only way to the Father (John 14:6).</p>
-          </div>
-          <div class="belief-item">
-            <h3>4. Salvation</h3>
-            <p>Salvation comes only through Jesus Christ - by grace through faith, not by works (Ephesians 2:8-9). It is the gift of God, not something we can earn.</p>
-          </div>
-          <div class="belief-item">
-            <h3>5. The Holy Spirit</h3>
-            <p>The Holy Spirit indwells every believer, empowering us to grow in holiness, truth, obedience, and boldness (Romans 8:11).</p>
-          </div>
+        <div class="beliefs-list" aria-label="Beliefs 1 through 5">
+          <div class="belief-item"><h3>1. The Bible</h3><p>The Bible is the inspired, infallible, and authoritative Word of God (2 Timothy 3:16). It is the final standard for all faith and conduct.</p></div>
+          <div class="belief-item"><h3>2. God</h3><p>There is one God who eternally exists in three Persons - Father, Son, and Holy Spirit (Matthew 28:19).</p></div>
+          <div class="belief-item"><h3>3. Jesus Christ</h3><p>Jesus is the eternal Son of God - fully God and fully man. He lived a sinless life, died for our sins, rose from the dead, and is the only way to the Father (John 14:6).</p></div>
+          <div class="belief-item"><h3>4. Salvation</h3><p>Salvation comes only through Jesus Christ - by grace through faith, not by works (Ephesians 2:8-9). It is the gift of God, not something we can earn.</p></div>
+          <div class="belief-item"><h3>5. The Holy Spirit</h3><p>The Holy Spirit indwells every believer, empowering us to grow in holiness, truth, obedience, and boldness (Romans 8:11).</p></div>
         </div>
-
-        <div class="beliefs-list" aria-label="Statement of beliefs, items 6 through 10">
-          <div class="belief-item">
-            <h3>6. The Church</h3>
-            <p>All believers form the Body of Christ - a family called to discipleship, unity, accountability, and love (John 13:35).</p>
-          </div>
-          <div class="belief-item">
-            <h3>7. Biblical Masculinity</h3>
-            <p>God designed men to lead with humility, protect with courage, provide with integrity, and serve with love (1 Corinthians 16:13-14).</p>
-          </div>
-          <div class="belief-item">
-            <h3>8. Accountability</h3>
-            <p>Scripture commands believers to correct, sharpen, and build one another up (Proverbs 27:17; Galatians 6:1). Brotherhood requires honesty and humility.</p>
-          </div>
-          <div class="belief-item">
-            <h3>9. Sin and Repentance</h3>
-            <p>Sin separates us from God - repentance restores us. We bring sin into the light and deal with it biblically (1 John 1:9).</p>
-          </div>
-          <div class="belief-item">
-            <h3>10. Spiritual Growth</h3>
-            <p>Every man is called to grow in Christ continually - in knowledge, character, and daily obedience (2 Peter 3:18).</p>
-          </div>
+        <div class="beliefs-list" aria-label="Beliefs 6 through 10">
+          <div class="belief-item"><h3>6. The Church</h3><p>All believers form the Body of Christ - a family called to discipleship, unity, accountability, and love (John 13:35).</p></div>
+          <div class="belief-item"><h3>7. Biblical Masculinity</h3><p>God designed men to lead with humility, protect with courage, provide with integrity, and serve with love (1 Corinthians 16:13-14).</p></div>
+          <div class="belief-item"><h3>8. Accountability</h3><p>Scripture commands believers to correct, sharpen, and build one another up (Proverbs 27:17; Galatians 6:1). Brotherhood requires honesty and humility.</p></div>
+          <div class="belief-item"><h3>9. Sin and Repentance</h3><p>Sin separates us from God - repentance restores us. We bring sin into the light and deal with it biblically (1 John 1:9).</p></div>
+          <div class="belief-item"><h3>10. Spiritual Growth</h3><p>Every man is called to grow in Christ continually - in knowledge, character, and daily obedience (2 Peter 3:18).</p></div>
         </div>
       </div>
     </section>
@@ -356,7 +323,6 @@
         </div>
         <p class="section-subtitle">These rules protect safety, clarity, and a serious, Scripture-first culture.</p>
       </div>
-
       <div class="card-grid">
         <article class="card">
           <h3 class="card-title">Core Rules</h3>
@@ -368,11 +334,10 @@
             <li><div class="rule-content"><strong>No Gossip or Slander</strong><br />We protect each other's integrity.</div></li>
             <li><div class="rule-content"><strong>Respect Schedules</strong><br />Most gatherings are virtual; participation is voluntary. We respect each other's time and responsibilities.</div></li>
             <li><div class="rule-content"><strong>18+ Only - For Safety</strong><br />Men only, adults only. This protects everyone. No minors for any reason.</div></li>
-            <li><div class="rule-content"><strong>Group Chat Courtesy</strong><br />Private conversations between 2-3 men should move to direct messages. If a discussion is open, relevant, or others can join naturally, that is strongly encouraged.</div></li>
+            <li><div class="rule-content"><strong>Group Chat Courtesy</strong><br />Private conversations between 2-3 men should move to direct messages. Open, relevant discussions are strongly encouraged.</div></li>
             <li><div class="rule-content"><strong>Brotherhood</strong><br />We pray for each other, support each other, and show up when we can.</div></li>
           </ol>
         </article>
-
         <article class="card">
           <h3 class="card-title">Culture &amp; Safety</h3>
           <p class="card-text">The goal is a strong, clean, bold environment - masculine, direct, and firmly rooted in Scripture. Not soft, not watered down, and not reckless.</p>
@@ -391,7 +356,6 @@
         </div>
         <p class="section-subtitle">Joining is simple - but not casual. Read, consider, and then step in with intention.</p>
       </div>
-
       <div class="card-grid">
         <article class="card">
           <h3 class="card-title">How Joining Works</h3>
@@ -403,16 +367,13 @@
           </ul>
           <p class="join-note">This is a place for men who are serious about following Christ, growing in biblical masculinity, and sharpening one another.</p>
         </article>
-
         <article class="card">
           <h3 class="card-title">Join The Discord Server</h3>
           <p class="card-text">The link below connects you to the primary Forge Discord server. This link may be periodically rotated for security and stewardship.</p>
-
           <a href="https://discord.gg/NfSXaJNw" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
             <span class="icon">💬</span><span>Enter The Forge on Discord</span>
           </a>
-
-          <p class="join-note">If you're unsure or want a conversation before joining, scroll down to the contact section. It's okay to take a step first, ask questions, and move forward with clarity.</p>
+          <p class="join-note">If you're unsure or want a conversation before joining, scroll down to the contact section.</p>
         </article>
       </div>
     </section>
@@ -426,46 +387,40 @@
         </div>
         <p class="section-subtitle">Some men need a real conversation before stepping into a group. That's not weakness - it's wisdom.</p>
       </div>
-
       <div class="contact-grid">
         <article class="card" aria-label="Contact form">
           <h3 class="card-title">Reach Out</h3>
-
-          <form class="contact-form" id="contactForm" action="#" method="post" novalidate>
+          <!-- Using unique IDs (contactName/contactEmail/contactMessage) to avoid
+               collision with the prayer request form IDs on other pages -->
+          <form class="contact-form" id="contactForm" novalidate>
             <div class="field">
               <label for="contactName">Name</label>
               <input id="contactName" name="name" type="text" autocomplete="name" required />
             </div>
-
             <div class="field">
               <label for="contactEmail">Email</label>
               <input id="contactEmail" name="email" type="email" autocomplete="email" required />
             </div>
-
             <div class="field">
               <label for="contactMessage">Message</label>
               <textarea id="contactMessage" name="message" rows="4" required placeholder="Share briefly where you're at and what you're looking for."></textarea>
             </div>
-
             <div class="field">
               <label for="cf-turnstile-1">Verification</label>
               <div id="cf-turnstile-1" class="cf-turnstile" data-sitekey="0x4AAAAAACCHux8WMR1ry2Zq" data-theme="auto"></div>
             </div>
-
             <button type="submit" class="btn btn-outline">
               <span class="icon">📨</span><span>Send Message</span>
             </button>
-
             <div class="auth-error" id="contactStatus" role="status" aria-live="polite"></div>
           </form>
         </article>
-
         <article class="card">
           <h3 class="card-title">Before You Step In</h3>
           <div class="contact-meta">
             <p>This isn't a casual chat room. It's a brotherhood. If you want to talk one-on-one before joining, that's encouraged.</p>
             <p>Use the form or email <a href="mailto:theforgetncommunity@gmail.com">theforgetncommunity@gmail.com</a> if you:</p>
-            <ul class="card-list" style="margin-top: 0.4rem;">
+            <ul class="card-list" style="margin-top:0.4rem;">
               <li><span class="card-list-bullet"></span><span>Have questions about the Statement of Beliefs.</span></li>
               <li><span class="card-list-bullet"></span><span>Are coming from a rough church or life experience.</span></li>
               <li><span class="card-list-bullet"></span><span>Need clarity on what "biblical masculinity" actually means here.</span></li>
@@ -478,17 +433,12 @@
 
     <footer>
       <div>© <span id="year"></span> The Forge · ESTD 2025</div>
-      <div>
-        <span id="authStatus" style="font-size:0.85rem; color:var(--text-soft);"></span>
-      </div>
-      <div>
-        For accessibility questions, email
-        <a href="mailto:theforgetncommunity@gmail.com">theforgetncommunity@gmail.com</a>.
-      </div>
+      <div><span id="authStatus" style="font-size:0.85rem;color:var(--text-soft);"></span></div>
+      <div>For accessibility questions, email <a href="mailto:theforgetncommunity@gmail.com">theforgetncommunity@gmail.com</a>.</div>
     </footer>
   </main>
 
-  <!-- AUTH MODAL — IDs now match auth.js exactly -->
+  <!-- AUTH MODAL — all IDs aligned with auth.js -->
   <div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authDialogTitle" aria-hidden="true">
     <div class="auth-card" tabindex="-1">
       <button type="button" class="auth-close-btn" id="authCloseBtn" aria-label="Close account window">✕</button>
@@ -503,7 +453,7 @@
           <button type="button" class="auth-toggle-btn" data-mode="signup" role="tab" aria-selected="false">Create Account</button>
         </div>
 
-        <!-- SIGN IN FORM — id="loginForm", fields match auth.js -->
+        <!-- SIGN IN FORM — id="loginForm" matches auth.js -->
         <form id="loginForm" class="auth-form" aria-label="Sign in form">
           <div class="auth-field">
             <label class="auth-label" for="loginEmail">Email</label>
@@ -519,7 +469,7 @@
           <div class="auth-footnote">Already joined? Use the email and password you created.</div>
         </form>
 
-        <!-- SIGN UP FORM — id="signupForm", fields match auth.js -->
+        <!-- SIGN UP FORM — id="signupForm", first/last name matches auth.js -->
         <form id="signupForm" class="auth-form" style="display:none;" aria-label="Create account form">
           <div class="auth-field">
             <label class="auth-label" for="signupFirstName">First Name</label>
@@ -529,7 +479,7 @@
             <label class="auth-label" for="signupLastName">Last Name</label>
             <input id="signupLastName" type="text" class="auth-input" autocomplete="family-name" required />
           </div>
-          <!-- Hidden legacy field auth.js checks as fallback -->
+          <!-- Hidden legacy field auth.js checks as fallback — keep it -->
           <input id="signupName" type="hidden" />
           <div class="auth-field">
             <label class="auth-label" for="signupEmail">Email</label>
@@ -555,105 +505,86 @@
     </div>
   </div>
 
-  <!-- Turnstile -->
+  <!-- Cloudflare Turnstile -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
-  <!-- theme.js and a11y.js load normally (no ES modules) -->
+  <!-- theme.js and a11y.js are plain scripts (no ES modules) -->
   <script src="theme.js" defer></script>
   <script src="a11y.js" defer></script>
 
-  <!-- auth.js MUST be type="module" because it uses ES import statements -->
+  <!-- auth.js MUST be type="module" — it uses ES import statements at the top -->
   <script type="module" src="auth.js"></script>
 
   <script>
     // Footer year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Wire openAccountBtn in hero to trigger accountButton click
+    // "Sign In / Account" hero button opens auth modal via accountButton
     document.getElementById('openAccountBtn').addEventListener('click', function () {
       document.getElementById('accountButton').click();
     });
 
     // Accessibility widget toggle
     (function () {
-      const widgetBtn = document.getElementById('a11yWidgetBtn');
-      const toolbar = document.getElementById('accessibilityToolbar');
-      if (!widgetBtn || !toolbar) return;
-      widgetBtn.addEventListener('click', function () {
-        const isOpen = toolbar.classList.toggle('open');
-        widgetBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      var btn = document.getElementById('a11yWidgetBtn');
+      var bar = document.getElementById('accessibilityToolbar');
+      if (!btn || !bar) return;
+      btn.addEventListener('click', function () {
+        var open = bar.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
       document.addEventListener('click', function (e) {
-        if (!toolbar.contains(e.target) && e.target !== widgetBtn) {
-          toolbar.classList.remove('open');
-          widgetBtn.setAttribute('aria-expanded', 'false');
+        if (!bar.contains(e.target) && e.target !== btn) {
+          bar.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
         }
       });
     })();
 
     // Auto-grow contact textarea
     (function () {
-      const messageEl = document.getElementById('contactMessage');
-      if (!messageEl) return;
-      const autoResize = () => {
-        messageEl.style.height = 'auto';
-        messageEl.style.height = messageEl.scrollHeight + 'px';
-      };
-      messageEl.addEventListener('input', autoResize);
-      autoResize();
+      var el = document.getElementById('contactMessage');
+      if (!el) return;
+      function resize() { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+      el.addEventListener('input', resize);
+      resize();
     })();
 
     // Contact form submission
     (function () {
-      const form = document.getElementById('contactForm');
-      const statusEl = document.getElementById('contactStatus');
-      if (!form || !statusEl) return;
+      var form = document.getElementById('contactForm');
+      var status = document.getElementById('contactStatus');
+      if (!form || !status) return;
 
-      function setStatus(msg) { statusEl.textContent = msg || ''; }
-
-      form.addEventListener('submit', async (e) => {
+      form.addEventListener('submit', async function (e) {
         e.preventDefault();
-        setStatus('');
+        status.textContent = '';
 
-        const name    = (document.getElementById('contactName')?.value || '').trim();
-        const email   = (document.getElementById('contactEmail')?.value || '').trim();
-        const message = (document.getElementById('contactMessage')?.value || '').trim();
+        var name    = (document.getElementById('contactName').value || '').trim();
+        var email   = (document.getElementById('contactEmail').value || '').trim();
+        var message = (document.getElementById('contactMessage').value || '').trim();
 
-        if (!name || !email || !message) {
-          setStatus('Please complete all fields.');
-          return;
-        }
+        if (!name || !email || !message) { status.textContent = 'Please complete all fields.'; return; }
 
-        const tokenEl = form.querySelector('input[name="cf-turnstile-response"]');
-        const turnstileToken = tokenEl ? tokenEl.value : '';
+        var tokenEl = form.querySelector('input[name="cf-turnstile-response"]');
+        if (!tokenEl || !tokenEl.value) { status.textContent = 'Please complete the verification.'; return; }
 
-        if (!turnstileToken) {
-          setStatus('Please complete verification.');
-          return;
-        }
-
-        setStatus('Sending...');
+        status.textContent = 'Sending...';
 
         try {
-          const res = await fetch('/api/contact', {
+          var res = await fetch('/api/contact', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, message, turnstileToken })
+            body: JSON.stringify({ name, email, message, turnstileToken: tokenEl.value })
           });
-
-          if (!res.ok) throw new Error('Bad response');
-
-          setStatus('Message sent. You will hear back soon.');
+          if (!res.ok) throw new Error('bad response');
+          status.textContent = 'Message sent. You will hear back soon.';
           form.reset();
         } catch (err) {
-          const subject = encodeURIComponent('Forge Contact - ' + name);
-          const body = encodeURIComponent(
-            'Name: ' + name + '\n' +
-            'Email: ' + email + '\n\n' +
-            message + '\n'
-          );
-          setStatus('Direct send is not available right now. Opening email client...');
-          window.location.href = 'mailto:theforgetncommunity@gmail.com?subject=' + subject + '&body=' + body;
+          var sub  = encodeURIComponent('Forge Contact - ' + name);
+          var body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + message);
+          status.textContent = 'Direct send unavailable. Opening your email client...';
+          window.location.href = 'mailto:theforgetncommunity@gmail.com?subject=' + sub + '&body=' + body;
         }
       });
     })();

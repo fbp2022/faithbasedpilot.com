@@ -1,84 +1,104 @@
-// mobile-nav.js
-// Handles the mobile hamburger + opaque overlay menu
-// - Opens/closes mobile nav
-// - Locks background scroll while open
-// - Closes on link click, outside click, ESC, and on desktop breakpoint
-
+// mobile-nav.js — drawer menu + sync with header hamburger and bottom “More”
 (function () {
   const hamburger = document.getElementById("hamburgerButton");
-  const mobileNav = document.getElementById("mobileNav");
+  const mobileRoot = document.getElementById("mobileNav");
+  const closeBtn = document.getElementById("mobileNavClose");
+  const bottomMore = document.getElementById("bottomNavMore");
+  const backdrop = mobileRoot ? mobileRoot.querySelector(".mobile-nav-backdrop") : null;
 
-  if (!hamburger || !mobileNav) return;
+  if (!mobileRoot) return;
 
   const body = document.body;
 
-  // Optional: first focusable link inside mobile menu for accessibility
-  function getFirstFocusableInMenu() {
-    return mobileNav.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
+  function getPanel() {
+    return document.getElementById("mobileNavPanel");
+  }
+
+  function getFirstFocusable() {
+    const panel = getPanel();
+    if (!panel) return null;
+    return panel.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
   }
 
   function setOpen(isOpen) {
-    mobileNav.classList.toggle("open", isOpen);
-    hamburger.classList.toggle("is-open", isOpen);
+    mobileRoot.classList.toggle("open", isOpen);
+    mobileRoot.setAttribute("aria-hidden", isOpen ? "false" : "true");
 
-    hamburger.setAttribute("aria-expanded", isOpen ? "true" : "false");
-    mobileNav.setAttribute("aria-hidden", isOpen ? "false" : "true");
+    if (hamburger) {
+      hamburger.classList.toggle("is-open", isOpen);
+      hamburger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      hamburger.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+    }
 
     body.classList.toggle("no-scroll", isOpen);
 
     if (isOpen) {
-      const first = getFirstFocusableInMenu();
+      const first = getFirstFocusable();
       if (first) first.focus();
-    } else {
+    } else if (hamburger && document.activeElement && mobileRoot.contains(document.activeElement)) {
       hamburger.focus();
     }
   }
 
   function isOpen() {
-    return mobileNav.classList.contains("open");
+    return mobileRoot.classList.contains("open");
   }
 
   function toggle() {
     setOpen(!isOpen());
   }
 
-  // Click hamburger
-  hamburger.addEventListener("click", (e) => {
-    e.preventDefault();
-    toggle();
-  });
+  if (hamburger) {
+    hamburger.addEventListener("click", function (e) {
+      e.preventDefault();
+      toggle();
+    });
+  }
 
-  // Close when any link inside menu is clicked
-  mobileNav.addEventListener("click", (e) => {
-    const target = e.target;
-    if (!target) return;
+  if (bottomMore) {
+    bottomMore.addEventListener("click", function (e) {
+      e.preventDefault();
+      setOpen(true);
+    });
+  }
 
-    // If user clicks a link/button inside the menu, close it
-    const clickedLink = target.closest("a");
-    const clickedButton = target.closest("button");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", function () {
+      setOpen(false);
+    });
+  }
 
-    if (clickedLink || clickedButton) {
+  if (backdrop) {
+    backdrop.addEventListener("click", function () {
+      setOpen(false);
+    });
+  }
+
+  mobileRoot.addEventListener("click", function (e) {
+    const t = e.target;
+    if (!t) return;
+    if (t.closest("a") || (t.closest("button") && t.closest(".mobile-nav-panel"))) {
       setOpen(false);
     }
   });
 
-  // ESC closes
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && isOpen()) {
       setOpen(false);
     }
   });
 
-  // If viewport grows past breakpoint, ensure menu is closed
-  // (Match your CSS breakpoint for .nav-links hidden / hamburger shown)
-  const BREAKPOINT_PX = 840;
-  window.addEventListener("resize", () => {
+  var BREAKPOINT_PX = 840;
+  window.addEventListener("resize", function () {
     if (window.innerWidth > BREAKPOINT_PX && isOpen()) {
       setOpen(false);
     }
   });
 
-  // Expose helpers (optional)
-  window.__forgeOpenMobileNav = () => setOpen(true);
-  window.__forgeCloseMobileNav = () => setOpen(false);
+  window.__forgeOpenMobileNav = function () {
+    setOpen(true);
+  };
+  window.__forgeCloseMobileNav = function () {
+    setOpen(false);
+  };
 })();

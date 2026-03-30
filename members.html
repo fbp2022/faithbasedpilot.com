@@ -6,6 +6,9 @@
   <title>The Forge - Members</title>
   <meta name="color-scheme" content="dark light" />
   <meta name="description" content="Members roster for The Forge (invite-only)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styling.css" />
 
   <!-- Apply saved theme ASAP to avoid flash -->
@@ -21,57 +24,95 @@
   </script>
 </head>
 
-<body>
+<body class="page-members has-bottom-nav">
+  <div class="ambient-orbit" aria-hidden="true"></div>
+
   <a href="#mainContent" class="skip-link">Skip to main content</a>
 
-  <header>
-    <nav class="nav" aria-label="Main navigation">
-      <div class="brand">
-        <img src="images/theforgelogo.png" alt="The Forge logo" class="brand-logo" />
-        <div>
-          <div class="brand-text-main">The Forge</div>
-          <div class="brand-text-sub">Members</div>
+  <header class="site-header">
+    <nav class="nav site-nav" aria-label="Main navigation">
+      <a href="theforge.html" class="brand">
+        <img src="images/theforgelogo.png" alt="" width="48" height="48" class="brand-logo" />
+        <div class="brand-text">
+          <span class="brand-text-main">The Forge</span>
+          <span class="brand-text-sub">Members</span>
+        </div>
+      </a>
+
+      <div class="nav-desktop">
+        <div class="nav-desktop-links">
+          <a href="theforge.html#top" class="nav-pill">Home</a>
+          <a href="members.html" class="nav-pill active" aria-current="page">Members</a>
+          <a href="prayerrequests.html" class="nav-pill">Prayer</a>
         </div>
       </div>
 
-      <!-- Desktop nav links -->
-      <div class="nav-links">
-        <a href="theforge.html">Home</a>
-        <a href="members.html" class="active" aria-current="page">Members</a>
-        <a href="prayerrequests.html">Prayer Requests</a>
-      </div>
-
       <div class="nav-actions">
-        <!-- Theme toggle — ID matches theme.js -->
-        <button id="themeToggleDesktop" class="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme">🌓</button>
+        <button id="themeToggleDesktop" class="theme-toggle" type="button" aria-label="Toggle light or dark theme" title="Theme">🌓</button>
 
-        <!-- Account button — ID matches auth.js -->
         <button id="accountButton" class="account-btn" type="button">
-          <span class="icon">👤</span>
-          <span id="navAuthButtonLabel">Sign In</span>
+          <span class="icon" aria-hidden="true">👤</span>
+          <span id="navAuthButtonLabel" class="account-btn-label">Account</span>
         </button>
 
-        <!-- Mobile icon nav -->
-        <nav class="mobile-top-icons" aria-label="Mobile quick navigation">
-          <a href="theforge.html" aria-label="Home">
-            <svg class="mobile-top-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
-          </a>
-          <a href="members.html" class="active" aria-label="Members">
-            <svg class="mobile-top-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"/>
-            </svg>
-          </a>
-          <a href="prayerrequests.html" aria-label="Prayer requests">
-            <svg class="mobile-top-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 11c0 5.65-7 10-7 10z"/>
-            </svg>
-          </a>
-        </nav>
+        <button
+          type="button"
+          class="nav-menu-toggle"
+          id="hamburgerButton"
+          aria-expanded="false"
+          aria-controls="mobileNavPanel"
+          aria-label="Open menu"
+        >
+          <span class="nav-menu-bars" aria-hidden="true"></span>
+        </button>
       </div>
     </nav>
   </header>
+
+  <div id="mobileNav" class="mobile-nav-root" aria-hidden="true">
+    <button type="button" class="mobile-nav-backdrop" tabindex="-1" aria-hidden="true"></button>
+    <div class="mobile-nav-panel" id="mobileNavPanel" role="dialog" aria-modal="true" aria-labelledby="mobileNavTitle">
+      <div class="mobile-nav-header">
+        <span class="mobile-nav-title" id="mobileNavTitle">Menu</span>
+        <button type="button" class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu">×</button>
+      </div>
+      <div class="mobile-nav-scroll">
+        <div class="mobile-nav-group-label">Main pages</div>
+        <nav class="mobile-nav-links" aria-label="Primary pages">
+          <a href="theforge.html#top">Home</a>
+          <a href="members.html" class="active" aria-current="page">Members</a>
+          <a href="prayerrequests.html">Prayer requests</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Quick navigation">
+    <a href="theforge.html#top" class="bottom-nav__btn">
+      <span class="bottom-nav__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"/></svg>
+      </span>
+      Home
+    </a>
+    <a href="members.html" class="bottom-nav__btn active" aria-current="page">
+      <span class="bottom-nav__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      </span>
+      Members
+    </a>
+    <a href="prayerrequests.html" class="bottom-nav__btn">
+      <span class="bottom-nav__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 000-7.8z"/></svg>
+      </span>
+      Prayer
+    </a>
+    <button type="button" class="bottom-nav__btn bottom-nav__btn--more" id="bottomNavMore" aria-label="Open full menu">
+      <span class="bottom-nav__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+      </span>
+      More
+    </button>
+  </nav>
 
   <!-- ACCESSIBILITY WIDGET -->
   <div class="a11y-widget" aria-label="Accessibility widget">
@@ -210,6 +251,7 @@
 
   <script src="theme.js" defer></script>
   <script src="a11y.js" defer></script>
+  <script src="mobile-nav.js" defer></script>
   <script type="module" src="auth.js"></script>
 
   <script>

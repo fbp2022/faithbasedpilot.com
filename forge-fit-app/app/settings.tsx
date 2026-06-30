@@ -30,10 +30,19 @@ export default function SettingsScreen() {
 
         <Text style={styles.h2}>Privacy</Text>
         <Text style={styles.p}>
-          Apple Health data is read on-device and is never sent to a server by this app. WHOOP data
-          is fetched directly from WHOOP&apos;s servers using OAuth tokens stored in the iOS
-          Keychain. Only the questions you type into the Ask tab are sent off-device, and they go
-          to Google&apos;s Gemini API.
+          Apple Health data is read on-device and is never sent to a server by this app. WHOOP,
+          Fitbit, and Garmin data are fetched directly from those vendors&apos; servers using OAuth
+          tokens stored in the iOS Keychain — Forge Fit has no backend of its own. The only data
+          that leaves your phone is the question you type into the Ask tab, which goes to
+          Google&apos;s Gemini API.
+        </Text>
+
+        <Text style={styles.h2}>Sources we can read</Text>
+        <Text style={styles.p}>
+          • Apple Health (on-device){'\n'}
+          • WHOOP — self-serve developer account at developer.whoop.com{'\n'}
+          • Fitbit (incl. new Google-era models and Pixel Watch) — self-serve at dev.fitbit.com{'\n'}
+          • Garmin — partner-approval-only at developerportal.garmin.com
         </Text>
       </ScrollView>
     </SafeAreaView>

@@ -27,38 +27,52 @@ import {
   type WhoopRecovery,
   type WhoopSleep,
 } from '@/lib/whoop';
-import { generateInsights, type CombinedSnapshot } from '@/lib/assistant';
+import { getFitbitSnapshot, isFitbitConnected, type FitbitSnapshot } from '@/lib/fitbit';
+import { getGarminSnapshot, isGarminConnected, type GarminSnapshot } from '@/lib/garmin';
+import { generateInsights, unify, type CombinedSnapshot } from '@/lib/assistant';
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const [health, setHealth] = useState<DailyHealthSnapshot | null>(null);
   const [whoop, setWhoop] = useState<{
     recovery: WhoopRecovery | null;
     sleep: WhoopSleep | null;
     cycle: WhoopCycle | null;
   }>({ recovery: null, sleep: null, cycle: null });
+  const [fitbit, setFitbit] = useState<FitbitSnapshot | null>(null);
+  const [garmin, setGarmin] = useState<GarminSnapshot | null>(null);
 
   const load = useCallback(async () => {
     setError(null);
     try {
       await requestHealthPermissions().catch(() => {});
-      const [h, connected] = await Promise.all([
-        getTodaySnapshot().catch(() => null),
+
+      const [whoopConnected, fitbitConnected, garminConnected] = await Promise.all([
         isWhoopConnected(),
+        isFitbitConnected(),
+        isGarminConnected(),
       ]);
+
+      const [h, whoopData, fitbitData, garminData] = await Promise.all([
+        getTodaySnapshot().catch(() => null),
+        whoopConnected
+          ? Promise.all([
+              getLatestWhoopRecovery().catch(() => null),
+              getLatestWhoopSleep().catch(() => null),
+              getLatestWhoopCycle().catch(() => null),
+            ]).then(([recovery, sleep, cycle]) => ({ recovery, sleep, cycle }))
+          : Promise.resolve({ recovery: null, sleep: null, cycle: null }),
+        fitbitConnected ? getFitbitSnapshot().catch(() => null) : Promise.resolve(null),
+        garminConnected ? getGarminSnapshot().catch(() => null) : Promise.resolve(null),
+      ]);
+
       setHealth(h);
-      if (connected) {
-        const [recovery, sleep, cycle] = await Promise.all([
-          getLatestWhoopRecovery().catch(() => null),
-          getLatestWhoopSleep().catch(() => null),
-          getLatestWhoopCycle().catch(() => null),
-        ]);
-        setWhoop({ recovery, sleep, cycle });
-      } else {
-        setWhoop({ recovery: null, sleep: null, cycle: null });
-      }
+      setWhoop(whoopData);
+      setFitbit(fitbitData);
+      setGarmin(garminData);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -76,7 +90,8 @@ export default function Dashboard() {
     load();
   }, [load]);
 
-  const combined: CombinedSnapshot = { health, whoop };
+  const combined: CombinedSnapshot = { health, whoop, fitbit, garmin };
+  const u = unify(combined);
   const insights = generateInsights(combined);
 
   return (
@@ -92,52 +107,56 @@ export default function Dashboard() {
             {error ? <Text style={styles.error}>{error}</Text> : null}
 
             <Text style={styles.section}>Today</Text>
+
             <View style={styles.row}>
               <MetricCard
                 label="Steps"
-                value={health?.steps != null ? health.steps.toLocaleString() : '—'}
+                value={u.steps ? Math.round(u.steps.value).toLocaleString() : '—'}
+                sub={u.steps?.source}
               />
               <MetricCard
                 label="Active kcal"
-                value={
-                  health?.activeEnergyKcal != null
-                    ? Math.round(health.activeEnergyKcal).toLocaleString()
-                    : '—'
-                }
+                value={u.activeKcal ? Math.round(u.activeKcal.value).toLocaleString() : '—'}
+                sub={u.activeKcal?.source}
               />
             </View>
+
             <View style={styles.row}>
               <MetricCard
                 label="Resting HR"
-                value={
-                  health?.restingHR != null
-                    ? `${Math.round(health.restingHR)} bpm`
-                    : whoop.recovery
-                    ? `${whoop.recovery.score.resting_heart_rate} bpm`
-                    : '—'
-                }
-                sub={whoop.recovery ? 'WHOOP available' : undefined}
+                value={u.restingHR ? `${Math.round(u.restingHR.value)} bpm` : '—'}
+                sub={u.restingHR?.source}
               />
               <MetricCard
                 label="HRV"
-                value={
-                  whoop.recovery?.score.hrv_rmssd_milli
-                    ? `${Math.round(whoop.recovery.score.hrv_rmssd_milli)} ms`
-                    : health?.hrvMs != null
-                    ? `${Math.round(health.hrvMs)} ms`
-                    : '—'
-                }
+                value={u.hrvMs ? `${Math.round(u.hrvMs.value)} ms` : '—'}
+                sub={u.hrvMs?.source}
               />
             </View>
+
             <View style={styles.row}>
               <MetricCard
                 label="Recovery"
-                value={whoop.recovery ? `${whoop.recovery.score.recovery_score}%` : '—'}
-                sub={whoop.recovery ? 'WHOOP' : 'Connect WHOOP'}
+                value={u.recovery ? `${u.recovery.value}%` : '—'}
+                sub={u.recovery?.source ?? 'Connect WHOOP'}
               />
               <MetricCard
+                label="Sleep"
+                value={u.sleepHours ? `${u.sleepHours.value.toFixed(1)} h` : '—'}
+                sub={u.sleepHours?.source}
+              />
+            </View>
+
+            <View style={styles.row}>
+              <MetricCard
                 label="Strain"
-                value={whoop.cycle?.score.strain != null ? whoop.cycle.score.strain.toFixed(1) : '—'}
+                value={u.strainOrLoad ? u.strainOrLoad.value.toFixed(1) : '—'}
+                sub={u.strainOrLoad?.source}
+              />
+              <MetricCard
+                label="Body Battery"
+                value={u.bodyBattery != null ? String(u.bodyBattery) : '—'}
+                sub={u.bodyBattery != null ? 'Garmin' : 'Connect Garmin'}
               />
             </View>
 
@@ -154,7 +173,7 @@ export default function Dashboard() {
               </Link>
               <Link href="/connect" asChild>
                 <Pressable style={styles.navBtn}>
-                  <Text style={styles.navBtnText}>Connect WHOOP →</Text>
+                  <Text style={styles.navBtnText}>Connect devices →</Text>
                 </Pressable>
               </Link>
               <Link href="/settings" asChild>
@@ -165,8 +184,8 @@ export default function Dashboard() {
             </View>
 
             <Text style={styles.note}>
-              Insights on this screen are generated by deterministic rules — not AI. Web answers
-              (in the Ask tab) use Google Gemini and are labeled as such.
+              Insights on this screen are generated by deterministic rules — not AI. Web answers (in
+              the Ask tab) use Google Gemini and are clearly labeled as such.
             </Text>
           </>
         )}

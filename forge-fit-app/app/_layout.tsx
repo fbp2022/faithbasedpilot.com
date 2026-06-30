@@ -14,7 +14,7 @@ export default function RootLayout() {
       >
         <Stack.Screen name="index" options={{ title: 'Forge Fit' }} />
         <Stack.Screen name="ask" options={{ title: 'Ask the web' }} />
-        <Stack.Screen name="connect" options={{ title: 'Connect WHOOP' }} />
+        <Stack.Screen name="connect" options={{ title: 'Connect devices' }} />
         <Stack.Screen name="settings" options={{ title: 'Settings' }} />
       </Stack>
     </>

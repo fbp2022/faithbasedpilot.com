@@ -1,84 +1,158 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { connectWhoop, disconnectWhoop, isWhoopConnected } from '@/lib/whoop';
+import { connectFitbit, disconnectFitbit, isFitbitConnected } from '@/lib/fitbit';
+import {
+  connectGarmin,
+  disconnectGarmin,
+  isGarminConnected,
+  isGarminConfigured,
+} from '@/lib/garmin';
+
+type ProviderRow = {
+  key: 'whoop' | 'fitbit' | 'garmin';
+  name: string;
+  blurb: string;
+  notice?: string;
+  isConnected: () => Promise<boolean>;
+  connect: () => Promise<void>;
+  disconnect: () => Promise<void>;
+};
+
+const PROVIDERS: ProviderRow[] = [
+  {
+    key: 'whoop',
+    name: 'WHOOP',
+    blurb: 'Recovery, sleep performance, strain.',
+    isConnected: isWhoopConnected,
+    connect: connectWhoop,
+    disconnect: disconnectWhoop,
+  },
+  {
+    key: 'fitbit',
+    name: 'Fitbit (incl. new Google models & Pixel Watch)',
+    blurb: 'Steps, heart rate, sleep, HRV, SpO₂. Signs in via Google account.',
+    isConnected: isFitbitConnected,
+    connect: connectFitbit,
+    disconnect: disconnectFitbit,
+  },
+  {
+    key: 'garmin',
+    name: 'Garmin',
+    blurb: 'Steps, body battery, stress, HRV, sleep score.',
+    notice:
+      'Garmin Health API requires partner approval at developerportal.garmin.com. Until you are approved and have added GARMIN credentials to .env, this button will surface an "approval required" error.',
+    isConnected: isGarminConnected,
+    connect: connectGarmin,
+    disconnect: disconnectGarmin,
+  },
+];
 
 export default function ConnectScreen() {
-  const [connected, setConnected] = useState<boolean | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [statuses, setStatuses] = useState<Record<string, boolean | null>>({});
+  const [busy, setBusy] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string | null>>({});
+  const [garminReady] = useState<boolean>(isGarminConfigured());
 
-  useEffect(() => {
-    isWhoopConnected().then(setConnected);
+  const refresh = useCallback(async () => {
+    const entries = await Promise.all(
+      PROVIDERS.map(async (p) => [p.key, await p.isConnected().catch(() => false)] as const),
+    );
+    setStatuses(Object.fromEntries(entries));
   }, []);
 
-  const onConnect = async () => {
-    setBusy(true);
-    setError(null);
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  const onConnect = async (p: ProviderRow) => {
+    setBusy(p.key);
+    setErrors((e) => ({ ...e, [p.key]: null }));
     try {
-      await connectWhoop();
-      setConnected(true);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      await p.connect();
+      await refresh();
+    } catch (err) {
+      setErrors((e) => ({ ...e, [p.key]: err instanceof Error ? err.message : String(err) }));
     } finally {
-      setBusy(false);
+      setBusy(null);
     }
   };
 
-  const onDisconnect = async () => {
-    setBusy(true);
+  const onDisconnect = async (p: ProviderRow) => {
+    setBusy(p.key);
     try {
-      await disconnectWhoop();
-      setConnected(false);
+      await p.disconnect();
+      await refresh();
     } finally {
-      setBusy(false);
+      setBusy(null);
     }
   };
 
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.h1}>WHOOP</Text>
+        <Text style={styles.h1}>Connect your devices</Text>
         <Text style={styles.p}>
-          Connect your WHOOP account so Forge Fit can read your recovery, sleep, and strain
-          alongside your Apple Health data.
+          Connect any combination of the services below. Forge Fit will merge what it can read from
+          each and tell you in plain English when two devices disagree.
         </Text>
 
-        <View style={styles.statusBox}>
-          <Text style={styles.statusLabel}>Status</Text>
-          {connected === null ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={[styles.statusValue, { color: connected ? '#3ddc97' : '#ff8a65' }]}>
-              {connected ? 'Connected' : 'Not connected'}
-            </Text>
-          )}
-        </View>
+        {PROVIDERS.map((p) => {
+          const connected = statuses[p.key];
+          const isBusy = busy === p.key;
+          const err = errors[p.key];
+          const showApprovalNotice = p.key === 'garmin' && !garminReady;
+          return (
+            <View key={p.key} style={styles.card}>
+              <Text style={styles.cardTitle}>{p.name}</Text>
+              <Text style={styles.cardBlurb}>{p.blurb}</Text>
 
-        {connected === false ? (
-          <Pressable style={styles.button} onPress={onConnect} disabled={busy}>
-            <Text style={styles.buttonText}>{busy ? 'Opening WHOOP…' : 'Sign in with WHOOP'}</Text>
-          </Pressable>
-        ) : null}
+              {p.notice ? <Text style={styles.notice}>{p.notice}</Text> : null}
 
-        {connected === true ? (
-          <Pressable
-            style={[styles.button, { backgroundColor: '#ff8a65' }]}
-            onPress={onDisconnect}
-            disabled={busy}
-          >
-            <Text style={styles.buttonText}>{busy ? 'Disconnecting…' : 'Disconnect WHOOP'}</Text>
-          </Pressable>
-        ) : null}
+              <View style={styles.cardRow}>
+                <Text style={styles.statusLabel}>Status</Text>
+                {connected === undefined || connected === null ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={[styles.statusValue, { color: connected ? '#3ddc97' : '#ff8a65' }]}>
+                    {connected ? 'Connected' : 'Not connected'}
+                  </Text>
+                )}
+              </View>
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+              {connected === false ? (
+                <Pressable
+                  style={[styles.button, showApprovalNotice && { opacity: 0.6 }]}
+                  onPress={() => onConnect(p)}
+                  disabled={isBusy}
+                >
+                  <Text style={styles.buttonText}>
+                    {isBusy ? `Opening ${p.name}…` : `Connect ${p.name.split(' ')[0]}`}
+                  </Text>
+                </Pressable>
+              ) : null}
+
+              {connected === true ? (
+                <Pressable
+                  style={[styles.button, { backgroundColor: '#ff8a65' }]}
+                  onPress={() => onDisconnect(p)}
+                  disabled={isBusy}
+                >
+                  <Text style={styles.buttonText}>{isBusy ? 'Disconnecting…' : 'Disconnect'}</Text>
+                </Pressable>
+              ) : null}
+
+              {err ? <Text style={styles.error}>{err}</Text> : null}
+            </View>
+          );
+        })}
 
         <Text style={styles.h2}>Apple Health</Text>
         <Text style={styles.p}>
-          Permissions for Apple Health are requested automatically on the dashboard. If you denied
-          them by accident, open the iOS Settings app → Privacy & Security → Health → Forge Fit,
-          and enable the categories you want to share.
+          Apple Health permissions are requested automatically on the dashboard. To change them,
+          open the iOS Settings app → Privacy & Security → Health → Forge Fit.
         </Text>
       </ScrollView>
     </SafeAreaView>
@@ -91,24 +165,40 @@ const styles = StyleSheet.create({
   h1: { color: '#f5f7fa', fontSize: 28, fontWeight: '800', marginBottom: 8 },
   h2: { color: '#f5f7fa', fontSize: 22, fontWeight: '700', marginTop: 28, marginBottom: 8 },
   p: { color: '#c2cfdb', fontSize: 15, lineHeight: 22 },
-  statusBox: {
+  card: {
+    backgroundColor: '#141a22',
+    borderRadius: 14,
+    padding: 16,
+    marginTop: 16,
+  },
+  cardTitle: { color: '#f5f7fa', fontSize: 18, fontWeight: '700' },
+  cardBlurb: { color: '#8aa0b4', fontSize: 13, marginTop: 4 },
+  notice: {
+    color: '#f1e6b8',
+    fontSize: 13,
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: '#2a210a',
+    borderRadius: 8,
+    borderLeftColor: '#f1c40f',
+    borderLeftWidth: 3,
+    lineHeight: 18,
+  },
+  cardRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#141a22',
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 18,
+    marginTop: 14,
   },
   statusLabel: { color: '#8aa0b4', fontSize: 14 },
-  statusValue: { fontSize: 16, fontWeight: '700' },
+  statusValue: { fontSize: 15, fontWeight: '700' },
   button: {
     backgroundColor: '#3ddc97',
-    padding: 14,
-    borderRadius: 12,
-    marginTop: 14,
+    padding: 12,
+    borderRadius: 10,
+    marginTop: 12,
     alignItems: 'center',
   },
-  buttonText: { color: '#0b0f14', fontSize: 16, fontWeight: '700' },
-  error: { color: '#ff8a65', marginTop: 14 },
+  buttonText: { color: '#0b0f14', fontSize: 15, fontWeight: '700' },
+  error: { color: '#ff8a65', marginTop: 10, fontSize: 13 },
 });

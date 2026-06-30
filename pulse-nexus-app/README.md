@@ -8,6 +8,21 @@ customizable view, with a deterministic rule-based dashboard and a multi-turn
 Coach chat that can run on **Google Gemini**, **OpenAI ChatGPT**, **Anthropic
 Claude**, or **xAI Grok**.
 
+Pulse Nexus also hands your data off to the **external ChatGPT iOS app** (and
+Claude / Grok) in two complementary ways:
+
+1. **Share-Sheet path (works for everyone, no infrastructure):** every Home /
+   Sleep / Workouts tab has an "Ask…" button that opens the ChatGPT, Claude,
+   or Grok app with a plain-text snapshot of that tab's data already in the
+   prompt box. See [`lib/share.ts`](./lib/share.ts) and
+   [`components/AskExternalAI.tsx`](./components/AskExternalAI.tsx).
+2. **Custom-GPT path (true pull, requires a free Cloudflare deploy):** the
+   sister project [`pulse-nexus-connector/`](../pulse-nexus-connector/)
+   exposes your WHOOP / Fitbit / Garmin data over HTTPS so a ChatGPT Custom
+   GPT can call `getSnapshot`, `getLastNightSleep`, `getRecentWorkouts`
+   whenever you ask it a question. See that folder's README for the
+   deployment + GPT-creation walkthrough.
+
 This project is set up so you can build, sign, and ship to the App Store
 **without owning a Mac** — everything runs in the cloud via Expo Application
 Services (EAS).
@@ -207,6 +222,10 @@ Already shipped:
 - ✅ Sleep detail with stages, efficiency, score, debt, per-device compare
 - ✅ Unified workouts list with filters and totals
 - ✅ Multi-provider Coach chat (Gemini / ChatGPT / Claude / Grok)
+- ✅ "Ask ChatGPT / Claude / Grok" share button on every tab — sends the
+   current snapshot straight into the external AI app's prompt box
+- ✅ Custom-GPT connector backend (Cloudflare Worker) — see
+   [`../pulse-nexus-connector/`](../pulse-nexus-connector/)
 - ✅ Keychain-backed token + preference storage
 - ✅ Persistent AI disclaimer banner
 

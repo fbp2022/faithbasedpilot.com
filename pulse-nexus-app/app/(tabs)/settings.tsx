@@ -72,6 +72,19 @@ export default function SettingsScreen() {
           newest-first. Filter by source and time window.
         </Text>
 
+        <Text style={styles.h2}>Sending data to the ChatGPT app</Text>
+        <Text style={styles.p}>
+          Every Home, Sleep, and Workouts screen has a share button in the top right. Tap it to send
+          that screen&apos;s data to the external ChatGPT, Claude, or Grok app — or any other app
+          via the iOS share sheet. Pulse Nexus builds a plain-text summary and hands it to the
+          chosen app as the prompt; the AI then answers questions about your live data.
+        </Text>
+        <Text style={styles.p}>
+          For a deeper integration where ChatGPT actively pulls your data on demand, deploy the
+          Pulse Nexus connector (Cloudflare Worker — free tier) and install it as a Custom GPT. The
+          full walkthrough is in the project&apos;s pulse-nexus-connector folder.
+        </Text>
+
         <Text style={styles.h2}>How Sleep works</Text>
         <Text style={styles.p}>
           The Sleep tab shows last night merged across all four sources, with the most detailed

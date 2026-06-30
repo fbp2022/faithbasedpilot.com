@@ -26,6 +26,7 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Home',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => <Ionicons name="grid" color={color} size={size} />,
         }}
       />
@@ -33,6 +34,7 @@ export default function TabsLayout() {
         name="sleep"
         options={{
           title: 'Sleep',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => <Ionicons name="moon" color={color} size={size} />,
         }}
       />
@@ -40,6 +42,7 @@ export default function TabsLayout() {
         name="workouts"
         options={{
           title: 'Workouts',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => <Ionicons name="barbell" color={color} size={size} />,
         }}
       />

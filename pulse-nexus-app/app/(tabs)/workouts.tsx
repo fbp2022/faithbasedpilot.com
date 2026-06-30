@@ -11,7 +11,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { WorkoutCard } from '@/components/WorkoutCard';
+import { AskExternalAIButton } from '@/components/AskExternalAI';
 import { getAllWorkouts, type Workout, type WorkoutSource } from '@/lib/workouts';
+import { buildWorkoutsSnapshotText } from '@/lib/snapshot-text';
 
 const WINDOWS: Array<{ label: string; days: number }> = [
   { label: '7 d', days: 7 },
@@ -73,7 +75,13 @@ export default function WorkoutsScreen() {
         contentContainerStyle={styles.scroll}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#fff" />}
       >
-        <Text style={styles.h1}>Workouts</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.h1}>Workouts</Text>
+          <AskExternalAIButton
+            subject={`Pulse Nexus — workouts (last ${days} days)`}
+            getSnapshotText={() => buildWorkoutsSnapshotText(filtered, days)}
+          />
+        </View>
         <Text style={styles.sub}>
           Merged from Apple Health, WHOOP, Fitbit, and Garmin. Pull to refresh.
         </Text>
@@ -151,7 +159,13 @@ function Summary({ label, value }: { label: string; value: string }) {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#0b0f14' },
   scroll: { padding: 8, paddingBottom: 40 },
-  h1: { color: '#f5f7fa', fontSize: 28, fontWeight: '800', marginHorizontal: 6 },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 6,
+  },
+  h1: { color: '#f5f7fa', fontSize: 28, fontWeight: '800' },
   sub: { color: '#8aa0b4', fontSize: 13, marginHorizontal: 6, marginTop: 4 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 10, marginHorizontal: 2 },
   chip: {

@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SleepStageBar } from '@/components/SleepStageBar';
+import { AskExternalAIButton } from '@/components/AskExternalAI';
 import {
   formatHM,
   getSleepCombined,
@@ -17,6 +18,7 @@ import {
   type SleepCombined,
   type SleepSnapshot,
 } from '@/lib/sleep';
+import { buildSleepSnapshotText } from '@/lib/snapshot-text';
 
 function fmtClock(iso: string): string {
   return new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
@@ -76,7 +78,15 @@ export default function SleepScreen() {
         contentContainerStyle={styles.scroll}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#fff" />}
       >
-        <Text style={styles.h1}>Sleep</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.h1}>Sleep</Text>
+          <AskExternalAIButton
+            subject="Pulse Nexus — last night sleep"
+            getSnapshotText={() =>
+              buildSleepSnapshotText(data?.primary ?? null, data?.perSource ?? [])
+            }
+          />
+        </View>
         <Text style={styles.sub}>
           Last night, merged across Apple Health, WHOOP, Fitbit, and Garmin. Pull to refresh.
         </Text>
@@ -203,7 +213,13 @@ function PerSourceRow({ s }: { s: SleepSnapshot }) {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#0b0f14' },
   scroll: { padding: 12, paddingBottom: 40 },
-  h1: { color: '#f5f7fa', fontSize: 28, fontWeight: '800', marginHorizontal: 4 },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 4,
+  },
+  h1: { color: '#f5f7fa', fontSize: 28, fontWeight: '800' },
   sub: { color: '#8aa0b4', fontSize: 13, marginHorizontal: 4, marginTop: 4 },
   error: { color: '#ff8a65', margin: 12 },
   empty: { color: '#8aa0b4', textAlign: 'center', marginTop: 32, padding: 18, lineHeight: 20 },

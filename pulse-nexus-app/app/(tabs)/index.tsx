@@ -13,6 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MetricCard } from '@/components/MetricCard';
 import { InsightCard } from '@/components/InsightCard';
+import { AskExternalAIButton } from '@/components/AskExternalAI';
+import { buildDashboardSnapshotText } from '@/lib/snapshot-text';
 import {
   getTodaySnapshot,
   requestHealthPermissions,
@@ -192,9 +194,15 @@ export default function Dashboard() {
           <ActivityIndicator color="#fff" style={{ marginTop: 32 }} />
         ) : (
           <>
-            {error ? <Text style={styles.error}>{error}</Text> : null}
+            <View style={styles.titleRow}>
+              <Text style={styles.pageTitle}>Today</Text>
+              <AskExternalAIButton
+                subject="Pulse Nexus — today's snapshot"
+                getSnapshotText={() => buildDashboardSnapshotText(combined)}
+              />
+            </View>
 
-            <Text style={styles.section}>Today</Text>
+            {error ? <Text style={styles.error}>{error}</Text> : null}
             {rows.length === 0 ? (
               <Link href="/preferences" asChild>
                 <Pressable style={styles.emptyCard}>
@@ -213,7 +221,7 @@ export default function Dashboard() {
               ))
             )}
 
-            <Text style={styles.section}>Insights</Text>
+            <Text style={[styles.section, { marginTop: 18 }]}>Insights</Text>
             {insights.map((i, idx) => (
               <InsightCard key={idx} insight={i} />
             ))}
@@ -232,6 +240,15 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#0b0f14' },
   scroll: { padding: 8, paddingBottom: 40 },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
+    paddingTop: 8,
+    paddingBottom: 4,
+  },
+  pageTitle: { color: '#f5f7fa', fontSize: 32, fontWeight: '800', letterSpacing: -0.5 },
   section: {
     color: '#f5f7fa',
     fontSize: 22,

@@ -30,11 +30,18 @@ import {
 import { getFitbitSnapshot, isFitbitConnected, type FitbitSnapshot } from '@/lib/fitbit';
 import { getGarminSnapshot, isGarminConnected, type GarminSnapshot } from '@/lib/garmin';
 import { generateInsights, unify, type CombinedSnapshot } from '@/lib/assistant';
+import {
+  DEFAULT_PREFERENCES,
+  loadPreferences,
+  type DashboardCardKey,
+  type Preferences,
+} from '@/lib/preferences';
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [prefs, setPrefs] = useState<Preferences>(DEFAULT_PREFERENCES);
 
   const [health, setHealth] = useState<DailyHealthSnapshot | null>(null);
   const [whoop, setWhoop] = useState<{
@@ -48,7 +55,11 @@ export default function Dashboard() {
   const load = useCallback(async () => {
     setError(null);
     try {
-      await requestHealthPermissions().catch(() => {});
+      const [loadedPrefs] = await Promise.all([
+        loadPreferences(),
+        requestHealthPermissions().catch(() => {}),
+      ]);
+      setPrefs(loadedPrefs);
 
       const [whoopConnected, fitbitConnected, garminConnected] = await Promise.all([
         isWhoopConnected(),
@@ -94,6 +105,83 @@ export default function Dashboard() {
   const u = unify(combined);
   const insights = generateInsights(combined);
 
+  const enabled = (k: DashboardCardKey) => prefs.dashboardCards[k];
+
+  const cards: Array<{ key: DashboardCardKey; label: string; value: string; sub?: string }> = [];
+  if (enabled('steps'))
+    cards.push({
+      key: 'steps',
+      label: 'Steps',
+      value: u.steps ? Math.round(u.steps.value).toLocaleString() : '—',
+      sub: u.steps?.source,
+    });
+  if (enabled('activeKcal'))
+    cards.push({
+      key: 'activeKcal',
+      label: 'Active kcal',
+      value: u.activeKcal ? Math.round(u.activeKcal.value).toLocaleString() : '—',
+      sub: u.activeKcal?.source,
+    });
+  if (enabled('restingHR'))
+    cards.push({
+      key: 'restingHR',
+      label: 'Resting HR',
+      value: u.restingHR ? `${Math.round(u.restingHR.value)} bpm` : '—',
+      sub: u.restingHR?.source,
+    });
+  if (enabled('hrvMs'))
+    cards.push({
+      key: 'hrvMs',
+      label: 'HRV',
+      value: u.hrvMs ? `${Math.round(u.hrvMs.value)} ms` : '—',
+      sub: u.hrvMs?.source,
+    });
+  if (enabled('recovery'))
+    cards.push({
+      key: 'recovery',
+      label: 'Recovery',
+      value: u.recovery ? `${u.recovery.value}%` : '—',
+      sub: u.recovery?.source ?? 'Connect WHOOP',
+    });
+  if (enabled('sleep'))
+    cards.push({
+      key: 'sleep',
+      label: 'Sleep',
+      value: u.sleepHours ? `${u.sleepHours.value.toFixed(1)} h` : '—',
+      sub: u.sleepHours?.source,
+    });
+  if (enabled('strain'))
+    cards.push({
+      key: 'strain',
+      label: 'Strain',
+      value: u.strainOrLoad ? u.strainOrLoad.value.toFixed(1) : '—',
+      sub: u.strainOrLoad?.source,
+    });
+  if (enabled('bodyBattery'))
+    cards.push({
+      key: 'bodyBattery',
+      label: 'Body Battery',
+      value: u.bodyBattery != null ? String(u.bodyBattery) : '—',
+      sub: u.bodyBattery != null ? 'Garmin' : 'Connect Garmin',
+    });
+  if (enabled('spo2'))
+    cards.push({
+      key: 'spo2',
+      label: 'SpO₂',
+      value: u.spo2 ? `${u.spo2.value.toFixed(0)}%` : '—',
+      sub: u.spo2?.source,
+    });
+  if (enabled('stress'))
+    cards.push({
+      key: 'stress',
+      label: 'Stress',
+      value: u.stressAvg != null ? String(u.stressAvg) : '—',
+      sub: u.stressAvg != null ? 'Garmin' : 'Connect Garmin',
+    });
+
+  const rows: Array<typeof cards> = [];
+  for (let i = 0; i < cards.length; i += 2) rows.push(cards.slice(i, i + 2));
+
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
       <ScrollView
@@ -107,90 +195,32 @@ export default function Dashboard() {
             {error ? <Text style={styles.error}>{error}</Text> : null}
 
             <Text style={styles.section}>Today</Text>
-
-            <View style={styles.row}>
-              <MetricCard
-                label="Steps"
-                value={u.steps ? Math.round(u.steps.value).toLocaleString() : '—'}
-                sub={u.steps?.source}
-              />
-              <MetricCard
-                label="Active kcal"
-                value={u.activeKcal ? Math.round(u.activeKcal.value).toLocaleString() : '—'}
-                sub={u.activeKcal?.source}
-              />
-            </View>
-
-            <View style={styles.row}>
-              <MetricCard
-                label="Resting HR"
-                value={u.restingHR ? `${Math.round(u.restingHR.value)} bpm` : '—'}
-                sub={u.restingHR?.source}
-              />
-              <MetricCard
-                label="HRV"
-                value={u.hrvMs ? `${Math.round(u.hrvMs.value)} ms` : '—'}
-                sub={u.hrvMs?.source}
-              />
-            </View>
-
-            <View style={styles.row}>
-              <MetricCard
-                label="Recovery"
-                value={u.recovery ? `${u.recovery.value}%` : '—'}
-                sub={u.recovery?.source ?? 'Connect WHOOP'}
-              />
-              <MetricCard
-                label="Sleep"
-                value={u.sleepHours ? `${u.sleepHours.value.toFixed(1)} h` : '—'}
-                sub={u.sleepHours?.source}
-              />
-            </View>
-
-            <View style={styles.row}>
-              <MetricCard
-                label="Strain"
-                value={u.strainOrLoad ? u.strainOrLoad.value.toFixed(1) : '—'}
-                sub={u.strainOrLoad?.source}
-              />
-              <MetricCard
-                label="Body Battery"
-                value={u.bodyBattery != null ? String(u.bodyBattery) : '—'}
-                sub={u.bodyBattery != null ? 'Garmin' : 'Connect Garmin'}
-              />
-            </View>
+            {rows.length === 0 ? (
+              <Link href="/preferences" asChild>
+                <Pressable style={styles.emptyCard}>
+                  <Text style={styles.emptyText}>
+                    No metric cards enabled. Tap to choose what to show.
+                  </Text>
+                </Pressable>
+              </Link>
+            ) : (
+              rows.map((row, ri) => (
+                <View key={ri} style={styles.row}>
+                  {row.map((c) => (
+                    <MetricCard key={c.key} label={c.label} value={c.value} sub={c.sub} />
+                  ))}
+                </View>
+              ))
+            )}
 
             <Text style={styles.section}>Insights</Text>
             {insights.map((i, idx) => (
               <InsightCard key={idx} insight={i} />
             ))}
 
-            <View style={styles.nav}>
-              <Link href="/chat" asChild>
-                <Pressable style={styles.navBtn}>
-                  <Text style={styles.navBtnText}>Chat with coach →</Text>
-                </Pressable>
-              </Link>
-              <Link href="/workouts" asChild>
-                <Pressable style={styles.navBtn}>
-                  <Text style={styles.navBtnText}>Workouts →</Text>
-                </Pressable>
-              </Link>
-              <Link href="/connect" asChild>
-                <Pressable style={styles.navBtn}>
-                  <Text style={styles.navBtnText}>Connect devices →</Text>
-                </Pressable>
-              </Link>
-              <Link href="/settings" asChild>
-                <Pressable style={styles.navBtn}>
-                  <Text style={styles.navBtnText}>Settings →</Text>
-                </Pressable>
-              </Link>
-            </View>
-
             <Text style={styles.note}>
-              Insights on this screen are generated by deterministic rules — not AI. The Coach tab
-              uses Google Gemini with web search and is clearly labeled as such.
+              Insights are generated by deterministic rules — not AI. The Coach tab uses your
+              chosen AI provider (Gemini, ChatGPT, Claude, or Grok) and is clearly labeled.
             </Text>
           </>
         )}
@@ -206,20 +236,19 @@ const styles = StyleSheet.create({
     color: '#f5f7fa',
     fontSize: 22,
     fontWeight: '800',
-    marginTop: 18,
+    marginTop: 14,
     marginBottom: 4,
     marginLeft: 8,
   },
   row: { flexDirection: 'row' },
   error: { color: '#ff8a65', margin: 12 },
-  nav: { marginTop: 18 },
-  navBtn: {
+  emptyCard: {
     backgroundColor: '#141a22',
-    padding: 14,
+    padding: 18,
     borderRadius: 12,
     marginHorizontal: 6,
-    marginVertical: 4,
+    marginTop: 8,
   },
-  navBtnText: { color: '#f5f7fa', fontSize: 16, fontWeight: '600' },
+  emptyText: { color: '#8aa0b4', textAlign: 'center' },
   note: { color: '#6c8094', fontSize: 12, margin: 14, lineHeight: 18 },
 });

@@ -12,9 +12,11 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Link } from 'expo-router';
 
 import { DisclaimerBanner } from '@/components/DisclaimerBanner';
-import { chatTurn, type ChatMessage, type GroundingSource } from '@/lib/gemini';
+import { chatTurn, getActiveProvider } from '@/lib/ai';
+import type { ChatMessage, ChatProvider, GroundingSource } from '@/lib/ai/types';
 import {
   getTodaySnapshot,
   requestHealthPermissions,
@@ -49,7 +51,7 @@ const SUGGESTIONS = [
 
 const WELCOME: DisplayMessage = {
   id: 'welcome',
-  role: 'model',
+  role: 'assistant',
   text:
     "Hi — I'm the Pulse Nexus coach. I can see your most recent Apple Health, WHOOP, Fitbit, and Garmin data, and I can search the web. Ask me anything about your training, recovery, or sleep.",
 };
@@ -59,7 +61,13 @@ export default function ChatScreen() {
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [snapshot, setSnapshot] = useState<CombinedSnapshot | null>(null);
+  const [provider, setProvider] = useState<ChatProvider | null>(null);
   const scrollRef = useRef<ScrollView | null>(null);
+
+  const loadProvider = useCallback(async () => {
+    const p = await getActiveProvider();
+    setProvider(p);
+  }, []);
 
   const loadSnapshot = useCallback(async () => {
     await requestHealthPermissions().catch(() => {});
@@ -90,8 +98,9 @@ export default function ChatScreen() {
   }, []);
 
   useEffect(() => {
+    loadProvider();
     loadSnapshot();
-  }, [loadSnapshot]);
+  }, [loadProvider, loadSnapshot]);
 
   const sendMessage = useCallback(
     async (text: string) => {
@@ -100,7 +109,12 @@ export default function ChatScreen() {
 
       const userMsg: DisplayMessage = { id: `u${Date.now()}`, role: 'user', text: trimmed };
       const pendingId = `m${Date.now()}`;
-      const pendingMsg: DisplayMessage = { id: pendingId, role: 'model', text: '', pending: true };
+      const pendingMsg: DisplayMessage = {
+        id: pendingId,
+        role: 'assistant',
+        text: '',
+        pending: true,
+      };
       setMessages((m) => [...m, userMsg, pendingMsg]);
       setInput('');
       setSending(true);
@@ -109,7 +123,7 @@ export default function ChatScreen() {
 
       try {
         const history: ChatMessage[] = messages
-          .filter((m) => m.id !== 'welcome' && !m.error)
+          .filter((m) => m.id !== 'welcome' && !m.error && !m.pending)
           .map((m) => ({ role: m.role, text: m.text }));
 
         const result = await chatTurn(history, trimmed, snapshot ?? undefined);
@@ -124,9 +138,7 @@ export default function ChatScreen() {
         const msg = err instanceof Error ? err.message : String(err);
         setMessages((m) =>
           m.map((x) =>
-            x.id === pendingId
-              ? { ...x, pending: false, text: '', error: msg }
-              : x,
+            x.id === pendingId ? { ...x, pending: false, text: '', error: msg } : x,
           ),
         );
       } finally {
@@ -140,8 +152,9 @@ export default function ChatScreen() {
   const newConversation = useCallback(() => {
     setMessages([WELCOME]);
     setInput('');
+    loadProvider();
     loadSnapshot();
-  }, [loadSnapshot]);
+  }, [loadProvider, loadSnapshot]);
 
   return (
     <SafeAreaView style={styles.root} edges={['bottom']}>
@@ -150,6 +163,18 @@ export default function ChatScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <DisclaimerBanner />
+
+        {provider ? (
+          <Link href="/preferences" asChild>
+            <Pressable style={styles.providerBar}>
+              <Text style={styles.providerLabel}>Coach engine</Text>
+              <Text style={styles.providerValue}>
+                {provider.name} · {provider.modelLabel}
+                {!provider.isConfigured() ? '  ⚠️ key missing' : ''}
+              </Text>
+            </Pressable>
+          </Link>
+        ) : null}
 
         <ScrollView
           ref={(r) => {
@@ -183,7 +208,7 @@ export default function ChatScreen() {
             <Text style={styles.newBtnText}>+</Text>
           </Pressable>
           <TextInput
-            placeholder="Ask the coach…"
+            placeholder={`Ask ${provider?.name ?? 'the coach'}…`}
             placeholderTextColor="#6c8094"
             value={input}
             onChangeText={setInput}
@@ -238,6 +263,23 @@ function MessageBubble({ msg }: { msg: DisplayMessage }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#0b0f14' },
+  providerBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    backgroundColor: '#0f1620',
+    borderBottomWidth: 1,
+    borderBottomColor: '#1c242e',
+  },
+  providerLabel: {
+    color: '#8aa0b4',
+    fontSize: 11,
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+  },
+  providerValue: { color: '#f5f7fa', fontSize: 13, fontWeight: '600' },
   scroll: { padding: 8, paddingBottom: 16 },
   bubbleRow: { flexDirection: 'row', marginVertical: 4, paddingHorizontal: 4 },
   bubble: { maxWidth: '85%', padding: 12, borderRadius: 14 },
@@ -246,7 +288,6 @@ const styles = StyleSheet.create({
   bubbleText: { color: '#f5f7fa', fontSize: 15, lineHeight: 22 },
   userBubbleText: { color: '#0b0f14', fontWeight: '600' },
   error: { color: '#ff8a65', fontSize: 14 },
-
   sources: { marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#1c242e' },
   sourcesHeader: {
     color: '#8aa0b4',
@@ -256,7 +297,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   sourceLink: { color: '#7fb5ff', fontSize: 13, marginTop: 3, textDecorationLine: 'underline' },
-
   suggestions: { marginTop: 16, paddingHorizontal: 4 },
   suggestion: {
     backgroundColor: '#141a22',
@@ -267,7 +307,6 @@ const styles = StyleSheet.create({
     borderLeftWidth: 3,
   },
   suggestionText: { color: '#c2cfdb', fontSize: 14 },
-
   inputRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',

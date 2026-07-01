@@ -9,23 +9,29 @@
     "start": "expo start",
     "ios": "expo run:ios",
     "prebuild": "expo prebuild --platform ios --clean",
+    "build:dev": "eas build --platform ios --profile development",
     "build:ios:preview": "eas build --platform ios --profile preview",
     "build:ios:prod": "eas build --platform ios --profile production",
     "submit:ios": "eas submit --platform ios --latest",
     "typecheck": "tsc --noEmit",
+    "bundle-check": "expo export --platform ios --output-dir .expo-export --no-minify && echo '\\nBundle OK. Ready to build.' && rm -rf .expo-export",
+    "preflight": "npm run typecheck && npm run bundle-check",
     "lint": "expo lint"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.4",
     "expo": "~53.0.0",
-    "expo-router": "~4.0.0",
-    "expo-status-bar": "~2.0.0",
-    "expo-secure-store": "~14.0.0",
+    "expo-asset": "~11.1.7",
     "expo-auth-session": "~6.0.0",
     "expo-clipboard": "~7.0.0",
-    "expo-web-browser": "~14.0.0",
+    "expo-constants": "~17.1.8",
+    "expo-dev-client": "~5.2.4",
+    "expo-font": "~13.3.2",
     "expo-linking": "~7.0.0",
-    "expo-constants": "~17.0.0",
+    "expo-router": "~4.0.0",
+    "expo-secure-store": "~14.0.0",
+    "expo-status-bar": "~2.0.0",
+    "expo-web-browser": "~14.0.0",
     "react": "18.3.1",
     "react-native": "0.76.5",
     "react-native-health": "^1.19.0",
@@ -34,7 +40,7 @@
   },
   "devDependencies": {
     "@types/react": "~18.3.12",
-    "typescript": "~5.3.3"
+    "typescript": "~5.4.5"
   },
   "private": true
 }

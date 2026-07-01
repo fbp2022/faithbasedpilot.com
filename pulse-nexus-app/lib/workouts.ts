@@ -126,13 +126,13 @@ const WHOOP_SPORT_BY_ID: Record<number, string> = {
 
 async function getAppleHealthWorkouts(days = 14): Promise<Workout[]> {
   if (Platform.OS !== 'ios') return [];
-  const opts: HealthInputOptions = {
+  const opts = {
     startDate: isoDaysAgo(days),
     endDate: new Date().toISOString(),
     limit: 50,
     ascending: false,
     type: 'Workout',
-  };
+  } as unknown as HealthInputOptions;
 
   type AppleWorkoutRaw = HealthValue & {
     activityName?: string;

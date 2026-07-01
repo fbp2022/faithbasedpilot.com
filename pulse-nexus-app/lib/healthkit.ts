@@ -109,7 +109,9 @@ export async function getTodaySnapshot(): Promise<DailyHealthSnapshot> {
       },
       (err, results) => {
         if (err || !results) return resolve(null);
-        const asleepMs = results
+        type SleepRow = { value?: string; startDate: string; endDate: string };
+        const rows = results as unknown as SleepRow[];
+        const asleepMs = rows
           .filter((s) => typeof s.value === 'string' && s.value.toLowerCase().includes('asleep'))
           .reduce((sum, s) => {
             const a = new Date(s.startDate).getTime();

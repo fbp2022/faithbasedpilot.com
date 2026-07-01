@@ -65,10 +65,16 @@ async function fetchAppleHealthSleep(): Promise<SleepSnapshot | null> {
   const start = new Date(end.getTime() - 36 * MS_PER_HOUR);
 
   const opts: HealthInputOptions = { startDate: start.toISOString(), endDate: end.toISOString() };
-  type SleepSample = HealthValue & { value?: string; startDate?: string; endDate?: string };
+  type SleepSample = Omit<HealthValue, 'value'> & {
+    value?: string;
+    startDate?: string;
+    endDate?: string;
+  };
 
   const samples = await new Promise<SleepSample[]>((resolve) => {
-    AppleHealthKit.getSleepSamples(opts, (err, r) => resolve(err || !r ? [] : (r as SleepSample[])));
+    AppleHealthKit.getSleepSamples(opts, (err, r) =>
+      resolve(err || !r ? [] : (r as unknown as SleepSample[])),
+    );
   });
   if (samples.length === 0) return null;
 

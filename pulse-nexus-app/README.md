@@ -23,10 +23,6 @@ Claude / Grok) in two complementary ways:
    whenever you ask it a question. See that folder's README for the
    deployment + GPT-creation walkthrough.
 
-This project is set up so you can build, sign, and ship to the App Store
-**without owning a Mac** — everything runs in the cloud via Expo Application
-Services (EAS).
-
 ---
 
 ## The five tabs
@@ -82,17 +78,6 @@ cp .env.example .env
 # Fill .env. At minimum, set ONE of the AI provider keys.
 ```
 
-```bash
-npm install -g eas-cli
-eas login
-```
-
-### Register the iOS bundle id
-
-1. developer.apple.com/account → **Identifiers** → **+** → register App ID `com.faithbasedinnovations.pulsenexus`.
-2. Enable the **HealthKit** capability on that App ID.
-3. In App Store Connect, create a matching app record. Paste the App Store Connect app id into `eas.json`.
-
 ### Register OAuth redirect URIs
 
 | Provider | Redirect URI |
@@ -103,26 +88,12 @@ eas login
 
 ---
 
-## Build a TestFlight build — from any OS
+## Run the app locally
 
 ```bash
-eas init                                          # first time only
-eas build --platform ios --profile preview
+npm start           # Expo dev server
+npm run ios         # build & run on an iOS simulator / device
 ```
-
-Pick **"Let EAS handle it"** when asked about signing — EAS generates the
-certificate and provisioning profile in the cloud. After ~15–20 min, EAS gives
-you a TestFlight build.
-
-## Submit to App Store — from any OS
-
-```bash
-eas build --platform ios --profile production
-eas submit --platform ios --latest
-```
-
-Fill in App Store screenshots and the privacy questionnaire **in your
-browser**, then click **Submit for Review**.
 
 ---
 
@@ -226,10 +197,8 @@ and a rule in `generateInsights()`, then surface it on the relevant tab.
 
 ## Ongoing cost
 
-- Apple Developer Program: **$99/year**
 - AI provider: free (Gemini) or pay-as-you-go
 - WHOOP, Fitbit, Garmin developer access: free
-- EAS Build: free tier ~30 builds/month; ~$19/month if you outgrow it
 
 ---
 

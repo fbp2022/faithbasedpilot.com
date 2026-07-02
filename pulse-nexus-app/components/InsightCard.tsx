@@ -1,17 +1,28 @@
 import { StyleSheet, Text, View } from 'react-native';
-import type { Insight } from '@/lib/assistant';
+import { Ionicons } from '@expo/vector-icons';
 
-const COLORS: Record<Insight['level'], { bg: string; bar: string; text: string }> = {
-  good: { bg: '#0f2018', bar: '#3ddc97', text: '#bff5db' },
-  neutral: { bg: '#0f1620', bar: '#5b8def', text: '#d0dcf3' },
-  warn: { bg: '#221410', bar: '#ff8a65', text: '#f7c7b8' },
+import type { Insight } from '@/lib/assistant';
+import { colors, radii, spacing } from '@/lib/theme';
+
+const STYLE: Record<
+  Insight['level'],
+  { bar: string; icon: keyof typeof Ionicons.glyphMap; title: string }
+> = {
+  good: { bar: colors.positive, icon: 'checkmark-circle', title: colors.text },
+  neutral: { bar: colors.accent, icon: 'information-circle', title: colors.text },
+  warn: { bar: colors.warn, icon: 'alert-circle', title: colors.text },
 };
 
 export function InsightCard({ insight }: { insight: Insight }) {
-  const c = COLORS[insight.level];
+  const s = STYLE[insight.level];
   return (
-    <View style={[styles.card, { backgroundColor: c.bg, borderLeftColor: c.bar }]}>
-      <Text style={[styles.title, { color: c.text }]}>{insight.title}</Text>
+    <View style={[styles.card, { borderLeftColor: s.bar }]}>
+      <View style={styles.head}>
+        <Ionicons name={s.icon} size={16} color={s.bar} />
+        <Text style={[styles.title, { color: s.title }]} numberOfLines={2}>
+          {insight.title}
+        </Text>
+      </View>
       <Text style={styles.detail}>{insight.detail}</Text>
     </View>
   );
@@ -19,12 +30,20 @@ export function InsightCard({ insight }: { insight: Insight }) {
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 12,
-    borderLeftWidth: 4,
-    padding: 14,
-    marginVertical: 6,
-    marginHorizontal: 6,
+    borderRadius: radii.md,
+    borderLeftWidth: 3,
+    padding: spacing.md + 2,
+    marginVertical: spacing.xs,
+    marginHorizontal: spacing.xs + 2,
+    backgroundColor: colors.bgCard,
+    borderTopWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderTopColor: colors.border,
+    borderRightColor: colors.border,
+    borderBottomColor: colors.border,
   },
-  title: { fontSize: 16, fontWeight: '700' },
-  detail: { color: '#c2cfdb', fontSize: 14, marginTop: 6, lineHeight: 20 },
+  head: { flexDirection: 'row', alignItems: 'center' },
+  title: { fontSize: 15, fontWeight: '700', marginLeft: 8, flex: 1 },
+  detail: { color: colors.textMuted, fontSize: 13, marginTop: 6, lineHeight: 20 },
 });

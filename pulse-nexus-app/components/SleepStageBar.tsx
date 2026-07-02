@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native';
+
 import type { SleepStageMs } from '@/lib/sleep';
+import { colors } from '@/lib/theme';
 
 const COLORS: Record<keyof SleepStageMs, string> = {
-  deep: '#5b8def',
-  rem: '#7c5cff',
-  light: '#3ddc97',
-  awake: '#f1c40f',
+  deep: '#2b6bff',
+  rem: '#8b6cf6',
+  light: '#4ac6ff',
+  awake: colors.warn,
 };
 
 const ORDER: Array<keyof SleepStageMs> = ['deep', 'rem', 'light', 'awake'];
@@ -57,11 +59,11 @@ const styles = StyleSheet.create({
     height: 18,
     borderRadius: 9,
     overflow: 'hidden',
-    backgroundColor: '#1c242e',
+    backgroundColor: colors.border,
   },
   segment: { height: '100%' },
   legend: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 10 },
   legendItem: { flexDirection: 'row', alignItems: 'center', marginRight: 12, marginTop: 4 },
   dot: { width: 10, height: 10, borderRadius: 5, marginRight: 6 },
-  legendLabel: { color: '#c2cfdb', fontSize: 12 },
+  legendLabel: { color: colors.textMuted, fontSize: 12 },
 });

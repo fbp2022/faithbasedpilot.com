@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native';
+
 import type { Workout, WorkoutSource } from '@/lib/workouts';
+import { colors, radii, spacing } from '@/lib/theme';
 
 const SOURCE_COLOR: Record<WorkoutSource, string> = {
-  'Apple Health': '#fa5252',
-  WHOOP: '#3ddc97',
-  Fitbit: '#5b8def',
-  Garmin: '#7c5cff',
+  'Apple Health': colors.apple,
+  WHOOP: colors.whoop,
+  Fitbit: colors.fitbit,
+  Garmin: colors.garmin,
 };
 
 function fmtDuration(min: number): string {
@@ -23,15 +25,17 @@ function fmtTime(iso: string): string {
     d.getMonth() === today.getMonth() &&
     d.getDate() === today.getDate();
   const time = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-  return sameDay ? `Today, ${time}` : `${d.toLocaleDateString([], { month: 'short', day: 'numeric' })}, ${time}`;
+  return sameDay
+    ? `Today, ${time}`
+    : `${d.toLocaleDateString([], { month: 'short', day: 'numeric' })}, ${time}`;
 }
 
 function strainColor(s: number | undefined): string {
-  if (s == null) return '#8aa0b4';
-  if (s >= 18) return '#ff8a65';
-  if (s >= 14) return '#f1c40f';
-  if (s >= 10) return '#3ddc97';
-  return '#5b8def';
+  if (s == null) return colors.textMuted;
+  if (s >= 18) return colors.danger;
+  if (s >= 14) return colors.warn;
+  if (s >= 10) return colors.positive;
+  return colors.accent;
 }
 
 export function WorkoutCard({ workout }: { workout: Workout }) {
@@ -61,8 +65,12 @@ export function WorkoutCard({ workout }: { workout: Workout }) {
         {workout.calories != null ? (
           <Stat label="kcal" value={Math.round(workout.calories).toLocaleString()} />
         ) : null}
-        {workout.avgHR != null ? <Stat label="Avg HR" value={`${Math.round(workout.avgHR)}`} /> : null}
-        {workout.maxHR != null ? <Stat label="Max HR" value={`${Math.round(workout.maxHR)}`} /> : null}
+        {workout.avgHR != null ? (
+          <Stat label="Avg HR" value={`${Math.round(workout.avgHR)}`} />
+        ) : null}
+        {workout.maxHR != null ? (
+          <Stat label="Max HR" value={`${Math.round(workout.maxHR)}`} />
+        ) : null}
       </View>
     </View>
   );
@@ -79,31 +87,34 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#141a22',
-    borderRadius: 14,
-    padding: 14,
-    marginVertical: 6,
+    backgroundColor: colors.bgCard,
+    borderRadius: radii.lg,
+    padding: spacing.md + 2,
+    marginVertical: spacing.xs + 2,
     marginHorizontal: 6,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  sourcePill: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 99 },
-  sourcePillText: { color: '#0b0f14', fontSize: 11, fontWeight: '700' },
+  sourcePill: { paddingHorizontal: 10, paddingVertical: 3, borderRadius: radii.pill },
+  sourcePillText: { color: '#fff', fontSize: 11, fontWeight: '700' },
   strainPill: {
     borderWidth: 1,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     paddingVertical: 2,
-    borderRadius: 99,
+    borderRadius: radii.pill,
   },
   strainPillText: { fontSize: 11, fontWeight: '700' },
-  type: { color: '#f5f7fa', fontSize: 18, fontWeight: '700', marginTop: 10 },
-  time: { color: '#8aa0b4', fontSize: 12, marginTop: 2 },
-  statsRow: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 10, marginHorizontal: -6 },
+  type: { color: colors.text, fontSize: 18, fontWeight: '800', marginTop: spacing.md, letterSpacing: -0.3 },
+  time: { color: colors.textMuted, fontSize: 12, marginTop: 2 },
+  statsRow: { flexDirection: 'row', flexWrap: 'wrap', marginTop: spacing.md, marginHorizontal: -6 },
   stat: { paddingHorizontal: 6, marginTop: 6, minWidth: 80 },
   statLabel: {
-    color: '#6c8094',
+    color: colors.textDim,
     fontSize: 10,
     textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    letterSpacing: 0.8,
+    fontWeight: '700',
   },
-  statValue: { color: '#f5f7fa', fontSize: 16, fontWeight: '700', marginTop: 2 },
+  statValue: { color: colors.text, fontSize: 16, fontWeight: '700', marginTop: 3 },
 });

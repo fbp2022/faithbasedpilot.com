@@ -1,8 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+
+import { colors, radii, spacing } from '@/lib/theme';
 
 export function DisclaimerBanner() {
   return (
     <View style={styles.box}>
+      <Ionicons name="information-circle" size={16} color={colors.warn} />
       <Text style={styles.text}>
         Answers in this tab come from a generative AI model with live web search. They can be
         incomplete or wrong. Don&apos;t use them for medical, legal, or financial decisions without
@@ -14,13 +18,16 @@ export function DisclaimerBanner() {
 
 const styles = StyleSheet.create({
   box: {
-    backgroundColor: '#2a210a',
-    borderLeftColor: '#f1c40f',
-    borderLeftWidth: 4,
-    padding: 12,
-    marginHorizontal: 6,
-    marginBottom: 8,
-    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: `${colors.warn}14`,
+    borderLeftColor: colors.warn,
+    borderLeftWidth: 3,
+    padding: spacing.md,
+    marginHorizontal: spacing.xs + 2,
+    marginBottom: spacing.sm,
+    borderRadius: radii.md,
+    gap: spacing.sm as unknown as number,
   },
-  text: { color: '#f1e6b8', fontSize: 13, lineHeight: 18 },
+  text: { color: colors.text, fontSize: 12, lineHeight: 18, marginLeft: spacing.sm, flex: 1 },
 });

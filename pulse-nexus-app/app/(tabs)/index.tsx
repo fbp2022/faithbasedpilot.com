@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AskExternalAIButton } from '@/components/AskExternalAI';
 import { InsightCard } from '@/components/InsightCard';
 import { MetricCard } from '@/components/MetricCard';
-import { RecoveryRing } from '@/components/RecoveryRing';
+import { ScoreRings, type ScoreRing } from '@/components/ScoreRings';
 import { buildDashboardSnapshotText } from '@/lib/snapshot-text';
 import { generateInsights, unify, type CombinedSnapshot } from '@/lib/assistant';
 import {
@@ -240,6 +240,33 @@ export default function Dashboard() {
   const recoveryValue = u.recovery?.value ?? null;
   const recoverySource = u.recovery?.source ?? 'Connect WHOOP for recovery';
 
+  const heroRings: ScoreRing[] = [
+    {
+      key: 'recovery',
+      label: 'Recovery',
+      value: recoveryValue != null ? `${Math.round(recoveryValue)}%` : '—',
+      sub: recoveryValue != null ? recoverySource : 'No data',
+      zoneValue: recoveryValue,
+      hasData: recoveryValue != null,
+    },
+    {
+      key: 'sleep',
+      label: 'Sleep',
+      value: u.sleepHours != null ? `${u.sleepHours.value.toFixed(1)}h` : '—',
+      sub: u.sleepHours?.source ?? 'No data',
+      color: '#8b6cf6',
+      hasData: u.sleepHours != null,
+    },
+    {
+      key: 'strain',
+      label: 'Strain',
+      value: u.strainOrLoad != null ? u.strainOrLoad.value.toFixed(1) : '—',
+      sub: u.strainOrLoad?.source ?? 'No data',
+      color: colors.whoop,
+      hasData: u.strainOrLoad != null,
+    },
+  ];
+
   return (
     <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <ScrollView
@@ -270,11 +297,7 @@ export default function Dashboard() {
         ) : (
           <>
             <View style={styles.hero}>
-              <RecoveryRing
-                value={recoveryValue}
-                label="Recovery"
-                sub={recoverySource}
-              />
+              <ScoreRings rings={heroRings} />
             </View>
 
             {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -370,7 +393,8 @@ const styles = StyleSheet.create({
   hero: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing.xl,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.sm,
     marginHorizontal: spacing.xs + 2,
     borderRadius: radii.xl,
     backgroundColor: colors.bgElevated,

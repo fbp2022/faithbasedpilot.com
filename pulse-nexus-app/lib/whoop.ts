@@ -31,7 +31,14 @@ import {
   estimateRestingHr,
   meanHeartRate,
 } from './whoop-analytics';
-import { getRecentHrSamples, getRecentRrIntervals } from './whoop-store';
+import {
+  getHistoryCounts,
+  getLatestCycle,
+  getLatestSleep,
+  getRecentHrSamples,
+  getRecentRrIntervals,
+  getWorkoutsSince,
+} from './whoop-store';
 
 const NEEDS_BLE_PAIRING_MESSAGE =
   'Pair your WHOOP strap over Bluetooth from Connect \u2192 WHOOP. Pulse Nexus no longer signs in to WHOOP\u2019s cloud.';
@@ -50,6 +57,17 @@ export async function disconnectWhoop(): Promise<void> {
 
 export async function isWhoopConnected(): Promise<boolean> {
   return isWhoopStrapPaired();
+}
+
+/**
+ * True if there is any WHOOP data to show — either a strap paired over
+ * Bluetooth or history imported from a WHOOP account export. The dashboard
+ * uses this to decide whether to read WHOOP recovery / sleep / strain.
+ */
+export async function hasWhoopData(): Promise<boolean> {
+  if (await isWhoopStrapPaired()) return true;
+  const counts = await getHistoryCounts();
+  return counts.cycles > 0 || counts.sleeps > 0 || counts.workouts > 0;
 }
 
 export type WhoopRecovery = {
@@ -78,21 +96,85 @@ export type WhoopCycle = {
 };
 
 /**
- * Stage 2 will decode these from the strap's own frames. Until then, we
- * report "no data" — the dashboard falls back to Apple Health / Fitbit /
- * Garmin sources for these metrics, and the WHOOP live-HR card carries
- * the "connected" experience by itself.
+ * These now read the newest record from the local store, which is
+ * populated by a WHOOP account-export import (and, in a later stage, by
+ * the strap's own encrypted history offload). If nothing has been imported
+ * yet they return null and the dashboard falls back to Apple Health /
+ * Fitbit / Garmin.
  */
 export async function getLatestWhoopRecovery(): Promise<WhoopRecovery | null> {
-  return null;
+  const cycle = await getLatestCycle();
+  if (!cycle || cycle.recoveryScore == null) return null;
+  return {
+    cycle_id: Number(cycle.startTs),
+    score: {
+      recovery_score: cycle.recoveryScore,
+      resting_heart_rate: cycle.restingHr ?? 0,
+      hrv_rmssd_milli: cycle.hrvRmssdMs ?? 0,
+    },
+    updated_at: new Date(cycle.startTs).toISOString(),
+  };
 }
 
 export async function getLatestWhoopSleep(): Promise<WhoopSleep | null> {
-  return null;
+  const sleep = await getLatestSleep();
+  if (!sleep) return null;
+  return {
+    id: Number(sleep.startTs),
+    start: new Date(sleep.startTs).toISOString(),
+    end: new Date(sleep.endTs).toISOString(),
+    score: {
+      sleep_performance_percentage: sleep.performancePct ?? 0,
+      sleep_efficiency_percentage: sleep.efficiencyPct ?? 0,
+      sleep_needed_milli: sleep.neededMs ?? 0,
+      stage_summary: {
+        total_in_bed_time_milli: sleep.inBedMs ?? sleep.asleepMs ?? 0,
+      },
+    },
+  };
 }
 
 export async function getLatestWhoopCycle(): Promise<WhoopCycle | null> {
-  return null;
+  const cycle = await getLatestCycle();
+  if (!cycle || cycle.strain == null) return null;
+  return {
+    id: Number(cycle.startTs),
+    start: new Date(cycle.startTs).toISOString(),
+    end: cycle.endTs ? new Date(cycle.endTs).toISOString() : null,
+    score: { strain: cycle.strain, average_heart_rate: cycle.avgHr ?? 0 },
+  };
+}
+
+export type WhoopHistoryWorkout = {
+  id: string;
+  start: string;
+  end: string;
+  type: string;
+  strainOrLoad: number | null;
+  avgHR: number | null;
+  maxHR: number | null;
+  calories: number | null;
+  distanceKm: number | null;
+};
+
+/**
+ * Imported WHOOP workouts over the given window, newest-first. Feeds the
+ * Workouts tab alongside Apple Health / Fitbit / Garmin sessions.
+ */
+export async function getWhoopHistoryWorkouts(days = 30): Promise<WhoopHistoryWorkout[]> {
+  const since = Date.now() - days * 24 * 60 * 60 * 1000;
+  const rows = await getWorkoutsSince(since);
+  return rows.map((w) => ({
+    id: w.workoutId,
+    start: new Date(w.startTs).toISOString(),
+    end: new Date(w.endTs).toISOString(),
+    type: w.type,
+    strainOrLoad: w.strain,
+    avgHR: w.avgHr,
+    maxHR: w.maxHr,
+    calories: w.kilojoules != null ? w.kilojoules / 4.184 : null,
+    distanceKm: w.distanceMeters != null ? w.distanceMeters / 1000 : null,
+  }));
 }
 
 /**

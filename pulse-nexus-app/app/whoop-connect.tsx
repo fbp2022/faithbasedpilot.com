@@ -16,9 +16,12 @@ import {
   forgetWhoopStrap,
   getWhoopBle,
   type LiveHR,
+  type OffloadStatus,
   type StrapAdvertisement,
   type StrapConnectionState,
 } from '@/lib/whoop-ble';
+import { pickAndImportWhoopExport, type ImportResult } from '@/lib/whoop-import-file';
+import { getHistoryCounts } from '@/lib/whoop-store';
 
 const colors = {
   bg: '#0b0f14',
@@ -88,6 +91,11 @@ export default function WhoopConnectScreen() {
   const [devices, setDevices] = useState<StrapAdvertisement[]>([]);
   const [liveHR, setLiveHR] = useState<LiveHR | null>(ble.getLastHR());
   const [pairedName, setPairedName] = useState<string | null>(null);
+  const [offload, setOffloadStatus] = useState<OffloadStatus>(ble.getOffloadStatus());
+  const [history, setHistory] = useState<{ cycles: number; sleeps: number; workouts: number; earliestTs: number | null } | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
   const scanCancelledRef = useRef(false);
 
   const refreshPaired = useCallback(async () => {
@@ -95,19 +103,49 @@ export default function WhoopConnectScreen() {
     setPairedName(paired?.name ?? null);
   }, [ble]);
 
+  const refreshHistory = useCallback(async () => {
+    const counts = await getHistoryCounts().catch(() => null);
+    if (counts) setHistory(counts);
+  }, []);
+
   useEffect(() => {
     refreshPaired();
+    refreshHistory();
     const offState = ble.onState((s, err) => {
       setState(s);
       setError(err ?? null);
       refreshPaired();
     });
     const offHR = ble.onHR((hr) => setLiveHR(hr));
+    const offOffload = ble.onOffload((s) => setOffloadStatus(s));
     return () => {
       offState();
       offHR();
+      offOffload();
     };
-  }, [ble, refreshPaired]);
+  }, [ble, refreshPaired, refreshHistory]);
+
+  const importExport = useCallback(async () => {
+    setImporting(true);
+    setImportError(null);
+    setImportResult(null);
+    try {
+      const result = await pickAndImportWhoopExport();
+      if (result) {
+        setImportResult(result);
+        await refreshHistory();
+      }
+    } catch (e) {
+      setImportError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setImporting(false);
+    }
+  }, [refreshHistory]);
+
+  const syncStrapHistory = useCallback(async () => {
+    await ble.offloadHistory();
+    await refreshHistory();
+  }, [ble, refreshHistory]);
 
   const scan = useCallback(async () => {
     setDevices([]);
@@ -274,6 +312,90 @@ export default function WhoopConnectScreen() {
           </>
         ) : null}
 
+        <Text style={styles.section}>Bring in all your WHOOP history</Text>
+        <View style={styles.historyCard}>
+          <Text style={styles.historyBlurb}>
+            Export your full WHOOP account history from the WHOOP app (Settings → Data Export)
+            and import the .zip here. Everything moves onto this device — recovery, sleep, and
+            workouts from day one — with no WHOOP account needed afterwards.
+          </Text>
+
+          {history && (history.cycles > 0 || history.sleeps > 0 || history.workouts > 0) ? (
+            <View style={styles.historyStats}>
+              <HistoryStat label="Days" value={history.cycles} />
+              <HistoryStat label="Nights" value={history.sleeps} />
+              <HistoryStat label="Workouts" value={history.workouts} />
+            </View>
+          ) : null}
+
+          {history?.earliestTs ? (
+            <Text style={styles.historySince}>
+              History since {new Date(history.earliestTs).toLocaleDateString()}
+            </Text>
+          ) : null}
+
+          <Pressable
+            style={[styles.btn, styles.btnPrimary]}
+            onPress={importExport}
+            disabled={importing}
+          >
+            {importing ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Ionicons name="cloud-upload" size={16} color="#fff" />
+                <Text style={styles.btnPrimaryText}>Import WHOOP export</Text>
+              </>
+            )}
+          </Pressable>
+
+          {importResult ? (
+            <Text style={styles.importOk}>
+              Imported {importResult.cycles} days, {importResult.sleeps} nights, and{' '}
+              {importResult.workouts} workouts.
+            </Text>
+          ) : null}
+          {importError ? (
+            <View style={styles.errorBox}>
+              <Ionicons name="alert-circle" size={16} color={colors.danger} />
+              <Text style={styles.errorText}>{importError}</Text>
+            </View>
+          ) : null}
+        </View>
+
+        {isConnected ? (
+          <>
+            <Text style={styles.section}>Sync from the strap</Text>
+            <View style={styles.historyCard}>
+              <Text style={styles.historyBlurb}>
+                Pull the last ~14 days the strap stores on-device, straight over Bluetooth.
+              </Text>
+              {offload.phase === 'unsupported' ? (
+                <View style={styles.hintBox}>
+                  <Ionicons name="information-circle" size={16} color={colors.warn} />
+                  <Text style={styles.hintText}>{offload.reason}</Text>
+                </View>
+              ) : offload.phase === 'offloading' ? (
+                <Text style={styles.historySince}>
+                  Offloading… {offload.pagesDone}
+                  {offload.pagesTotal ? ` / ${offload.pagesTotal}` : ''} pages
+                </Text>
+              ) : offload.phase === 'done' ? (
+                <Text style={styles.importOk}>Synced {offload.framesDecoded} records from the strap.</Text>
+              ) : offload.phase === 'error' ? (
+                <View style={styles.errorBox}>
+                  <Ionicons name="alert-circle" size={16} color={colors.danger} />
+                  <Text style={styles.errorText}>{offload.message}</Text>
+                </View>
+              ) : null}
+              <Pressable style={[styles.btn, styles.btnSecondary]} onPress={syncStrapHistory}>
+                <Ionicons name="sync" size={16} color={colors.text} />
+                <Text style={styles.btnSecondaryText}>Sync strap history</Text>
+              </Pressable>
+            </View>
+          </>
+        ) : null}
+
         <Text style={styles.tips}>
           Only one device holds the strap&apos;s Bluetooth bond at a time. If pairing fails,
           fully quit the official WHOOP app on any phone that&apos;s currently connected, then
@@ -285,6 +407,15 @@ export default function WhoopConnectScreen() {
         </Pressable>
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+function HistoryStat({ label, value }: { label: string; value: number }) {
+  return (
+    <View style={styles.historyStat}>
+      <Text style={styles.historyStatValue}>{value.toLocaleString()}</Text>
+      <Text style={styles.historyStatLabel}>{label}</Text>
+    </View>
   );
 }
 
@@ -441,4 +572,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   closeText: { color: colors.accent, fontWeight: '700' },
+
+  historyCard: {
+    backgroundColor: colors.bgCard,
+    borderRadius: radii.lg,
+    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: spacing.md as unknown as number,
+  },
+  historyBlurb: { color: colors.textMuted, fontSize: 13, lineHeight: 19 },
+  historyStats: { flexDirection: 'row', justifyContent: 'space-around' },
+  historyStat: { alignItems: 'center' },
+  historyStatValue: {
+    color: colors.accent,
+    fontSize: 26,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  historyStatLabel: {
+    color: colors.textMuted,
+    fontSize: 11,
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+    fontWeight: '700',
+    marginTop: 2,
+  },
+  historySince: { color: colors.textDim, fontSize: 12, textAlign: 'center' },
+  importOk: { color: colors.positive, fontSize: 13, fontWeight: '600' },
+  hintBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    padding: spacing.md,
+    backgroundColor: `${colors.warn}14`,
+    borderRadius: radii.md,
+    borderLeftColor: colors.warn,
+    borderLeftWidth: 3,
+    gap: spacing.sm as unknown as number,
+  },
+  hintText: { color: colors.text, fontSize: 12, lineHeight: 18, marginLeft: spacing.sm, flex: 1 },
 });

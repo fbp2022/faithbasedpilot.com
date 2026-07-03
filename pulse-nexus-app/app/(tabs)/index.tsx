@@ -28,6 +28,7 @@ import {
   getLatestWhoopSleep,
   getWhoopHrvOverWindow,
   getWhoopRestingHr,
+  hasWhoopData,
   isWhoopConnected,
   type WhoopCycle,
   type WhoopRecovery,
@@ -73,15 +74,16 @@ export default function Dashboard() {
       ]);
       setPrefs(loadedPrefs);
 
-      const [whoopConnected, fitbitConnected, garminConnected] = await Promise.all([
+      const [whoopConnected, whoopHasData, fitbitConnected, garminConnected] = await Promise.all([
         isWhoopConnected(),
+        hasWhoopData(),
         isFitbitConnected(),
         isGarminConnected(),
       ]);
 
       const [h, whoopData, fitbitData, garminData, whoopBleData] = await Promise.all([
         getTodaySnapshot().catch(() => null),
-        whoopConnected
+        whoopHasData
           ? Promise.all([
               getLatestWhoopRecovery().catch(() => null),
               getLatestWhoopSleep().catch(() => null),

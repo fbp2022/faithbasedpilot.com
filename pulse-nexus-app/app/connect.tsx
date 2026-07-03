@@ -1,34 +1,41 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
-import { connectWhoop, disconnectWhoop, isWhoopConnected } from '@/lib/whoop';
 import { connectFitbit, disconnectFitbit, isFitbitConnected } from '@/lib/fitbit';
 import {
   connectGarmin,
   disconnectGarmin,
-  isGarminConnected,
   isGarminConfigured,
+  isGarminConnected,
 } from '@/lib/garmin';
+import { disconnectWhoop, isWhoopConnected } from '@/lib/whoop';
+
+type ProviderKey = 'whoop' | 'fitbit' | 'garmin';
 
 type ProviderRow = {
-  key: 'whoop' | 'fitbit' | 'garmin';
+  key: ProviderKey;
   name: string;
   blurb: string;
   notice?: string;
   isConnected: () => Promise<boolean>;
-  connect: () => Promise<void>;
   disconnect: () => Promise<void>;
+  connect?: () => Promise<void>;
+  route?: string;
+  connectLabel?: string;
 };
 
 const PROVIDERS: ProviderRow[] = [
   {
     key: 'whoop',
     name: 'WHOOP',
-    blurb: 'Recovery, sleep performance, strain.',
+    blurb:
+      'Direct Bluetooth pairing with your WHOOP strap. No WHOOP account, no subscription, no cloud. Live heart rate streams as soon as you pair.',
     isConnected: isWhoopConnected,
-    connect: connectWhoop,
     disconnect: disconnectWhoop,
+    route: '/whoop-connect',
+    connectLabel: 'Pair over Bluetooth',
   },
   {
     key: 'fitbit',
@@ -51,6 +58,7 @@ const PROVIDERS: ProviderRow[] = [
 ];
 
 export default function ConnectScreen() {
+  const router = useRouter();
   const [statuses, setStatuses] = useState<Record<string, boolean | null>>({});
   const [busy, setBusy] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string | null>>({});
@@ -67,7 +75,18 @@ export default function ConnectScreen() {
     refresh();
   }, [refresh]);
 
+  // Re-refresh when returning from a modal (e.g. /whoop-connect after pairing).
+  useEffect(() => {
+    const id = setInterval(refresh, 1500);
+    return () => clearInterval(id);
+  }, [refresh]);
+
   const onConnect = async (p: ProviderRow) => {
+    if (p.route) {
+      router.push(p.route as never);
+      return;
+    }
+    if (!p.connect) return;
     setBusy(p.key);
     setErrors((e) => ({ ...e, [p.key]: null }));
     try {
@@ -129,19 +148,32 @@ export default function ConnectScreen() {
                   disabled={isBusy}
                 >
                   <Text style={styles.buttonText}>
-                    {isBusy ? `Opening ${p.name}…` : `Connect ${p.name.split(' ')[0]}`}
+                    {isBusy
+                      ? `Opening ${p.name}…`
+                      : p.connectLabel ?? `Connect ${p.name.split(' ')[0]}`}
                   </Text>
                 </Pressable>
               ) : null}
 
               {connected === true ? (
-                <Pressable
-                  style={[styles.button, { backgroundColor: '#ff8a65' }]}
-                  onPress={() => onDisconnect(p)}
-                  disabled={isBusy}
-                >
-                  <Text style={styles.buttonText}>{isBusy ? 'Disconnecting…' : 'Disconnect'}</Text>
-                </Pressable>
+                <View style={styles.rowActions}>
+                  {p.route ? (
+                    <Pressable
+                      style={[styles.button, styles.buttonSecondary]}
+                      onPress={() => onConnect(p)}
+                      disabled={isBusy}
+                    >
+                      <Text style={styles.buttonSecondaryText}>Manage</Text>
+                    </Pressable>
+                  ) : null}
+                  <Pressable
+                    style={[styles.button, { backgroundColor: '#ff8a65', flex: 1 }]}
+                    onPress={() => onDisconnect(p)}
+                    disabled={isBusy}
+                  >
+                    <Text style={styles.buttonText}>{isBusy ? 'Disconnecting…' : 'Disconnect'}</Text>
+                  </Pressable>
+                </View>
               ) : null}
 
               {err ? <Text style={styles.error}>{err}</Text> : null}
@@ -200,5 +232,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: { color: '#0b0f14', fontSize: 15, fontWeight: '700' },
+  buttonSecondary: {
+    backgroundColor: '#1c242e',
+    flex: 1,
+    marginRight: 8,
+  },
+  buttonSecondaryText: { color: '#c2cfdb', fontSize: 15, fontWeight: '700' },
+  rowActions: { flexDirection: 'row' },
   error: { color: '#ff8a65', marginTop: 10, fontSize: 13 },
 });

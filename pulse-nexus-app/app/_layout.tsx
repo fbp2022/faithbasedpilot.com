@@ -14,6 +14,10 @@ export default function RootLayout() {
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="connect" options={{ title: 'Connect devices', presentation: 'modal' }} />
+        <Stack.Screen
+          name="whoop-connect"
+          options={{ title: 'Pair WHOOP strap', presentation: 'modal' }}
+        />
         <Stack.Screen name="preferences" options={{ title: 'Preferences', presentation: 'modal' }} />
       </Stack>
     </>

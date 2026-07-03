@@ -26,6 +26,12 @@
  * decoded strap frames instead of returning null.
  */
 import { forgetWhoopStrap, getWhoopBle, isWhoopStrapPaired } from './whoop-ble';
+import {
+  computeHrvSummary,
+  estimateRestingHr,
+  meanHeartRate,
+} from './whoop-analytics';
+import { getRecentHrSamples, getRecentRrIntervals } from './whoop-store';
 
 const NEEDS_BLE_PAIRING_MESSAGE =
   'Pair your WHOOP strap over Bluetooth from Connect \u2192 WHOOP. Pulse Nexus no longer signs in to WHOOP\u2019s cloud.';
@@ -96,4 +102,51 @@ export async function getLatestWhoopCycle(): Promise<WhoopCycle | null> {
 export function getLatestWhoopLiveHR(): { bpm: number; timestamp: number } | null {
   const last = getWhoopBle().getLastHR();
   return last ? { bpm: last.bpm, timestamp: last.timestamp } : null;
+}
+
+/** Rolling HRV RMSSD for the current session (ms). See lib/whoop-analytics. */
+export function getLiveRmssdMs(): number | null {
+  return getWhoopBle().getRollingRmssdMs();
+}
+
+export type WhoopHrvSummary = {
+  rmssdMs: number | null;
+  sdnnMs: number | null;
+  meanHr: number | null;
+  cleanedCount: number;
+  droppedCount: number;
+  windowHours: number;
+};
+
+/**
+ * HRV computed from persisted R-R intervals over the given window. Runs
+ * the Malik ectopic filter first (drops beats that deviate >20% from a
+ * running local median), then RMSSD and SDNN per Task Force 1996.
+ * See `lib/whoop-analytics.ts` for the math.
+ */
+export async function getWhoopHrvOverWindow(hours: number): Promise<WhoopHrvSummary | null> {
+  const windowMs = hours * 60 * 60 * 1000;
+  const rr = await getRecentRrIntervals(windowMs);
+  if (rr.length === 0) return null;
+  const summary = computeHrvSummary(rr.map((p) => p.rrMs));
+  return { ...summary, windowHours: hours };
+}
+
+/**
+ * Estimated resting heart rate from persisted HR samples over the given
+ * window (default 24 h). Uses the 5th-percentile heuristic — a
+ * conservative approximation of true resting HR that's stable enough for
+ * a wearable display.
+ */
+export async function getWhoopRestingHr(hours = 24): Promise<number | null> {
+  const samples = await getRecentHrSamples(hours * 60 * 60 * 1000);
+  return estimateRestingHr(samples);
+}
+
+/**
+ * Mean heart rate across the given window (default 24 h).
+ */
+export async function getWhoopMeanHr(hours = 24): Promise<number | null> {
+  const samples = await getRecentHrSamples(hours * 60 * 60 * 1000);
+  return meanHeartRate(samples);
 }

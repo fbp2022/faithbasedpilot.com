@@ -33,6 +33,8 @@ import { Platform } from 'react-native';
 import { BleManager, type Device, State, type Subscription } from 'react-native-ble-plx';
 
 import { deleteSecret, getSecret, setSecret } from './storage';
+import { RollingHrv } from './whoop-analytics';
+import { pruneOldSamples, recordHrPacket } from './whoop-store';
 
 // Public Bluetooth SIG UUIDs (128-bit form).
 const HR_SERVICE_UUID = '0000180d-0000-1000-8000-00805f9b34fb';
@@ -90,6 +92,8 @@ class WhoopBleClient {
   private lastHR: LiveHR | null = null;
   private state: StrapConnectionState = 'disconnected';
   private lastError: string | null = null;
+  private rollingHrv = new RollingHrv(60);
+  private lastPruneAt = 0;
 
   destroy(): void {
     this.stopScan();
@@ -108,6 +112,16 @@ class WhoopBleClient {
 
   getLastHR(): LiveHR | null {
     return this.lastHR;
+  }
+
+  /**
+   * Current rolling RMSSD (ms), computed from the most recent ~60 R-R
+   * intervals the strap has emitted this session. Returns null until we
+   * have at least a couple of clean beats. This is a *session* HRV — for
+   * a longer-horizon value use the store-backed helper in `lib/whoop.ts`.
+   */
+  getRollingRmssdMs(): number | null {
+    return this.rollingHrv.rmssdMs();
   }
 
   onHR(fn: Listener): () => void {
@@ -286,8 +300,20 @@ class WhoopBleClient {
         if (!raw) return;
         const parsed = parseHrMeasurement(base64ToBytes(raw));
         if (!parsed) return;
-        this.lastHR = { ...parsed, timestamp: Date.now() };
+        const ts = Date.now();
+        this.lastHR = { ...parsed, timestamp: ts };
         for (const l of this.hrListeners) l(this.lastHR);
+
+        if (parsed.rrIntervalsMs) {
+          for (const rr of parsed.rrIntervalsMs) this.rollingHrv.push(rr);
+        }
+
+        // Fire-and-forget persistence — never blocks the BLE callback.
+        recordHrPacket(ts, parsed.bpm, parsed.rrIntervalsMs).catch(() => {});
+        if (ts - this.lastPruneAt > 15 * 60 * 1000) {
+          this.lastPruneAt = ts;
+          pruneOldSamples().catch(() => {});
+        }
       },
     );
   }

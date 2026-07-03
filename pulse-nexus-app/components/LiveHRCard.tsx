@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 import { getWhoopBle, type LiveHR, type StrapConnectionState } from '@/lib/whoop-ble';
+import { getLiveRmssdMs } from '@/lib/whoop';
 
 const HEART_RED = '#ff6b6b';
 
@@ -19,9 +20,13 @@ export function LiveHRCard() {
   const ble = getWhoopBle();
   const [hr, setHr] = useState<LiveHR | null>(ble.getLastHR());
   const [state, setState] = useState<StrapConnectionState>(ble.getState());
+  const [rmssd, setRmssd] = useState<number | null>(getLiveRmssdMs());
 
   useEffect(() => {
-    const offHR = ble.onHR((v) => setHr(v));
+    const offHR = ble.onHR((v) => {
+      setHr(v);
+      setRmssd(getLiveRmssdMs());
+    });
     const offState = ble.onState((s) => setState(s));
     return () => {
       offHR();
@@ -59,10 +64,17 @@ export function LiveHRCard() {
           {hr ? Math.round(hr.bpm) : '—'}
         </Text>
         <Text style={styles.unit}>bpm</Text>
+        {rmssd != null ? (
+          <View style={styles.hrvChip}>
+            <Text style={styles.hrvChipLabel}>HRV</Text>
+            <Text style={styles.hrvChipValue}>{Math.round(rmssd)} ms</Text>
+          </View>
+        ) : null}
       </View>
       {hr?.rrIntervalsMs && hr.rrIntervalsMs.length > 0 ? (
         <Text style={styles.rr}>
           Latest R-R: {Math.round(hr.rrIntervalsMs[hr.rrIntervalsMs.length - 1])} ms
+          {rmssd != null ? '  ·  computed locally from R-R intervals' : ''}
         </Text>
       ) : null}
     </Pressable>
@@ -134,5 +146,27 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 6,
     fontVariant: ['tabular-nums'],
+  },
+  hrvChip: {
+    marginLeft: 'auto',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    backgroundColor: '#1c242e',
+    alignItems: 'flex-end',
+  },
+  hrvChipLabel: {
+    color: '#8aa0b4',
+    fontSize: 10,
+    letterSpacing: 0.6,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  hrvChipValue: {
+    color: '#f5f7fa',
+    fontSize: 16,
+    fontWeight: '800',
+    fontVariant: ['tabular-nums'],
+    marginTop: 2,
   },
 });

@@ -35,6 +35,7 @@ import { BleManager, type Device, State, type Subscription } from 'react-native-
 import { deleteSecret, getSecret, setSecret } from './storage';
 import { RollingHrv } from './whoop-analytics';
 import { pruneOldSamples, recordHrPacket } from './whoop-store';
+import { offloadCommandsReady } from './whoop-protocol';
 
 // Public Bluetooth SIG UUIDs (128-bit form).
 const HR_SERVICE_UUID = '0000180d-0000-1000-8000-00805f9b34fb';
@@ -79,8 +80,16 @@ export type LiveHR = {
   rrIntervalsMs?: number[];
 };
 
+export type OffloadStatus =
+  | { phase: 'idle' }
+  | { phase: 'unsupported'; reason: string }
+  | { phase: 'offloading'; pagesDone: number; pagesTotal: number | null }
+  | { phase: 'done'; framesDecoded: number }
+  | { phase: 'error'; message: string };
+
 type Listener = (v: LiveHR) => void;
 type StateListener = (s: StrapConnectionState, error?: string) => void;
+type OffloadListener = (s: OffloadStatus) => void;
 
 class WhoopBleClient {
   private manager = new BleManager();
@@ -94,6 +103,8 @@ class WhoopBleClient {
   private lastError: string | null = null;
   private rollingHrv = new RollingHrv(60);
   private lastPruneAt = 0;
+  private offloadStatus: OffloadStatus = { phase: 'idle' };
+  private offloadListeners = new Set<OffloadListener>();
 
   destroy(): void {
     this.stopScan();
@@ -122,6 +133,65 @@ class WhoopBleClient {
    */
   getRollingRmssdMs(): number | null {
     return this.rollingHrv.rmssdMs();
+  }
+
+  getOffloadStatus(): OffloadStatus {
+    return this.offloadStatus;
+  }
+
+  onOffload(fn: OffloadListener): () => void {
+    this.offloadListeners.add(fn);
+    fn(this.offloadStatus);
+    return () => this.offloadListeners.delete(fn);
+  }
+
+  private setOffload(s: OffloadStatus): void {
+    this.offloadStatus = s;
+    for (const l of this.offloadListeners) l(s);
+  }
+
+  /**
+   * Offload the strap's own stored history (the last ~14 days it buffers
+   * on-device) and persist it locally. This is the "the WHOOP starts
+   * writing to this app" path for data that never touched WHOOP's cloud.
+   *
+   * The transport (CRC framing, frame reassembly) is implemented in
+   * `lib/whoop-protocol.ts`, but the history-request command opcodes are
+   * generation/firmware specific and must be validated on real hardware
+   * before we send anything to the strap. Until those constants are
+   * confirmed, this reports `unsupported` instead of guessing a command —
+   * users still get full history via the WHOOP account-export import, and
+   * live HR / HRV stream regardless.
+   */
+  async offloadHistory(): Promise<OffloadStatus> {
+    if (!this.device) {
+      this.setOffload({ phase: 'error', message: 'No strap connected.' });
+      return this.offloadStatus;
+    }
+    const family = ((await getSecret(PAIRED_DEVICE_FAMILY_KEY)) as WhoopFamily | null) ?? 'unknown';
+    if (family === 'unknown') {
+      this.setOffload({
+        phase: 'unsupported',
+        reason: 'Unknown strap generation — cannot offload history yet.',
+      });
+      return this.offloadStatus;
+    }
+    if (!offloadCommandsReady(family)) {
+      this.setOffload({
+        phase: 'unsupported',
+        reason:
+          'On-strap history offload for this firmware is still being mapped. Import your WHOOP account export for full history in the meantime — live heart rate and HRV are already streaming.',
+      });
+      return this.offloadStatus;
+    }
+    // When the opcodes are validated, the sequence is:
+    //   1) write requestHistory to the control characteristic
+    //   2) accumulate notifications, readFrames() until a complete page
+    //   3) verify each frame's CRC, decode, persist, write ackPage
+    //   4) repeat until the strap signals end-of-history, then endOffload
+    // Left unimplemented on purpose — see whoop-protocol.ts.
+    this.setOffload({ phase: 'error', message: 'Offload pipeline not enabled in this build.' });
+    return this.offloadStatus;
   }
 
   onHR(fn: Listener): () => void {

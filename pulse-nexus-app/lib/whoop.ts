@@ -13,7 +13,7 @@
  */
 import * as AuthSession from 'expo-auth-session';
 import Constants from 'expo-constants';
-import { getSecret, setSecret, deleteSecret } from './storage';
+import { deleteSecret, getSecret, setSecret } from './storage';
 
 const AUTH_ENDPOINT = 'https://api.prod.whoop.com/oauth/oauth2/auth';
 const TOKEN_ENDPOINT = 'https://api.prod.whoop.com/oauth/oauth2/token';
@@ -29,22 +29,37 @@ const SCOPES = [
   'offline',
 ];
 
-function env(name: string): string {
-  const v =
-    (Constants.expoConfig?.extra as Record<string, string> | undefined)?.[name] ??
-    (process.env[name] as string | undefined);
-  if (!v) throw new Error(`Missing environment variable ${name}. See .env.example.`);
-  return v;
-}
+const NOT_CONFIGURED_MESSAGE =
+  'WHOOP is not configured yet. Create a free WHOOP developer app at https://developer.whoop.com, register the redirect URI pulsenexus://whoop-callback, then add EXPO_PUBLIC_WHOOP_CLIENT_ID and EXPO_PUBLIC_WHOOP_CLIENT_SECRET to your .env and rebuild.';
 
 const discovery: AuthSession.DiscoveryDocument = {
   authorizationEndpoint: AUTH_ENDPOINT,
   tokenEndpoint: TOKEN_ENDPOINT,
 };
 
+function envOptional(name: string): string | null {
+  const v =
+    (Constants.expoConfig?.extra as Record<string, string> | undefined)?.[name] ??
+    (process.env[name] as string | undefined);
+  return v && v.length > 0 ? v : null;
+}
+
+function envRequired(name: string): string {
+  const v = envOptional(name);
+  if (!v) throw new Error(NOT_CONFIGURED_MESSAGE);
+  return v;
+}
+
+export function isWhoopConfigured(): boolean {
+  return (
+    envOptional('EXPO_PUBLIC_WHOOP_CLIENT_ID') !== null &&
+    envOptional('EXPO_PUBLIC_WHOOP_CLIENT_SECRET') !== null
+  );
+}
+
 export async function connectWhoop(): Promise<void> {
-  const clientId = env('EXPO_PUBLIC_WHOOP_CLIENT_ID');
-  const clientSecret = env('EXPO_PUBLIC_WHOOP_CLIENT_SECRET');
+  const clientId = envRequired('EXPO_PUBLIC_WHOOP_CLIENT_ID');
+  const clientSecret = envRequired('EXPO_PUBLIC_WHOOP_CLIENT_SECRET');
   const redirectUri = AuthSession.makeRedirectUri({ scheme: 'pulsenexus', path: 'whoop-callback' });
 
   const request = new AuthSession.AuthRequest({
@@ -56,8 +71,11 @@ export async function connectWhoop(): Promise<void> {
   });
   await request.makeAuthUrlAsync(discovery);
   const result = await request.promptAsync(discovery);
+  if (result.type === 'cancel' || result.type === 'dismiss') {
+    throw new Error('WHOOP sign-in was cancelled.');
+  }
   if (result.type !== 'success' || !result.params.code) {
-    throw new Error(`WHOOP authorization failed: ${result.type}`);
+    throw new Error(`WHOOP sign-in failed (${result.type}). Please try again.`);
   }
 
   const token = await AuthSession.exchangeCodeAsync(
@@ -98,8 +116,8 @@ async function getValidAccessToken(): Promise<string> {
   const refresh = await getSecret('whoop.refresh_token');
   if (!refresh) throw new Error('WHOOP not connected. Open the Connect tab to sign in.');
 
-  const clientId = env('EXPO_PUBLIC_WHOOP_CLIENT_ID');
-  const clientSecret = env('EXPO_PUBLIC_WHOOP_CLIENT_SECRET');
+  const clientId = envRequired('EXPO_PUBLIC_WHOOP_CLIENT_ID');
+  const clientSecret = envRequired('EXPO_PUBLIC_WHOOP_CLIENT_SECRET');
   const refreshed = await AuthSession.refreshAsync(
     { clientId, clientSecret, refreshToken: refresh, scopes: SCOPES },
     discovery,

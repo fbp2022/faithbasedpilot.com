@@ -1,15 +1,18 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
+import { colors } from '@/lib/theme';
+
 export default function RootLayout() {
   return (
     <>
       <StatusBar style="light" />
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: '#0b0f14' },
-          headerTintColor: '#f5f7fa',
-          contentStyle: { backgroundColor: '#0b0f14' },
+          headerStyle: { backgroundColor: colors.bg },
+          headerTintColor: colors.text,
+          headerTitleStyle: { color: colors.text, fontWeight: '700' },
+          contentStyle: { backgroundColor: colors.bg },
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

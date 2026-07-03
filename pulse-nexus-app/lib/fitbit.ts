@@ -41,12 +41,27 @@ const discovery: AuthSession.DiscoveryDocument = {
   tokenEndpoint: TOKEN_ENDPOINT,
 };
 
-function env(name: string): string {
+const NOT_CONFIGURED_MESSAGE =
+  'Fitbit is not configured yet. Create a free Fitbit app at https://dev.fitbit.com/apps/new, register the redirect URI pulsenexus://fitbit-callback, then add EXPO_PUBLIC_FITBIT_CLIENT_ID and EXPO_PUBLIC_FITBIT_CLIENT_SECRET to your .env and rebuild.';
+
+function envOptional(name: string): string | null {
   const v =
     (Constants.expoConfig?.extra as Record<string, string> | undefined)?.[name] ??
     (process.env[name] as string | undefined);
-  if (!v) throw new Error(`Missing environment variable ${name}. See .env.example.`);
+  return v && v.length > 0 ? v : null;
+}
+
+function env(name: string): string {
+  const v = envOptional(name);
+  if (!v) throw new Error(NOT_CONFIGURED_MESSAGE);
   return v;
+}
+
+export function isFitbitConfigured(): boolean {
+  return (
+    envOptional('EXPO_PUBLIC_FITBIT_CLIENT_ID') !== null &&
+    envOptional('EXPO_PUBLIC_FITBIT_CLIENT_SECRET') !== null
+  );
 }
 
 export async function connectFitbit(): Promise<void> {
@@ -63,8 +78,11 @@ export async function connectFitbit(): Promise<void> {
   });
   await request.makeAuthUrlAsync(discovery);
   const result = await request.promptAsync(discovery);
+  if (result.type === 'cancel' || result.type === 'dismiss') {
+    throw new Error('Fitbit sign-in was cancelled.');
+  }
   if (result.type !== 'success' || !result.params.code) {
-    throw new Error(`Fitbit authorization failed: ${result.type}`);
+    throw new Error(`Fitbit sign-in failed (${result.type}). Please try again.`);
   }
 
   const token = await AuthSession.exchangeCodeAsync(

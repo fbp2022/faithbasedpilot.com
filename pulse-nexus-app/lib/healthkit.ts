@@ -5,6 +5,8 @@ import AppleHealthKit, {
   HealthValue,
 } from 'react-native-health';
 
+import { deleteSecret, getSecret, setSecret } from './storage';
+
 const { Permissions } = AppleHealthKit.Constants;
 
 const PERMS: HealthKitPermissions = {
@@ -27,6 +29,8 @@ const PERMS: HealthKitPermissions = {
   },
 };
 
+const CONNECTED_KEY = 'health.connected';
+
 export type DailyHealthSnapshot = {
   date: string;
   steps: number | null;
@@ -38,9 +42,13 @@ export type DailyHealthSnapshot = {
   spo2: number | null;
 };
 
+export function isHealthPlatformSupported(): boolean {
+  return Platform.OS === 'ios';
+}
+
 export async function requestHealthPermissions(): Promise<void> {
   if (Platform.OS !== 'ios') {
-    throw new Error('HealthKit is only available on iOS.');
+    throw new Error('Apple Health is only available on iOS.');
   }
   return new Promise((resolve, reject) => {
     AppleHealthKit.initHealthKit(PERMS, (err) => {
@@ -48,6 +56,27 @@ export async function requestHealthPermissions(): Promise<void> {
       else resolve();
     });
   });
+}
+
+/**
+ * Ask iOS for HealthKit read permission and remember locally that the user
+ * has connected. HealthKit doesn't expose "granted" status to the app, so we
+ * treat "user tapped Connect and iOS didn't throw" as connected. If the user
+ * revokes access in the Settings app, subsequent reads simply return null
+ * values and the UI degrades gracefully.
+ */
+export async function connectHealth(): Promise<void> {
+  await requestHealthPermissions();
+  await setSecret(CONNECTED_KEY, '1');
+}
+
+export async function disconnectHealth(): Promise<void> {
+  await deleteSecret(CONNECTED_KEY);
+}
+
+export async function isHealthConnected(): Promise<boolean> {
+  if (Platform.OS !== 'ios') return false;
+  return (await getSecret(CONNECTED_KEY)) !== null;
 }
 
 function startOfDay(d: Date): Date {

@@ -1,25 +1,31 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-const TINT = '#3ddc97';
-const INACTIVE = '#6c8094';
-const BG = '#0b0f14';
+import { colors } from '@/lib/theme';
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: TINT,
-        tabBarInactiveTintColor: INACTIVE,
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.textDim,
         tabBarStyle: {
-          backgroundColor: BG,
-          borderTopColor: '#1c242e',
+          backgroundColor: colors.bg,
+          borderTopColor: colors.border,
           borderTopWidth: 1,
+          height: 64,
+          paddingTop: 6,
+          paddingBottom: 8,
         },
-        headerStyle: { backgroundColor: BG },
-        headerTitleStyle: { color: '#f5f7fa', fontWeight: '700' },
-        headerTintColor: '#f5f7fa',
-        sceneStyle: { backgroundColor: BG },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
+          letterSpacing: 0.2,
+        },
+        headerStyle: { backgroundColor: colors.bg },
+        headerTitleStyle: { color: colors.text, fontWeight: '700' },
+        headerTintColor: colors.text,
+        sceneStyle: { backgroundColor: colors.bg },
       }}
     >
       <Tabs.Screen
@@ -27,7 +33,9 @@ export default function TabsLayout() {
         options={{
           title: 'Home',
           headerShown: false,
-          tabBarIcon: ({ color, size }) => <Ionicons name="grid" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" color={color} size={size} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -35,7 +43,9 @@ export default function TabsLayout() {
         options={{
           title: 'Sleep',
           headerShown: false,
-          tabBarIcon: ({ color, size }) => <Ionicons name="moon" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="moon" color={color} size={size} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -43,7 +53,9 @@ export default function TabsLayout() {
         options={{
           title: 'Workouts',
           headerShown: false,
-          tabBarIcon: ({ color, size }) => <Ionicons name="barbell" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="barbell" color={color} size={size} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -51,7 +63,7 @@ export default function TabsLayout() {
         options={{
           title: 'Coach',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubble-ellipses" color={color} size={size} />
+            <Ionicons name="chatbubbles" color={color} size={size} />
           ),
         }}
       />
@@ -59,7 +71,9 @@ export default function TabsLayout() {
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ color, size }) => <Ionicons name="settings" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings" color={color} size={size} />
+          ),
         }}
       />
     </Tabs>

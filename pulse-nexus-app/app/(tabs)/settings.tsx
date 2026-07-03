@@ -2,6 +2,9 @@ import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
 import Constants from 'expo-constants';
+import { Ionicons } from '@expo/vector-icons';
+
+import { colors, radii, spacing } from '@/lib/theme';
 
 export default function SettingsScreen() {
   const version = Constants.expoConfig?.version ?? '—';
@@ -16,21 +19,27 @@ export default function SettingsScreen() {
 
         <Link href="/connect" asChild>
           <Pressable style={styles.actionRow}>
-            <View>
-              <Text style={styles.actionTitle}>Connect devices</Text>
-              <Text style={styles.actionSub}>WHOOP, Fitbit, Garmin</Text>
+            <View style={[styles.actionIcon, { backgroundColor: colors.accentGlow }]}>
+              <Ionicons name="link" size={18} color={colors.accent} />
             </View>
-            <Text style={styles.chev}>›</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.actionTitle}>Connect devices</Text>
+              <Text style={styles.actionSub}>Apple Health, WHOOP, Fitbit, Garmin</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.textDim} />
           </Pressable>
         </Link>
 
         <Link href="/preferences" asChild>
           <Pressable style={styles.actionRow}>
-            <View>
+            <View style={[styles.actionIcon, { backgroundColor: colors.accentGlow }]}>
+              <Ionicons name="options" size={18} color={colors.accent} />
+            </View>
+            <View style={{ flex: 1 }}>
               <Text style={styles.actionTitle}>Preferences</Text>
               <Text style={styles.actionSub}>Coach engine, dashboard cards, units</Text>
             </View>
-            <Text style={styles.chev}>›</Text>
+            <Ionicons name="chevron-forward" size={18} color={colors.textDim} />
           </Pressable>
         </Link>
 
@@ -107,32 +116,51 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0b0f14' },
-  scroll: { padding: 18 },
-  h1: { color: '#f5f7fa', fontSize: 28, fontWeight: '800' },
-  h2: { color: '#f5f7fa', fontSize: 18, fontWeight: '700', marginTop: 24, marginBottom: 6 },
-  p: { color: '#c2cfdb', fontSize: 14, lineHeight: 20 },
+  root: { flex: 1, backgroundColor: colors.bg },
+  scroll: { padding: spacing.lg },
+  h1: {
+    color: colors.text,
+    fontSize: 28,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  h2: {
+    color: colors.text,
+    fontSize: 17,
+    fontWeight: '800',
+    marginTop: spacing.xl,
+    marginBottom: spacing.xs + 2,
+  },
+  p: { color: colors.textMuted, fontSize: 13, lineHeight: 20 },
 
   actionRow: {
-    backgroundColor: '#141a22',
-    borderRadius: 12,
-    padding: 14,
-    marginTop: 12,
+    backgroundColor: colors.bgCard,
+    borderRadius: radii.md,
+    padding: spacing.md,
+    marginTop: spacing.md,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  actionTitle: { color: '#f5f7fa', fontSize: 16, fontWeight: '700' },
-  actionSub: { color: '#8aa0b4', fontSize: 12, marginTop: 2 },
-  chev: { color: '#6c8094', fontSize: 22, fontWeight: '600' },
+  actionIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.md,
+  },
+  actionTitle: { color: colors.text, fontSize: 15, fontWeight: '700' },
+  actionSub: { color: colors.textMuted, fontSize: 12, marginTop: 2 },
 
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#1c242e',
+    borderBottomColor: colors.border,
   },
-  label: { color: '#8aa0b4', fontSize: 14 },
-  value: { color: '#f5f7fa', fontSize: 14, fontWeight: '600' },
+  label: { color: colors.textMuted, fontSize: 13 },
+  value: { color: colors.text, fontSize: 13, fontWeight: '600' },
 });

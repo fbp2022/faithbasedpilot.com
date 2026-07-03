@@ -64,8 +64,11 @@ export async function connectGarmin(): Promise<void> {
   });
   await request.makeAuthUrlAsync(discovery);
   const result = await request.promptAsync(discovery);
+  if (result.type === 'cancel' || result.type === 'dismiss') {
+    throw new Error('Garmin sign-in was cancelled.');
+  }
   if (result.type !== 'success' || !result.params.code) {
-    throw new Error(`Garmin authorization failed: ${result.type}`);
+    throw new Error(`Garmin sign-in failed (${result.type}). Please try again.`);
   }
 
   const token = await AuthSession.exchangeCodeAsync(

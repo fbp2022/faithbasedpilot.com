@@ -19,6 +19,7 @@ import {
   savePreferences,
   type Preferences,
 } from '@/lib/preferences';
+import { colors, radii, spacing } from '@/lib/theme';
 
 const CARD_LABELS: Record<DashboardCardKey, string> = {
   steps: 'Steps',
@@ -48,7 +49,7 @@ export default function PreferencesScreen() {
   if (!prefs) {
     return (
       <SafeAreaView style={styles.root}>
-        <ActivityIndicator color="#fff" style={{ marginTop: 32 }} />
+        <ActivityIndicator color={colors.accent} style={{ marginTop: 32 }} />
       </SafeAreaView>
     );
   }
@@ -89,10 +90,15 @@ export default function PreferencesScreen() {
                 <View
                   style={[
                     styles.providerStatusDot,
-                    { backgroundColor: configured ? '#3ddc97' : '#ff8a65' },
+                    { backgroundColor: configured ? colors.positive : colors.warn },
                   ]}
                 />
-                <Text style={[styles.providerStatusText, { color: configured ? '#3ddc97' : '#ff8a65' }]}>
+                <Text
+                  style={[
+                    styles.providerStatusText,
+                    { color: configured ? colors.positive : colors.warn },
+                  ]}
+                >
                   {configured ? 'API key configured' : `Missing ${p.apiKeyEnvVar}`}
                 </Text>
                 <Pressable onPress={() => Linking.openURL(p.apiKeyHelpUrl)}>
@@ -117,8 +123,8 @@ export default function PreferencesScreen() {
                   dashboardCards: { ...prefs.dashboardCards, [k]: v },
                 })
               }
-              trackColor={{ true: '#3ddc97', false: '#1c242e' }}
-              thumbColor="#f5f7fa"
+              trackColor={{ true: colors.accent, false: colors.border }}
+              thumbColor={colors.text}
             />
           </View>
         ))}
@@ -153,35 +159,47 @@ export default function PreferencesScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0b0f14' },
-  scroll: { padding: 18 },
-  h1: { color: '#f5f7fa', fontSize: 28, fontWeight: '800' },
-  h2: { color: '#f5f7fa', fontSize: 18, fontWeight: '700', marginTop: 24, marginBottom: 6 },
-  p: { color: '#c2cfdb', fontSize: 14, lineHeight: 20, marginBottom: 10 },
+  root: { flex: 1, backgroundColor: colors.bg },
+  scroll: { padding: spacing.lg },
+  h1: {
+    color: colors.text,
+    fontSize: 28,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  h2: {
+    color: colors.text,
+    fontSize: 17,
+    fontWeight: '800',
+    marginTop: spacing.xl,
+    marginBottom: spacing.xs + 2,
+  },
+  p: { color: colors.textMuted, fontSize: 13, lineHeight: 20, marginBottom: spacing.sm },
   mono: { fontFamily: 'Menlo' },
 
   providerCard: {
-    backgroundColor: '#141a22',
-    borderRadius: 14,
-    padding: 14,
-    marginTop: 8,
-    borderColor: 'transparent',
-    borderWidth: 2,
+    backgroundColor: colors.bgCard,
+    borderRadius: radii.lg,
+    padding: spacing.md + 2,
+    marginTop: spacing.sm,
+    borderColor: colors.border,
+    borderWidth: 1,
   },
-  providerCardSelected: { borderColor: '#3ddc97' },
+  providerCardSelected: { borderColor: colors.accent, backgroundColor: colors.accentGlow },
   providerHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  providerName: { color: '#f5f7fa', fontSize: 17, fontWeight: '700' },
-  providerVendor: { color: '#8aa0b4', fontSize: 13, fontWeight: '400' },
-  providerSelected: { color: '#3ddc97', fontSize: 18, fontWeight: '700' },
-  providerMeta: { color: '#8aa0b4', fontSize: 12, marginTop: 4 },
-  providerStatusRow: { flexDirection: 'row', alignItems: 'center', marginTop: 10 },
+  providerName: { color: colors.text, fontSize: 16, fontWeight: '800' },
+  providerVendor: { color: colors.textMuted, fontSize: 13, fontWeight: '400' },
+  providerSelected: { color: colors.accent, fontSize: 18, fontWeight: '800' },
+  providerMeta: { color: colors.textMuted, fontSize: 12, marginTop: 4 },
+  providerStatusRow: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm + 2 },
   providerStatusDot: { width: 8, height: 8, borderRadius: 4, marginRight: 8 },
-  providerStatusText: { fontSize: 13, flex: 1 },
+  providerStatusText: { fontSize: 13, flex: 1, fontWeight: '600' },
   providerHelp: {
-    color: '#7fb5ff',
+    color: colors.accent,
     fontSize: 12,
     textDecorationLine: 'underline',
     marginLeft: 8,
+    fontWeight: '600',
   },
 
   row: {
@@ -190,23 +208,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#1c242e',
+    borderBottomColor: colors.border,
   },
-  rowLabel: { color: '#f5f7fa', fontSize: 15 },
+  rowLabel: { color: colors.text, fontSize: 14 },
 
-  segmentRow: { flexDirection: 'row', backgroundColor: '#141a22', borderRadius: 8 },
+  segmentRow: {
+    flexDirection: 'row',
+    backgroundColor: colors.bgCard,
+    borderRadius: radii.sm,
+    padding: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
   segment: { paddingHorizontal: 12, paddingVertical: 6 },
-  segmentActive: { backgroundColor: '#3ddc97', borderRadius: 8 },
-  segmentText: { color: '#c2cfdb', fontWeight: '600' },
-  segmentTextActive: { color: '#0b0f14' },
+  segmentActive: { backgroundColor: colors.accent, borderRadius: radii.sm },
+  segmentText: { color: colors.textMuted, fontWeight: '600', fontSize: 13 },
+  segmentTextActive: { color: '#fff' },
 
   resetBtn: {
-    marginTop: 28,
+    marginTop: spacing.xxl,
     padding: 12,
-    borderRadius: 10,
+    borderRadius: radii.md,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#1c242e',
+    borderColor: colors.border,
+    backgroundColor: colors.bgCard,
   },
-  resetBtnText: { color: '#ff8a65', fontWeight: '700' },
+  resetBtnText: { color: colors.danger, fontWeight: '700' },
 });

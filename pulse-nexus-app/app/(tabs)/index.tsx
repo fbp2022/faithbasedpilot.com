@@ -8,18 +8,38 @@ import {
   Text,
   View,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { MetricCard } from '@/components/MetricCard';
-import { InsightCard } from '@/components/InsightCard';
 import { AskExternalAIButton } from '@/components/AskExternalAI';
+import { InsightCard } from '@/components/InsightCard';
+import { MetricCard } from '@/components/MetricCard';
+import { ScoreRings, type ScoreRing } from '@/components/ScoreRings';
 import { buildDashboardSnapshotText } from '@/lib/snapshot-text';
+import { generateInsights, unify, type CombinedSnapshot } from '@/lib/assistant';
+import {
+  getFitbitSnapshot,
+  isFitbitConnected,
+  type FitbitSnapshot,
+} from '@/lib/fitbit';
+import {
+  getGarminSnapshot,
+  isGarminConnected,
+  type GarminSnapshot,
+} from '@/lib/garmin';
 import {
   getTodaySnapshot,
-  requestHealthPermissions,
+  isHealthConnected,
   type DailyHealthSnapshot,
 } from '@/lib/healthkit';
+import {
+  DEFAULT_PREFERENCES,
+  loadPreferences,
+  type DashboardCardKey,
+  type Preferences,
+} from '@/lib/preferences';
+import { colors, radii, spacing } from '@/lib/theme';
 import {
   getLatestWhoopCycle,
   getLatestWhoopRecovery,
@@ -29,15 +49,32 @@ import {
   type WhoopRecovery,
   type WhoopSleep,
 } from '@/lib/whoop';
-import { getFitbitSnapshot, isFitbitConnected, type FitbitSnapshot } from '@/lib/fitbit';
-import { getGarminSnapshot, isGarminConnected, type GarminSnapshot } from '@/lib/garmin';
-import { generateInsights, unify, type CombinedSnapshot } from '@/lib/assistant';
-import {
-  DEFAULT_PREFERENCES,
-  loadPreferences,
-  type DashboardCardKey,
-  type Preferences,
-} from '@/lib/preferences';
+
+type CardMeta = {
+  key: DashboardCardKey;
+  label: string;
+  value: string;
+  sub?: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  accent: string;
+};
+
+function greeting(): string {
+  const h = new Date().getHours();
+  if (h < 5) return 'Late night';
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  if (h < 21) return 'Good evening';
+  return 'Good night';
+}
+
+function dateLine(): string {
+  return new Date().toLocaleDateString([], {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+}
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -45,6 +82,7 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [prefs, setPrefs] = useState<Preferences>(DEFAULT_PREFERENCES);
 
+  const [anyConnected, setAnyConnected] = useState(false);
   const [health, setHealth] = useState<DailyHealthSnapshot | null>(null);
   const [whoop, setWhoop] = useState<{
     recovery: WhoopRecovery | null;
@@ -57,20 +95,24 @@ export default function Dashboard() {
   const load = useCallback(async () => {
     setError(null);
     try {
-      const [loadedPrefs] = await Promise.all([
-        loadPreferences(),
-        requestHealthPermissions().catch(() => {}),
-      ]);
+      const loadedPrefs = await loadPreferences();
       setPrefs(loadedPrefs);
 
-      const [whoopConnected, fitbitConnected, garminConnected] = await Promise.all([
-        isWhoopConnected(),
-        isFitbitConnected(),
-        isGarminConnected(),
-      ]);
+      const [healthConnected, whoopConnected, fitbitConnected, garminConnected] = await Promise.all(
+        [
+          isHealthConnected(),
+          isWhoopConnected(),
+          isFitbitConnected(),
+          isGarminConnected(),
+        ],
+      );
+
+      setAnyConnected(
+        healthConnected || whoopConnected || fitbitConnected || garminConnected,
+      );
 
       const [h, whoopData, fitbitData, garminData] = await Promise.all([
-        getTodaySnapshot().catch(() => null),
+        healthConnected ? getTodaySnapshot().catch(() => null) : Promise.resolve(null),
         whoopConnected
           ? Promise.all([
               getLatestWhoopRecovery().catch(() => null),
@@ -109,55 +151,60 @@ export default function Dashboard() {
 
   const enabled = (k: DashboardCardKey) => prefs.dashboardCards[k];
 
-  const cards: Array<{ key: DashboardCardKey; label: string; value: string; sub?: string }> = [];
+  const cards: CardMeta[] = [];
   if (enabled('steps'))
     cards.push({
       key: 'steps',
       label: 'Steps',
       value: u.steps ? Math.round(u.steps.value).toLocaleString() : '—',
-      sub: u.steps?.source,
+      sub: u.steps?.source ?? 'No source',
+      icon: 'walk',
+      accent: colors.accent,
     });
   if (enabled('activeKcal'))
     cards.push({
       key: 'activeKcal',
       label: 'Active kcal',
       value: u.activeKcal ? Math.round(u.activeKcal.value).toLocaleString() : '—',
-      sub: u.activeKcal?.source,
+      sub: u.activeKcal?.source ?? 'No source',
+      icon: 'flame',
+      accent: colors.warn,
     });
   if (enabled('restingHR'))
     cards.push({
       key: 'restingHR',
       label: 'Resting HR',
       value: u.restingHR ? `${Math.round(u.restingHR.value)} bpm` : '—',
-      sub: u.restingHR?.source,
+      sub: u.restingHR?.source ?? 'No source',
+      icon: 'heart',
+      accent: colors.apple,
     });
   if (enabled('hrvMs'))
     cards.push({
       key: 'hrvMs',
       label: 'HRV',
       value: u.hrvMs ? `${Math.round(u.hrvMs.value)} ms` : '—',
-      sub: u.hrvMs?.source,
-    });
-  if (enabled('recovery'))
-    cards.push({
-      key: 'recovery',
-      label: 'Recovery',
-      value: u.recovery ? `${u.recovery.value}%` : '—',
-      sub: u.recovery?.source ?? 'Connect WHOOP',
+      sub: u.hrvMs?.source ?? 'No source',
+      icon: 'pulse',
+      accent: colors.accent,
     });
   if (enabled('sleep'))
     cards.push({
       key: 'sleep',
       label: 'Sleep',
       value: u.sleepHours ? `${u.sleepHours.value.toFixed(1)} h` : '—',
-      sub: u.sleepHours?.source,
+      sub: u.sleepHours?.source ?? 'No source',
+      icon: 'moon',
+      accent: '#8b6cf6',
     });
   if (enabled('strain'))
     cards.push({
       key: 'strain',
       label: 'Strain',
       value: u.strainOrLoad ? u.strainOrLoad.value.toFixed(1) : '—',
-      sub: u.strainOrLoad?.source,
+      sub: u.strainOrLoad?.source ?? 'Connect WHOOP',
+      icon: 'barbell',
+      accent: colors.whoop,
     });
   if (enabled('bodyBattery'))
     cards.push({
@@ -165,13 +212,17 @@ export default function Dashboard() {
       label: 'Body Battery',
       value: u.bodyBattery != null ? String(u.bodyBattery) : '—',
       sub: u.bodyBattery != null ? 'Garmin' : 'Connect Garmin',
+      icon: 'battery-charging',
+      accent: colors.garmin,
     });
   if (enabled('spo2'))
     cards.push({
       key: 'spo2',
       label: 'SpO₂',
       value: u.spo2 ? `${u.spo2.value.toFixed(0)}%` : '—',
-      sub: u.spo2?.source,
+      sub: u.spo2?.source ?? 'No source',
+      icon: 'water',
+      accent: colors.fitbit,
     });
   if (enabled('stress'))
     cards.push({
@@ -179,52 +230,114 @@ export default function Dashboard() {
       label: 'Stress',
       value: u.stressAvg != null ? String(u.stressAvg) : '—',
       sub: u.stressAvg != null ? 'Garmin' : 'Connect Garmin',
+      icon: 'alert',
+      accent: colors.warn,
     });
 
-  const rows: Array<typeof cards> = [];
+  const rows: CardMeta[][] = [];
   for (let i = 0; i < cards.length; i += 2) rows.push(cards.slice(i, i + 2));
 
+  const recoveryValue = u.recovery?.value ?? null;
+  const recoverySource = u.recovery?.source ?? 'Connect WHOOP for recovery';
+
+  const heroRings: ScoreRing[] = [
+    {
+      key: 'recovery',
+      label: 'Recovery',
+      value: recoveryValue != null ? `${Math.round(recoveryValue)}%` : '—',
+      sub: recoveryValue != null ? recoverySource : 'No data',
+      zoneValue: recoveryValue,
+      hasData: recoveryValue != null,
+    },
+    {
+      key: 'sleep',
+      label: 'Sleep',
+      value: u.sleepHours != null ? `${u.sleepHours.value.toFixed(1)}h` : '—',
+      sub: u.sleepHours?.source ?? 'No data',
+      color: '#8b6cf6',
+      hasData: u.sleepHours != null,
+    },
+    {
+      key: 'strain',
+      label: 'Strain',
+      value: u.strainOrLoad != null ? u.strainOrLoad.value.toFixed(1) : '—',
+      sub: u.strainOrLoad?.source ?? 'No data',
+      color: colors.whoop,
+      hasData: u.strainOrLoad != null,
+    },
+  ];
+
   return (
-    <SafeAreaView style={styles.root} edges={['bottom']}>
+    <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
       <ScrollView
         contentContainerStyle={styles.scroll}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#fff" />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.accent}
+          />
+        }
       >
+        <View style={styles.header}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.greeting}>{greeting()}</Text>
+            <Text style={styles.dateLine}>{dateLine()}</Text>
+          </View>
+          <AskExternalAIButton
+            subject="Pulse Nexus — today's snapshot"
+            getSnapshotText={() => buildDashboardSnapshotText(combined)}
+          />
+        </View>
+
         {loading ? (
-          <ActivityIndicator color="#fff" style={{ marginTop: 32 }} />
+          <ActivityIndicator color={colors.accent} style={{ marginTop: 48 }} />
+        ) : !anyConnected ? (
+          <EmptyState />
         ) : (
           <>
-            <View style={styles.titleRow}>
-              <Text style={styles.pageTitle}>Today</Text>
-              <AskExternalAIButton
-                subject="Pulse Nexus — today's snapshot"
-                getSnapshotText={() => buildDashboardSnapshotText(combined)}
-              />
+            <View style={styles.hero}>
+              <ScoreRings rings={heroRings} />
             </View>
 
             {error ? <Text style={styles.error}>{error}</Text> : null}
+
             {rows.length === 0 ? (
               <Link href="/preferences" asChild>
                 <Pressable style={styles.emptyCard}>
+                  <Ionicons name="options" size={18} color={colors.textMuted} />
                   <Text style={styles.emptyText}>
                     No metric cards enabled. Tap to choose what to show.
                   </Text>
                 </Pressable>
               </Link>
             ) : (
-              rows.map((row, ri) => (
-                <View key={ri} style={styles.row}>
-                  {row.map((c) => (
-                    <MetricCard key={c.key} label={c.label} value={c.value} sub={c.sub} />
-                  ))}
-                </View>
-              ))
+              <View style={styles.grid}>
+                {rows.map((row, ri) => (
+                  <View key={ri} style={styles.row}>
+                    {row.map((c) => (
+                      <MetricCard
+                        key={c.key}
+                        label={c.label}
+                        value={c.value}
+                        sub={c.sub}
+                        icon={c.icon}
+                        accent={c.accent}
+                      />
+                    ))}
+                  </View>
+                ))}
+              </View>
             )}
 
-            <Text style={[styles.section, { marginTop: 18 }]}>Insights</Text>
-            {insights.map((i, idx) => (
-              <InsightCard key={idx} insight={i} />
-            ))}
+            {insights.length > 0 ? (
+              <>
+                <Text style={styles.section}>Insights</Text>
+                {insights.map((i, idx) => (
+                  <InsightCard key={idx} insight={i} />
+                ))}
+              </>
+            ) : null}
 
             <Text style={styles.note}>
               Insights are generated by deterministic rules — not AI. The Coach tab uses your
@@ -237,35 +350,138 @@ export default function Dashboard() {
   );
 }
 
+function EmptyState() {
+  return (
+    <View style={styles.emptyState}>
+      <View style={styles.emptyBadge}>
+        <Ionicons name="link" size={28} color={colors.accent} />
+      </View>
+      <Text style={styles.emptyStateTitle}>Connect a device to get started</Text>
+      <Text style={styles.emptyStateBody}>
+        Pulse Nexus pulls live data from Apple Health, WHOOP, Fitbit, and Garmin. Turn on any
+        combination on the Connect screen and this dashboard fills in.
+      </Text>
+      <Link href="/connect" asChild>
+        <Pressable style={styles.emptyStateBtn}>
+          <Ionicons name="link" size={16} color="#fff" />
+          <Text style={styles.emptyStateBtnText}>Connect devices</Text>
+        </Pressable>
+      </Link>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0b0f14' },
-  scroll: { padding: 8, paddingBottom: 40 },
-  titleRow: {
+  root: { flex: 1, backgroundColor: colors.bg },
+  scroll: { padding: spacing.md, paddingBottom: 40 },
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    paddingBottom: 4,
+    paddingHorizontal: spacing.xs + 2,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.md,
   },
-  pageTitle: { color: '#f5f7fa', fontSize: 32, fontWeight: '800', letterSpacing: -0.5 },
-  section: {
-    color: '#f5f7fa',
-    fontSize: 22,
+  greeting: {
+    color: colors.text,
+    fontSize: 28,
     fontWeight: '800',
-    marginTop: 14,
-    marginBottom: 4,
-    marginLeft: 8,
+    letterSpacing: -0.5,
   },
+  dateLine: { color: colors.textMuted, fontSize: 13, marginTop: 2 },
+
+  hero: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.sm,
+    marginHorizontal: spacing.xs + 2,
+    borderRadius: radii.xl,
+    backgroundColor: colors.bgElevated,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: spacing.md,
+  },
+
+  grid: { marginTop: spacing.sm },
   row: { flexDirection: 'row' },
-  error: { color: '#ff8a65', margin: 12 },
   emptyCard: {
-    backgroundColor: '#141a22',
-    padding: 18,
-    borderRadius: 12,
-    marginHorizontal: 6,
-    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.bgCard,
+    padding: spacing.lg,
+    borderRadius: radii.md,
+    marginHorizontal: spacing.sm,
+    marginTop: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: spacing.sm as unknown as number,
   },
-  emptyText: { color: '#8aa0b4', textAlign: 'center' },
-  note: { color: '#6c8094', fontSize: 12, margin: 14, lineHeight: 18 },
+  emptyText: { color: colors.textMuted, textAlign: 'center', marginLeft: 8 },
+
+  section: {
+    color: colors.text,
+    fontSize: 20,
+    fontWeight: '800',
+    marginTop: spacing.xl,
+    marginBottom: spacing.xs,
+    marginLeft: spacing.sm,
+  },
+  error: { color: colors.danger, margin: spacing.md },
+  note: {
+    color: colors.textDim,
+    fontSize: 12,
+    margin: spacing.md,
+    lineHeight: 18,
+  },
+
+  emptyState: {
+    alignItems: 'center',
+    padding: spacing.xxl,
+    marginTop: spacing.xl,
+    marginHorizontal: spacing.xs + 2,
+    borderRadius: radii.xl,
+    backgroundColor: colors.bgElevated,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  emptyBadge: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.accentGlow,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
+  },
+  emptyStateTitle: {
+    color: colors.text,
+    fontSize: 18,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+  emptyStateBody: {
+    color: colors.textMuted,
+    fontSize: 13,
+    lineHeight: 20,
+    marginTop: spacing.sm,
+    marginBottom: spacing.lg,
+    textAlign: 'center',
+  },
+  emptyStateBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.accent,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 12,
+    borderRadius: radii.md,
+    gap: spacing.sm as unknown as number,
+  },
+  emptyStateBtnText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+    marginLeft: 6,
+  },
 });

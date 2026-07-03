@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SleepStageBar } from '@/components/SleepStageBar';
 import { AskExternalAIButton } from '@/components/AskExternalAI';
+import { colors, radii, spacing } from '@/lib/theme';
 import {
   formatHM,
   getSleepCombined,
@@ -29,17 +30,17 @@ function fmtDate(iso: string): string {
 }
 
 const SOURCE_COLOR: Record<SleepSnapshot['source'], string> = {
-  'Apple Health': '#fa5252',
-  WHOOP: '#3ddc97',
-  Fitbit: '#5b8def',
-  Garmin: '#7c5cff',
+  'Apple Health': colors.apple,
+  WHOOP: colors.whoop,
+  Fitbit: colors.fitbit,
+  Garmin: colors.garmin,
 };
 
 function scoreLabel(score: number | null | undefined): { text: string; color: string } {
-  if (score == null) return { text: '—', color: '#8aa0b4' };
-  if (score >= 85) return { text: `${Math.round(score)} · Optimal`, color: '#3ddc97' };
-  if (score >= 70) return { text: `${Math.round(score)} · Sufficient`, color: '#f1c40f' };
-  return { text: `${Math.round(score)} · Insufficient`, color: '#ff8a65' };
+  if (score == null) return { text: '—', color: colors.textMuted };
+  if (score >= 85) return { text: `${Math.round(score)} · Optimal`, color: colors.positive };
+  if (score >= 70) return { text: `${Math.round(score)} · Sufficient`, color: colors.warn };
+  return { text: `${Math.round(score)} · Insufficient`, color: colors.danger };
 }
 
 export default function SleepScreen() {
@@ -76,7 +77,13 @@ export default function SleepScreen() {
     <SafeAreaView style={styles.root} edges={['bottom']}>
       <ScrollView
         contentContainerStyle={styles.scroll}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#fff" />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.accent}
+          />
+        }
       >
         <View style={styles.titleRow}>
           <Text style={styles.h1}>Sleep</Text>
@@ -94,7 +101,7 @@ export default function SleepScreen() {
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
         {loading ? (
-          <ActivityIndicator color="#fff" style={{ marginTop: 32 }} />
+          <ActivityIndicator color={colors.accent} style={{ marginTop: 32 }} />
         ) : !primary ? (
           <Text style={styles.empty}>
             No sleep recorded yet. Wear your tracker overnight and pull to refresh in the morning.
@@ -211,75 +218,93 @@ function PerSourceRow({ s }: { s: SleepSnapshot }) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0b0f14' },
-  scroll: { padding: 12, paddingBottom: 40 },
+  root: { flex: 1, backgroundColor: colors.bg },
+  scroll: { padding: spacing.md, paddingBottom: 40 },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginHorizontal: 4,
   },
-  h1: { color: '#f5f7fa', fontSize: 28, fontWeight: '800' },
-  sub: { color: '#8aa0b4', fontSize: 13, marginHorizontal: 4, marginTop: 4 },
-  error: { color: '#ff8a65', margin: 12 },
-  empty: { color: '#8aa0b4', textAlign: 'center', marginTop: 32, padding: 18, lineHeight: 20 },
+  h1: { color: colors.text, fontSize: 28, fontWeight: '800', letterSpacing: -0.5 },
+  sub: { color: colors.textMuted, fontSize: 13, marginHorizontal: 4, marginTop: 4 },
+  error: { color: colors.danger, margin: spacing.md },
+  empty: {
+    color: colors.textMuted,
+    textAlign: 'center',
+    marginTop: spacing.xxl,
+    padding: spacing.lg,
+    lineHeight: 20,
+  },
 
   heroCard: {
-    marginTop: 14,
-    backgroundColor: '#141a22',
-    borderRadius: 16,
-    padding: 16,
+    marginTop: spacing.md,
+    backgroundColor: colors.bgCard,
+    borderRadius: radii.xl,
+    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   heroHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  sourcePill: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 99 },
-  sourcePillText: { color: '#0b0f14', fontSize: 11, fontWeight: '700' },
-  heroDate: { color: '#8aa0b4', fontSize: 12 },
+  sourcePill: { paddingHorizontal: 10, paddingVertical: 3, borderRadius: radii.pill },
+  sourcePillText: { color: '#fff', fontSize: 11, fontWeight: '700' },
+  heroDate: { color: colors.textMuted, fontSize: 12 },
   heroValue: {
-    color: '#f5f7fa',
-    fontSize: 44,
+    color: colors.text,
+    fontSize: 48,
     fontWeight: '800',
-    marginTop: 10,
-    letterSpacing: -1,
+    marginTop: spacing.md,
+    letterSpacing: -1.2,
   },
   heroLabel: {
-    color: '#8aa0b4',
-    fontSize: 12,
+    color: colors.textMuted,
+    fontSize: 11,
     textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    letterSpacing: 0.8,
+    fontWeight: '700',
   },
-  timeRow: { marginTop: 8 },
-  timeText: { color: '#c2cfdb', fontSize: 13 },
-  stageWrap: { marginTop: 14 },
-  miniGrid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 14, marginHorizontal: -6 },
+  timeRow: { marginTop: spacing.sm },
+  timeText: { color: colors.textMuted, fontSize: 13 },
+  stageWrap: { marginTop: spacing.md },
+  miniGrid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: spacing.md, marginHorizontal: -6 },
   mini: {
     paddingHorizontal: 6,
-    marginTop: 8,
+    marginTop: spacing.sm,
     minWidth: '33%',
   },
   miniLabel: {
-    color: '#6c8094',
+    color: colors.textDim,
     fontSize: 10,
     textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    letterSpacing: 0.8,
+    fontWeight: '700',
   },
-  miniValue: { color: '#f5f7fa', fontSize: 16, fontWeight: '700', marginTop: 2 },
+  miniValue: { color: colors.text, fontSize: 16, fontWeight: '700', marginTop: 3 },
 
   section: {
-    color: '#f5f7fa',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '800',
-    marginTop: 22,
-    marginBottom: 6,
+    marginTop: spacing.xl,
+    marginBottom: spacing.xs + 2,
     marginHorizontal: 4,
   },
   perSourceCard: {
-    backgroundColor: '#141a22',
-    borderRadius: 12,
-    padding: 14,
-    marginTop: 8,
+    backgroundColor: colors.bgCard,
+    borderRadius: radii.md,
+    padding: spacing.md + 2,
+    marginTop: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   perSourceHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  perSourceTotal: { color: '#c2cfdb', fontSize: 13, fontWeight: '600' },
+  perSourceTotal: { color: colors.textMuted, fontSize: 13, fontWeight: '600' },
 
-  smallNote: { color: '#6c8094', fontSize: 12, lineHeight: 18, marginTop: 18, marginHorizontal: 4 },
+  smallNote: {
+    color: colors.textDim,
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: spacing.lg,
+    marginHorizontal: 4,
+  },
 });

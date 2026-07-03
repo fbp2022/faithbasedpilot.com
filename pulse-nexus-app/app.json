@@ -5,13 +5,20 @@
     "scheme": "pulsenexus",
     "version": "0.1.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "description": "Pulse Nexus combines Apple Health, WHOOP, Fitbit, and Garmin into one plain-English view, with an optional Gemini-powered web Q&A tab.",
-    "primaryColor": "#3ddc97",
+    "primaryColor": "#4ac6ff",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#070b14"
+    },
     "ios": {
       "bundleIdentifier": "com.faithbasedinnovations.pulsenexus",
       "supportsTablet": false,
+      "icon": "./assets/icon.png",
       "infoPlist": {
         "NSHealthShareUsageDescription": "Pulse Nexus reads your Apple Health data so it can summarize your activity, sleep, and recovery alongside WHOOP, Fitbit, and Garmin data.",
         "NSHealthUpdateUsageDescription": "Pulse Nexus does not write to Apple Health by default; this is reserved for future features.",
@@ -22,6 +29,15 @@
         "com.apple.developer.healthkit": true,
         "com.apple.developer.healthkit.access": []
       }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#070b14"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router",

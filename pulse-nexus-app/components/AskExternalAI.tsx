@@ -10,6 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 
 import { shareSnapshot, type ExternalTarget } from '@/lib/share';
+import { colors, radii, spacing } from '@/lib/theme';
 
 type Target = {
   id: ExternalTarget;
@@ -90,7 +91,7 @@ export function AskExternalAIButton({
         accessibilityLabel="Ask external AI about this data"
         style={styles.headerBtn}
       >
-        <Ionicons name="share-outline" size={22} color="#f5f7fa" />
+        <Ionicons name="share-outline" size={20} color={colors.accent} />
       </Pressable>
 
       <Modal
@@ -146,30 +147,41 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
+    backgroundColor: colors.bgCard,
+    borderWidth: 1,
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: '#141a22',
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
-    paddingHorizontal: 14,
-    paddingTop: 18,
-    paddingBottom: 28,
+    backgroundColor: colors.bgElevated,
+    borderTopLeftRadius: radii.xl,
+    borderTopRightRadius: radii.xl,
+    paddingHorizontal: spacing.md + 2,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.xxl,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
-  title: { color: '#f5f7fa', fontSize: 20, fontWeight: '800' },
-  subtitle: { color: '#8aa0b4', fontSize: 13, marginTop: 6, marginBottom: 12, lineHeight: 18 },
+  title: { color: colors.text, fontSize: 20, fontWeight: '800', letterSpacing: -0.3 },
+  subtitle: {
+    color: colors.textMuted,
+    fontSize: 13,
+    marginTop: 6,
+    marginBottom: spacing.md,
+    lineHeight: 18,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: '#1c242e',
+    borderBottomColor: colors.border,
   },
   iconWrap: {
     width: 38,
@@ -180,9 +192,9 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   rowText: { flex: 1 },
-  rowLabel: { color: '#f5f7fa', fontSize: 16, fontWeight: '700' },
-  rowSub: { color: '#8aa0b4', fontSize: 12, marginTop: 2 },
-  error: { color: '#ff8a65', fontSize: 13, marginTop: 12 },
-  cancel: { padding: 14, alignItems: 'center', marginTop: 8 },
-  cancelText: { color: '#7fb5ff', fontSize: 15, fontWeight: '600' },
+  rowLabel: { color: colors.text, fontSize: 15, fontWeight: '700' },
+  rowSub: { color: colors.textMuted, fontSize: 12, marginTop: 2 },
+  error: { color: colors.danger, fontSize: 13, marginTop: spacing.md },
+  cancel: { padding: spacing.md, alignItems: 'center', marginTop: spacing.sm },
+  cancelText: { color: colors.accent, fontSize: 15, fontWeight: '600' },
 });

@@ -17,9 +17,10 @@ import { Link } from 'expo-router';
 import { DisclaimerBanner } from '@/components/DisclaimerBanner';
 import { chatTurn, getActiveProvider } from '@/lib/ai';
 import type { ChatMessage, ChatProvider, GroundingSource } from '@/lib/ai/types';
+import { colors, radii, spacing } from '@/lib/theme';
 import {
   getTodaySnapshot,
-  requestHealthPermissions,
+  isHealthConnected,
   type DailyHealthSnapshot,
 } from '@/lib/healthkit';
 import {
@@ -70,9 +71,11 @@ export default function ChatScreen() {
   }, []);
 
   const loadSnapshot = useCallback(async () => {
-    await requestHealthPermissions().catch(() => {});
+    const healthConnected = await isHealthConnected();
     const [health, whoopConnected, fitbitConnected, garminConnected] = await Promise.all([
-      getTodaySnapshot().catch<DailyHealthSnapshot | null>(() => null),
+      healthConnected
+        ? getTodaySnapshot().catch<DailyHealthSnapshot | null>(() => null)
+        : Promise.resolve<DailyHealthSnapshot | null>(null),
       isWhoopConnected(),
       isFitbitConnected(),
       isGarminConnected(),
@@ -209,7 +212,7 @@ export default function ChatScreen() {
           </Pressable>
           <TextInput
             placeholder={`Ask ${provider?.name ?? 'the coach'}…`}
-            placeholderTextColor="#6c8094"
+            placeholderTextColor={colors.textDim}
             value={input}
             onChangeText={setInput}
             style={styles.input}
@@ -237,7 +240,7 @@ function MessageBubble({ msg }: { msg: DisplayMessage }) {
     <View style={[styles.bubbleRow, { justifyContent: isUser ? 'flex-end' : 'flex-start' }]}>
       <View style={[styles.bubble, isUser ? styles.userBubble : styles.coachBubble]}>
         {msg.pending ? (
-          <ActivityIndicator color="#c2cfdb" />
+          <ActivityIndicator color={colors.textMuted} />
         ) : msg.error ? (
           <Text style={styles.error}>{msg.error}</Text>
         ) : (
@@ -262,75 +265,101 @@ function MessageBubble({ msg }: { msg: DisplayMessage }) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0b0f14' },
+  root: { flex: 1, backgroundColor: colors.bg },
   providerBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    backgroundColor: '#0f1620',
+    paddingHorizontal: spacing.md + 2,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.bgElevated,
     borderBottomWidth: 1,
-    borderBottomColor: '#1c242e',
+    borderBottomColor: colors.border,
   },
   providerLabel: {
-    color: '#8aa0b4',
+    color: colors.textMuted,
     fontSize: 11,
     textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    letterSpacing: 0.8,
+    fontWeight: '700',
   },
-  providerValue: { color: '#f5f7fa', fontSize: 13, fontWeight: '600' },
-  scroll: { padding: 8, paddingBottom: 16 },
-  bubbleRow: { flexDirection: 'row', marginVertical: 4, paddingHorizontal: 4 },
-  bubble: { maxWidth: '85%', padding: 12, borderRadius: 14 },
-  coachBubble: { backgroundColor: '#141a22' },
-  userBubble: { backgroundColor: '#3ddc97' },
-  bubbleText: { color: '#f5f7fa', fontSize: 15, lineHeight: 22 },
-  userBubbleText: { color: '#0b0f14', fontWeight: '600' },
-  error: { color: '#ff8a65', fontSize: 14 },
-  sources: { marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#1c242e' },
+  providerValue: { color: colors.text, fontSize: 13, fontWeight: '600' },
+  scroll: { padding: spacing.sm, paddingBottom: spacing.lg },
+  bubbleRow: { flexDirection: 'row', marginVertical: spacing.xs, paddingHorizontal: spacing.xs },
+  bubble: { maxWidth: '85%', padding: spacing.md, borderRadius: radii.lg },
+  coachBubble: {
+    backgroundColor: colors.bgCard,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  userBubble: { backgroundColor: colors.accent },
+  bubbleText: { color: colors.text, fontSize: 15, lineHeight: 22 },
+  userBubbleText: { color: '#fff', fontWeight: '600' },
+  error: { color: colors.danger, fontSize: 14 },
+  sources: {
+    marginTop: spacing.sm + 2,
+    paddingTop: spacing.sm + 2,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
   sourcesHeader: {
-    color: '#8aa0b4',
+    color: colors.textMuted,
     fontSize: 10,
     textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    letterSpacing: 0.8,
+    fontWeight: '700',
     marginBottom: 4,
   },
-  sourceLink: { color: '#7fb5ff', fontSize: 13, marginTop: 3, textDecorationLine: 'underline' },
-  suggestions: { marginTop: 16, paddingHorizontal: 4 },
-  suggestion: {
-    backgroundColor: '#141a22',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 8,
-    borderLeftColor: '#3ddc97',
-    borderLeftWidth: 3,
+  sourceLink: {
+    color: colors.accent,
+    fontSize: 13,
+    marginTop: 3,
+    textDecorationLine: 'underline',
   },
-  suggestionText: { color: '#c2cfdb', fontSize: 14 },
+  suggestions: { marginTop: spacing.lg, paddingHorizontal: spacing.xs },
+  suggestion: {
+    backgroundColor: colors.bgCard,
+    borderRadius: radii.md,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+    borderLeftColor: colors.accent,
+    borderLeftWidth: 3,
+    borderTopWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderTopColor: colors.border,
+    borderRightColor: colors.border,
+    borderBottomColor: colors.border,
+  },
+  suggestionText: { color: colors.text, fontSize: 14 },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    padding: 8,
-    paddingBottom: 12,
-    borderTopColor: '#1c242e',
+    padding: spacing.sm,
+    paddingBottom: spacing.md,
+    borderTopColor: colors.border,
     borderTopWidth: 1,
-    backgroundColor: '#0b0f14',
+    backgroundColor: colors.bg,
   },
   newBtn: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: '#141a22',
+    backgroundColor: colors.bgCard,
+    borderWidth: 1,
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 6,
   },
-  newBtnText: { color: '#f5f7fa', fontSize: 22, marginTop: -2 },
+  newBtnText: { color: colors.text, fontSize: 22, marginTop: -2 },
   input: {
     flex: 1,
-    backgroundColor: '#141a22',
-    color: '#f5f7fa',
+    backgroundColor: colors.bgCard,
+    color: colors.text,
     borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.border,
     paddingHorizontal: 14,
     paddingVertical: 10,
     fontSize: 15,
@@ -338,7 +367,7 @@ const styles = StyleSheet.create({
     minHeight: 38,
   },
   sendBtn: {
-    backgroundColor: '#3ddc97',
+    backgroundColor: colors.accent,
     paddingHorizontal: 16,
     height: 38,
     borderRadius: 19,
@@ -346,5 +375,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginLeft: 6,
   },
-  sendBtnText: { color: '#0b0f14', fontSize: 15, fontWeight: '700' },
+  sendBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });

@@ -14,6 +14,7 @@ import { WorkoutCard } from '@/components/WorkoutCard';
 import { AskExternalAIButton } from '@/components/AskExternalAI';
 import { getAllWorkouts, type Workout, type WorkoutSource } from '@/lib/workouts';
 import { buildWorkoutsSnapshotText } from '@/lib/snapshot-text';
+import { colors, radii, spacing } from '@/lib/theme';
 
 const WINDOWS: Array<{ label: string; days: number }> = [
   { label: '7 d', days: 7 },
@@ -73,7 +74,13 @@ export default function WorkoutsScreen() {
     <SafeAreaView style={styles.root} edges={['bottom']}>
       <ScrollView
         contentContainerStyle={styles.scroll}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#fff" />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.accent}
+          />
+        }
       >
         <View style={styles.titleRow}>
           <Text style={styles.h1}>Workouts</Text>
@@ -133,7 +140,7 @@ export default function WorkoutsScreen() {
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
         {loading ? (
-          <ActivityIndicator color="#fff" style={{ marginTop: 24 }} />
+          <ActivityIndicator color={colors.accent} style={{ marginTop: 24 }} />
         ) : filtered.length === 0 ? (
           <Text style={styles.empty}>
             No workouts in this window. Connect more sources on the Connect tab, or log a workout on
@@ -157,44 +164,63 @@ function Summary({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0b0f14' },
-  scroll: { padding: 8, paddingBottom: 40 },
+  root: { flex: 1, backgroundColor: colors.bg },
+  scroll: { padding: spacing.md, paddingBottom: 40 },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginHorizontal: 6,
   },
-  h1: { color: '#f5f7fa', fontSize: 28, fontWeight: '800' },
-  sub: { color: '#8aa0b4', fontSize: 13, marginHorizontal: 6, marginTop: 4 },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 10, marginHorizontal: 2 },
-  chip: {
-    backgroundColor: '#141a22',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 99,
-    margin: 4,
+  h1: { color: colors.text, fontSize: 28, fontWeight: '800', letterSpacing: -0.5 },
+  sub: { color: colors.textMuted, fontSize: 13, marginHorizontal: 6, marginTop: 4 },
+  chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: spacing.md,
+    marginHorizontal: 2,
   },
-  chipActive: { backgroundColor: '#3ddc97' },
-  chipText: { color: '#c2cfdb', fontSize: 12, fontWeight: '600' },
-  chipTextActive: { color: '#0b0f14' },
+  chip: {
+    backgroundColor: colors.bgCard,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: radii.pill,
+    margin: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  chipActive: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+  },
+  chipText: { color: colors.textMuted, fontSize: 12, fontWeight: '600' },
+  chipTextActive: { color: '#fff' },
   summary: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    backgroundColor: '#141a22',
-    borderRadius: 14,
-    padding: 12,
+    backgroundColor: colors.bgCard,
+    borderRadius: radii.lg,
+    padding: spacing.md,
     marginHorizontal: 6,
-    marginTop: 12,
+    marginTop: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   summaryCell: { flex: 1, minWidth: 80, paddingVertical: 4 },
   summaryLabel: {
-    color: '#6c8094',
+    color: colors.textDim,
     fontSize: 10,
     textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    letterSpacing: 0.8,
+    fontWeight: '700',
   },
-  summaryValue: { color: '#f5f7fa', fontSize: 18, fontWeight: '700', marginTop: 2 },
-  error: { color: '#ff8a65', margin: 12 },
-  empty: { color: '#8aa0b4', textAlign: 'center', marginTop: 32, padding: 18, lineHeight: 20 },
+  summaryValue: { color: colors.text, fontSize: 18, fontWeight: '800', marginTop: 3 },
+  error: { color: colors.danger, margin: spacing.md },
+  empty: {
+    color: colors.textMuted,
+    textAlign: 'center',
+    marginTop: spacing.xxl,
+    padding: spacing.lg,
+    lineHeight: 20,
+  },
 });

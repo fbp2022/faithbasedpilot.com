@@ -47,6 +47,14 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="nutrition"
+        options={{
+          title: 'Nutrition',
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => <Ionicons name="nutrition" color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
         name="chat"
         options={{
           title: 'Coach',

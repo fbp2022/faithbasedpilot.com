@@ -13,8 +13,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MetricCard } from '@/components/MetricCard';
 import { InsightCard } from '@/components/InsightCard';
+import { LiveHRCard } from '@/components/LiveHRCard';
 import { AskExternalAIButton } from '@/components/AskExternalAI';
 import { buildDashboardSnapshotText } from '@/lib/snapshot-text';
+import { getWhoopBle } from '@/lib/whoop-ble';
 import {
   getTodaySnapshot,
   requestHealthPermissions,
@@ -24,6 +26,9 @@ import {
   getLatestWhoopCycle,
   getLatestWhoopRecovery,
   getLatestWhoopSleep,
+  getWhoopHrvOverWindow,
+  getWhoopRestingHr,
+  hasWhoopData,
   isWhoopConnected,
   type WhoopCycle,
   type WhoopRecovery,
@@ -31,7 +36,12 @@ import {
 } from '@/lib/whoop';
 import { getFitbitSnapshot, isFitbitConnected, type FitbitSnapshot } from '@/lib/fitbit';
 import { getGarminSnapshot, isGarminConnected, type GarminSnapshot } from '@/lib/garmin';
-import { generateInsights, unify, type CombinedSnapshot } from '@/lib/assistant';
+import {
+  generateInsights,
+  unify,
+  type CombinedSnapshot,
+  type WhoopBleSnapshot,
+} from '@/lib/assistant';
 import {
   DEFAULT_PREFERENCES,
   loadPreferences,
@@ -53,6 +63,7 @@ export default function Dashboard() {
   }>({ recovery: null, sleep: null, cycle: null });
   const [fitbit, setFitbit] = useState<FitbitSnapshot | null>(null);
   const [garmin, setGarmin] = useState<GarminSnapshot | null>(null);
+  const [whoopBle, setWhoopBle] = useState<WhoopBleSnapshot | null>(null);
 
   const load = useCallback(async () => {
     setError(null);
@@ -63,15 +74,16 @@ export default function Dashboard() {
       ]);
       setPrefs(loadedPrefs);
 
-      const [whoopConnected, fitbitConnected, garminConnected] = await Promise.all([
+      const [whoopConnected, whoopHasData, fitbitConnected, garminConnected] = await Promise.all([
         isWhoopConnected(),
+        hasWhoopData(),
         isFitbitConnected(),
         isGarminConnected(),
       ]);
 
-      const [h, whoopData, fitbitData, garminData] = await Promise.all([
+      const [h, whoopData, fitbitData, garminData, whoopBleData] = await Promise.all([
         getTodaySnapshot().catch(() => null),
-        whoopConnected
+        whoopHasData
           ? Promise.all([
               getLatestWhoopRecovery().catch(() => null),
               getLatestWhoopSleep().catch(() => null),
@@ -80,12 +92,23 @@ export default function Dashboard() {
           : Promise.resolve({ recovery: null, sleep: null, cycle: null }),
         fitbitConnected ? getFitbitSnapshot().catch(() => null) : Promise.resolve(null),
         garminConnected ? getGarminSnapshot().catch(() => null) : Promise.resolve(null),
+        whoopConnected
+          ? Promise.all([
+              getWhoopHrvOverWindow(24).catch(() => null),
+              getWhoopRestingHr(24).catch(() => null),
+            ]).then<WhoopBleSnapshot>(([hrv, resting]) => ({
+              hrvRmssdMs: hrv?.rmssdMs ?? null,
+              restingHR: resting,
+              meanHR: hrv?.meanHr ?? null,
+            }))
+          : Promise.resolve<WhoopBleSnapshot | null>(null),
       ]);
 
       setHealth(h);
       setWhoop(whoopData);
       setFitbit(fitbitData);
       setGarmin(garminData);
+      setWhoopBle(whoopBleData);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -96,6 +119,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     load();
+    getWhoopBle()
+      .reconnect()
+      .catch(() => {});
   }, [load]);
 
   const onRefresh = useCallback(() => {
@@ -103,7 +129,7 @@ export default function Dashboard() {
     load();
   }, [load]);
 
-  const combined: CombinedSnapshot = { health, whoop, fitbit, garmin };
+  const combined: CombinedSnapshot = { health, whoop, whoopBle, fitbit, garmin };
   const u = unify(combined);
   const insights = generateInsights(combined);
 
@@ -201,6 +227,8 @@ export default function Dashboard() {
                 getSnapshotText={() => buildDashboardSnapshotText(combined)}
               />
             </View>
+
+            <LiveHRCard />
 
             {error ? <Text style={styles.error}>{error}</Text> : null}
             {rows.length === 0 ? (

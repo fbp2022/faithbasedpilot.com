@@ -15,6 +15,9 @@
       "infoPlist": {
         "NSHealthShareUsageDescription": "Pulse Nexus reads your Apple Health data so it can summarize your activity, sleep, and recovery alongside WHOOP, Fitbit, and Garmin data.",
         "NSHealthUpdateUsageDescription": "Pulse Nexus does not write to Apple Health by default; this is reserved for future features.",
+        "NSBluetoothAlwaysUsageDescription": "Pulse Nexus talks to your WHOOP strap directly over Bluetooth so it can show live heart rate and read your data without a WHOOP account or subscription.",
+        "NSBluetoothPeripheralUsageDescription": "Pulse Nexus talks to your WHOOP strap directly over Bluetooth so it can show live heart rate and read your data without a WHOOP account or subscription.",
+        "UIBackgroundModes": ["bluetooth-central"],
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleDisplayName": "Pulse Nexus"
       },
@@ -26,6 +29,14 @@
     "plugins": [
       "expo-router",
       "expo-secure-store",
+      [
+        "react-native-ble-plx",
+        {
+          "isBackgroundEnabled": true,
+          "modes": ["central"],
+          "bluetoothAlwaysPermission": "Pulse Nexus talks to your WHOOP strap directly over Bluetooth so it can show live heart rate and read your data without a WHOOP account or subscription."
+        }
+      ],
       [
         "react-native-health",
         {

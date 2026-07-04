@@ -8,6 +8,13 @@ customizable view, with a deterministic rule-based dashboard and a multi-turn
 Coach chat that can run on **Google Gemini**, **OpenAI ChatGPT**, **Anthropic
 Claude**, or **xAI Grok**.
 
+> **WHOOP connection is local-first.** Pulse Nexus pairs with the WHOOP strap
+> **directly over Bluetooth** — no WHOOP account, no WHOOP cloud, no
+> subscription. Live heart rate streams as soon as the strap is paired.
+> Deeper WHOOP metrics (recovery, HRV, sleep) require decoding the strap's
+> own encrypted frames on top of a GATT bond and are on the roadmap. See
+> [`lib/whoop-ble.ts`](./lib/whoop-ble.ts).
+
 Pulse Nexus also hands your data off to the **external ChatGPT iOS app** (and
 Claude / Grok) in two complementary ways:
 
@@ -95,11 +102,11 @@ eas login
 
 ### Register OAuth redirect URIs
 
-| Provider | Redirect URI |
+| Provider | How connection works |
 |---|---|
-| WHOOP | `pulsenexus://whoop-callback` |
-| Fitbit | `pulsenexus://fitbit-callback` |
-| Garmin | `pulsenexus://garmin-callback` |
+| WHOOP | **Direct Bluetooth pairing with the strap** (`lib/whoop-ble.ts`). No account, no cloud, no subscription. Pair from Connect → WHOOP → Pair over Bluetooth. |
+| Fitbit | OAuth redirect URI to register: `pulsenexus://fitbit-callback` |
+| Garmin | OAuth redirect URI to register: `pulsenexus://garmin-callback` |
 
 ---
 
@@ -139,7 +146,8 @@ pulse-nexus-app/
 │   │   ├── workouts.tsx         Unified workouts list
 │   │   ├── chat.tsx             Coach chat (multi-provider, data-aware, grounded)
 │   │   └── settings.tsx         About + links to Connect / Preferences
-│   ├── connect.tsx              WHOOP / Fitbit / Garmin OAuth (modal)
+│   ├── connect.tsx              Fitbit / Garmin OAuth + WHOOP Bluetooth entry (modal)
+│   ├── whoop-connect.tsx        WHOOP-strap Bluetooth scan / pair / live-HR (modal)
 │   └── preferences.tsx          Coach engine + dashboard cards + units (modal)
 ├── components/
 │   ├── DisclaimerBanner.tsx
@@ -157,7 +165,8 @@ pulse-nexus-app/
 │   │   ├── xai.ts
 │   │   └── index.ts             Registry + chatTurn() that picks active provider
 │   ├── healthkit.ts             Apple Health reads
-│   ├── whoop.ts                 WHOOP OAuth + API
+│   ├── whoop.ts                 Public WHOOP API (BLE-backed; no OAuth)
+│   ├── whoop-ble.ts             WHOOP-strap BLE client (scan / pair / live HR)
 │   ├── fitbit.ts                Fitbit Web API
 │   ├── garmin.ts                Garmin Health API
 │   ├── sleep.ts                 Unified sleep snapshot across all four sources

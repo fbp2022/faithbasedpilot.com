@@ -24,6 +24,12 @@ export type Insight = {
   detail: string;
 };
 
+export type WhoopBleSnapshot = {
+  hrvRmssdMs: number | null;
+  restingHR: number | null;
+  meanHR: number | null;
+};
+
 export type CombinedSnapshot = {
   health: DailyHealthSnapshot | null;
   whoop: {
@@ -31,6 +37,7 @@ export type CombinedSnapshot = {
     sleep: WhoopSleep | null;
     cycle: WhoopCycle | null;
   };
+  whoopBle?: WhoopBleSnapshot | null;
   fitbit: FitbitSnapshot | null;
   garmin: GarminSnapshot | null;
 };
@@ -75,9 +82,14 @@ export function unify(snap: CombinedSnapshot): UnifiedView {
     ? { value: whoop.recovery.score.recovery_score, source: 'WHOOP' }
     : null;
 
+  const whoopBle = snap.whoopBle ?? null;
+
   const restingHR = pickBest([
     whoop.recovery
       ? { source: 'WHOOP', value: whoop.recovery.score.resting_heart_rate }
+      : { source: '', value: NaN },
+    whoopBle?.restingHR != null
+      ? { source: 'WHOOP strap', value: whoopBle.restingHR }
       : { source: '', value: NaN },
     garmin?.restingHR != null
       ? { source: 'Garmin', value: garmin.restingHR }
@@ -93,6 +105,9 @@ export function unify(snap: CombinedSnapshot): UnifiedView {
   const hrvMs = pickBest([
     whoop.recovery?.score.hrv_rmssd_milli
       ? { source: 'WHOOP', value: whoop.recovery.score.hrv_rmssd_milli }
+      : { source: '', value: NaN },
+    whoopBle?.hrvRmssdMs != null
+      ? { source: 'WHOOP strap', value: whoopBle.hrvRmssdMs }
       : { source: '', value: NaN },
     garmin?.hrvLastNightMs != null
       ? { source: 'Garmin', value: garmin.hrvLastNightMs }
